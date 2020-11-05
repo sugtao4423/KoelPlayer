@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">KoelPlayer</string>
+
+    <!-- ServerSettings Layout -->
+    <string name="server_host">Server Host</string>
+    <string name="server_host_hint">https://localhost</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="done">Done</string>
+
+    <!-- ServerSettings Kotlin -->
+    <string name="error_get_token">ユーザー認証エラー</string>
+
 </resources>
