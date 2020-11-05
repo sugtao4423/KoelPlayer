@@ -2,16 +2,19 @@
     <string name="app_name">KoelPlayer</string>
     <string name="loading">Loading…</string>
 
-    <!-- ServerSettings Layout -->
+    <!-- activity_server_settings.xml -->
     <string name="server_host">Server Host</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="done">Done</string>
 
-    <!-- ServerSettings Kotlin -->
+    <!-- ServerSettingsActivity.kt -->
     <string name="error_get_token">ユーザー認証エラー</string>
 
-    <!-- SyncMusicData Kotlin -->
+    <!-- SyncMusicData.kt -->
     <string name="error_get_all_music_data">楽曲情報取得エラー</string>
+
+    <!-- item_album.xml -->
+    <string name="description_album_cover">アルバムアートワーク</string>
 
 </resources>
