@@ -1,5 +1,6 @@
 package sugtao4423.koel4j.dataclass
 
+import java.io.Serializable
 import java.util.*
 
 data class Song(
@@ -11,4 +12,4 @@ data class Song(
     val track: Int,
     val disc: Int,
     val createdAt: Date
-)
+) : Serializable

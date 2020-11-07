@@ -1,5 +1,6 @@
 package sugtao4423.koel4j.dataclass
 
+import java.io.Serializable
 import java.util.*
 
 data class Album(
@@ -9,4 +10,4 @@ data class Album(
     val cover: String,
     val createdAt: Date,
     val isCompilation: Boolean
-)
+) : Serializable
