@@ -26,7 +26,11 @@ class AlbumAdapter(
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
         val album = albums[position]
-        Glide.with(context).load(album.cover).into(holder.image)
+        if (album.cover.endsWith("unknown-album.png")) {
+            Glide.with(context).load(R.drawable.unknown_album).into(holder.image)
+        } else {
+            Glide.with(context).load(album.cover).into(holder.image)
+        }
         holder.title.text = album.name
         holder.artist.text = artistName(album.artistId)
     }
