@@ -20,9 +20,16 @@ class AlbumMusicAdapter(private val songs: List<Song>) :
         val song = songs[position]
         holder.position.text = song.track.toString()
         holder.title.text = song.title
-        val min = song.length.toInt() / 60
+
+        val hour = song.length.toInt() / 60 / 60
+        val min = song.length.toInt() / 60 % 60
         val sec = (song.length.toInt() % 60).toString().padStart(2, '0')
-        val length = "$min:$sec"
+        val length = if (hour == 0) {
+            "$min:$sec"
+        } else {
+            val m = min.toString().padStart(2, '0')
+            "$hour:$m:$sec"
+        }
         holder.duration.text = length
     }
 
