@@ -30,7 +30,7 @@
         <activity
             android:name=".AlbumDetailActivity"
             android:configChanges="orientation|screenSize|screenLayout"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+            android:theme="@style/Theme.KoelPlayer.NoActionBar" />
     </application>
 
 </manifest>
