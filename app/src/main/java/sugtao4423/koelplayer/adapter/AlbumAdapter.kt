@@ -1,6 +1,7 @@
 package sugtao4423.koelplayer.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.Artist
+import sugtao4423.koelplayer.AlbumDetailActivity
 import sugtao4423.koelplayer.R
 
 class AlbumAdapter(
@@ -33,6 +35,15 @@ class AlbumAdapter(
         }
         holder.title.text = album.name
         holder.artist.text = artistName(album.artistId)
+        holder.itemView.setOnClickListener(albumClickListener(album))
+    }
+
+    private fun albumClickListener(album: Album): View.OnClickListener {
+        return View.OnClickListener {
+            val intent = Intent(context, AlbumDetailActivity::class.java)
+            intent.putExtra(AlbumDetailActivity.KEY_INTENT_ALBUM_DATA, album)
+            context.startActivity(intent)
+        }
     }
 
     private fun artistName(artistId: Int): String {

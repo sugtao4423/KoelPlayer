@@ -5,6 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_alignParentTop="true"
     android:layout_alignParentBottom="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="4dp"
     app:cardElevation="5dp"
     app:cardUseCompatPadding="true">

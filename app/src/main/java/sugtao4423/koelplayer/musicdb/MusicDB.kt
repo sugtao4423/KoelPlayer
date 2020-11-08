@@ -22,6 +22,25 @@ class MusicDB(private val context: Context) {
         MusicDBHelper(context).onCreate(db)
     }
 
+    fun getAlbumSongs(albumId: Int): List<Song> {
+        val songs = ArrayList<Song>()
+        val songCursor = db.rawQuery("SELECT * FROM songs WHERE albumId = ?", arrayOf(albumId.toString()))
+        while (songCursor.moveToNext()) {
+            songs.add(getSongData(songCursor))
+        }
+        songCursor.close()
+        songs.sortBy { it.track }
+        return songs
+    }
+
+    fun getArtist(artistId: Int): Artist {
+        val artistCursor = db.rawQuery("SELECT * FROM artists WHERE id = ?", arrayOf(artistId.toString()))
+        artistCursor.moveToNext()
+        val artist = getArtistData(artistCursor)
+        artistCursor.close()
+        return artist
+    }
+
     fun getAllMusicData(): AllMusicData {
         val albums = ArrayList<Album>()
         val albumCursor = db.rawQuery("SELECT * FROM albums", null)

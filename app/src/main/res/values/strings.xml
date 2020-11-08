@@ -15,6 +15,7 @@
     <string name="error_get_all_music_data">楽曲情報取得エラー</string>
 
     <!-- item_album.xml -->
+    <!-- activity_album_detail.xml -->
     <string name="description_album_cover">アルバムアートワーク</string>
 
 </resources>

@@ -27,6 +27,10 @@
             android:name=".ServerSettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".AlbumDetailActivity"
+            android:configChanges="orientation|screenSize|screenLayout"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
     </application>
 
 </manifest>

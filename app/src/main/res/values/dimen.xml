@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="default_text_size">14sp</dimen>
+
     <dimen name="activity_content_margin">16dp</dimen>
     <dimen name="edit_text_margin">20dp</dimen>
     <dimen name="fab_margin">8dp</dimen>
     <dimen name="album_item_text_padding">8dp</dimen>
+    <dimen name="album_song_item_text_padding">8dp</dimen>
+    <dimen name="album_song_item_position_width">60dp</dimen>
+    <dimen name="album_song_item_title_text_size">16sp</dimen>
+    <dimen name="album_detail_title_padding">8dp</dimen>
+    <dimen name="album_detail_artist_padding">8dp</dimen>
+
+    <dimen name="no_padding">0dp</dimen>
+    <dimen name="no_height">0dp</dimen>
 
 </resources>
