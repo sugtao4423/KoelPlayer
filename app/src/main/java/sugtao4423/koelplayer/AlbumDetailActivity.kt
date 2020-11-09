@@ -22,7 +22,6 @@ class AlbumDetailActivity : AppCompatActivity() {
         albumDetailToolbar.setNavigationOnClickListener { finish() }
 
         val album = intent.getSerializableExtra(KEY_INTENT_ALBUM_DATA) as Album
-        val artist = MusicDB(this).getArtist(album.artistId)
         val songs = MusicDB(this).getAlbumSongs(album.id)
 
         if (album.cover.endsWith("unknown-album.png")) {
@@ -34,7 +33,7 @@ class AlbumDetailActivity : AppCompatActivity() {
             albumDetailTitle.text = it
             supportActionBar!!.title = it
         }
-        albumDetailArtist.text = artist.name
+        albumDetailArtist.text = album.artist.name
 
         val layoutManager = LinearLayoutManager(this)
         val adapter = AlbumMusicAdapter(songs)

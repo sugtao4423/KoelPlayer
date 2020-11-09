@@ -5,7 +5,7 @@ import java.util.*
 
 data class Album(
     val id: Int,
-    val artistId: Int,
+    val artist: Artist,
     val name: String,
     val cover: String,
     val createdAt: Date,

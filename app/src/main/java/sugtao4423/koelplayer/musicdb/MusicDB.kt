@@ -8,6 +8,21 @@ import kotlin.collections.ArrayList
 
 class MusicDB(private val context: Context) {
 
+    companion object {
+        const val SQL_SELECT_SONGS = "SELECT songs.id, songs.title, songs.length, songs.track, songs.disc, songs.createdAt, " +
+                "albums.id AS albumId, albums.name AS albumName, albums.cover AS albumCover, albums.createdAt AS albumCreatedAt, albums.isCompilation AS albumIsCompilation, " +
+                "songArtists.id AS songArtistId, songArtists.name AS songArtistName, songArtists.image AS songArtistImage, " +
+                "albumArtists.id AS albumArtistId, albumArtists.name AS albumArtistName, albumArtists.image AS albumArtistImage " +
+                "FROM songs " +
+                "INNER JOIN albums ON songs.albumId = albums.id " +
+                "INNER JOIN artists AS songArtists ON songs.artistId = songArtists.id " +
+                "INNER JOIN artists AS albumArtists ON albums.artistId = albumArtists.id"
+        const val SQL_SELECT_ALBUMS = "SELECT albums.id, albums.name, albums.cover, albums.createdAt, albums.isCompilation, " +
+                "albumArtists.id AS albumArtistId, albumArtists.name AS albumArtistName, albumArtists.image AS albumArtistImage " +
+                "FROM albums " +
+                "INNER JOIN artists AS albumArtists ON albums.artistId = albumArtists.id"
+    }
+
     private val db = MusicDBHelper(context).writableDatabase
 
     fun close() {
@@ -23,8 +38,9 @@ class MusicDB(private val context: Context) {
     }
 
     fun getAlbumSongs(albumId: Int): List<Song> {
+        val sql = "$SQL_SELECT_SONGS WHERE songs.albumId = ?"
         val songs = ArrayList<Song>()
-        val songCursor = db.rawQuery("SELECT * FROM songs WHERE albumId = ?", arrayOf(albumId.toString()))
+        val songCursor = db.rawQuery(sql, arrayOf(albumId.toString()))
         while (songCursor.moveToNext()) {
             songs.add(getSongData(songCursor))
         }
@@ -33,17 +49,9 @@ class MusicDB(private val context: Context) {
         return songs
     }
 
-    fun getArtist(artistId: Int): Artist {
-        val artistCursor = db.rawQuery("SELECT * FROM artists WHERE id = ?", arrayOf(artistId.toString()))
-        artistCursor.moveToNext()
-        val artist = getArtistData(artistCursor)
-        artistCursor.close()
-        return artist
-    }
-
     fun getAllMusicData(): AllMusicData {
         val albums = ArrayList<Album>()
-        val albumCursor = db.rawQuery("SELECT * FROM albums", null)
+        val albumCursor = db.rawQuery(SQL_SELECT_ALBUMS, null)
         while (albumCursor.moveToNext()) {
             albums.add(getAlbumData(albumCursor))
         }
@@ -57,7 +65,7 @@ class MusicDB(private val context: Context) {
         artistCursor.close()
 
         val songs = ArrayList<Song>()
-        val songCursor = db.rawQuery("SELECT * FROM songs", null)
+        val songCursor = db.rawQuery(SQL_SELECT_SONGS, null)
         while (songCursor.moveToNext()) {
             songs.add(getSongData(songCursor))
         }
@@ -75,14 +83,19 @@ class MusicDB(private val context: Context) {
 
     private fun getAlbumData(c: Cursor): Album {
         c.apply {
+            val albumArtist = let {
+                val id = it.getInt(5)
+                val name = it.getString(6)
+                val image = it.getString(7)
+                Artist(id, name, image)
+            }
             val id = c.getInt(0)
-            val artistId = c.getInt(1)
-            val name = c.getString(2)
-            val cover = c.getString(3)
-            val createdAt = Date(c.getLong(4) * 1000)
-            val isCompilation = c.getString(5).toBoolean()
+            val name = c.getString(1)
+            val cover = c.getString(2)
+            val createdAt = Date(c.getLong(3) * 1000)
+            val isCompilation = c.getString(4).toBoolean()
 
-            return Album(id, artistId, name, cover, createdAt, isCompilation)
+            return Album(id, albumArtist, name, cover, createdAt, isCompilation)
         }
     }
 
@@ -98,16 +111,34 @@ class MusicDB(private val context: Context) {
 
     private fun getSongData(c: Cursor): Song {
         c.apply {
+            val albumArtist = let {
+                val id = it.getInt(14)
+                val name = it.getString(15)
+                val image = it.getString(16)
+                Artist(id, name, image)
+            }
+            val album = let {
+                val id = it.getInt(6)
+                val name = it.getString(7)
+                val cover = it.getString(8)
+                val createdAt = Date(c.getLong(9) * 1000)
+                val isCompilation = c.getString(10).toBoolean()
+                Album(id, albumArtist, name, cover, createdAt, isCompilation)
+            }
+            val songArtist = let {
+                val id = it.getInt(11)
+                val name = it.getString(12)
+                val image = it.getString(13)
+                Artist(id, name, image)
+            }
             val id = c.getString(0)
-            val albumId = c.getInt(1)
-            val artistId = c.getInt(2)
-            val title = c.getString(3)
-            val length = c.getDouble(4)
-            val track = c.getInt(5)
-            val disc = c.getInt(6)
-            val createdAt = Date(c.getLong(7) * 1000)
+            val title = c.getString(1)
+            val length = c.getDouble(2)
+            val track = c.getInt(3)
+            val disc = c.getInt(4)
+            val createdAt = Date(c.getLong(5) * 1000)
 
-            return Song(id, albumId, artistId, title, length, track, disc, createdAt)
+            return Song(id, album, songArtist, title, length, track, disc, createdAt)
         }
     }
 
@@ -133,7 +164,7 @@ class MusicDB(private val context: Context) {
         albums.map {
             val bindArgs = arrayOf(
                 it.id.toString(),
-                it.artistId.toString(),
+                it.artist.id.toString(),
                 it.name,
                 it.cover,
                 it.createdAt.time.toString(),
@@ -166,8 +197,8 @@ class MusicDB(private val context: Context) {
         songs.map {
             val bindArgs = arrayOf(
                 it.id,
-                it.albumId.toString(),
-                it.artistId.toString(),
+                it.album.id.toString(),
+                it.artist.id.toString(),
                 it.title,
                 it.length.toString(),
                 it.track.toString(),

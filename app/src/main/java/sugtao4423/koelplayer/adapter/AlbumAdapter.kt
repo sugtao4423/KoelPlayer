@@ -10,14 +10,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import sugtao4423.koel4j.dataclass.Album
-import sugtao4423.koel4j.dataclass.Artist
 import sugtao4423.koelplayer.AlbumDetailActivity
 import sugtao4423.koelplayer.R
 
 class AlbumAdapter(
     private val context: Context,
     private val albums: List<Album>,
-    private val artists: List<Artist>
 ) :
     RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
@@ -34,7 +32,7 @@ class AlbumAdapter(
             Glide.with(context).load(album.cover).into(holder.image)
         }
         holder.title.text = album.name
-        holder.artist.text = artistName(album.artistId)
+        holder.artist.text = album.artist.name
         holder.itemView.setOnClickListener(albumClickListener(album))
     }
 
@@ -43,15 +41,6 @@ class AlbumAdapter(
             val intent = Intent(context, AlbumDetailActivity::class.java)
             intent.putExtra(AlbumDetailActivity.KEY_INTENT_ALBUM_DATA, album)
             context.startActivity(intent)
-        }
-    }
-
-    private fun artistName(artistId: Int): String {
-        val result = artists.filter { it.id == artistId }
-        return if (result.isNotEmpty()) {
-            result[0].name
-        } else {
-            ""
         }
     }
 

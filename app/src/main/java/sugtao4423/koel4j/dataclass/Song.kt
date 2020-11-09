@@ -5,8 +5,8 @@ import java.util.*
 
 data class Song(
     val id: String,
-    val albumId: Int,
-    val artistId: Int,
+    val album: Album,
+    val artist: Artist,
     val title: String,
     val length: Double,
     val track: Int,

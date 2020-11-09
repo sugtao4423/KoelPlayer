@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        val adapter = AlbumAdapter(this, allMusicData.albums, allMusicData.artists)
+        val adapter = AlbumAdapter(this, allMusicData.albums)
         val layoutManager = GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false)
         albumGrid.layoutManager = layoutManager
         albumGrid.setHasFixedSize(true)

@@ -9,28 +9,10 @@ import kotlin.collections.ArrayList
 class ParseAllMusicData(private val json: JSONObject, private val playlists: List<Playlist>) {
 
     fun parse(): AllMusicData {
-        val albums = parseAlbums()
         val artists = parseArtists()
-        val songs = parseSongs()
+        val albums = parseAlbums(artists)
+        val songs = parseSongs(artists, albums)
         return AllMusicData(albums, artists, songs, playlists)
-    }
-
-    private fun parseAlbums(): List<Album> {
-        val result = ArrayList<Album>()
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val objects = json.getJSONArray("albums")
-        for (i in 0 until objects.length()) {
-            val obj = objects.getJSONObject(i)
-            val id = obj.getInt("id")
-            val artistId = obj.getInt("artist_id")
-            val name = obj.getString("name")
-            val cover = obj.getString("cover")
-            val createdAt = sdf.parse(obj.getString("created_at"))!!
-            val isCompilation = obj.getBoolean("is_compilation")
-            val album = Album(id, artistId, name, cover, createdAt, isCompilation)
-            result.add(album)
-        }
-        return result
     }
 
     private fun parseArtists(): List<Artist> {
@@ -47,7 +29,27 @@ class ParseAllMusicData(private val json: JSONObject, private val playlists: Lis
         return result
     }
 
-    private fun parseSongs(): List<Song> {
+    private fun parseAlbums(artists: List<Artist>): List<Album> {
+        val result = ArrayList<Album>()
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val objects = json.getJSONArray("albums")
+        for (i in 0 until objects.length()) {
+            val obj = objects.getJSONObject(i)
+            val id = obj.getInt("id")
+            val artistId = obj.getInt("artist_id")
+            val name = obj.getString("name")
+            val cover = obj.getString("cover")
+            val createdAt = sdf.parse(obj.getString("created_at"))!!
+            val isCompilation = obj.getBoolean("is_compilation")
+
+            val artist = artists.find { it.id == artistId }!!
+            val album = Album(id, artist, name, cover, createdAt, isCompilation)
+            result.add(album)
+        }
+        return result
+    }
+
+    private fun parseSongs(artists: List<Artist>, albums: List<Album>): List<Song> {
         val result = ArrayList<Song>()
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val objects = json.getJSONArray("songs")
@@ -61,7 +63,10 @@ class ParseAllMusicData(private val json: JSONObject, private val playlists: Lis
             val track = obj.getInt("track")
             val disc = obj.getInt("disc")
             val createdAt = sdf.parse(obj.getString("created_at"))!!
-            val song = Song(id, albumId, artistId, title, length, track, disc, createdAt)
+
+            val album = albums.find { it.id == albumId }!!
+            val artist = artists.find { it.id == artistId }!!
+            val song = Song(id, album, artist, title, length, track, disc, createdAt)
             result.add(song)
         }
         return result
