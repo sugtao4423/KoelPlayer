@@ -21,6 +21,8 @@ class MusicDB(private val context: Context) {
                 "albumArtists.id AS albumArtistId, albumArtists.name AS albumArtistName, albumArtists.image AS albumArtistImage " +
                 "FROM albums " +
                 "INNER JOIN artists AS albumArtists ON albums.artistId = albumArtists.id"
+        const val SQL_SELECT_ARTISTS = "SELECT * FROM artists"
+        const val SQL_SELECT_PLAYLISTS = "SELECT * FROM playlists"
     }
 
     private val db = MusicDBHelper(context).writableDatabase
@@ -58,7 +60,7 @@ class MusicDB(private val context: Context) {
         albumCursor.close()
 
         val artists = ArrayList<Artist>()
-        val artistCursor = db.rawQuery("SELECT * FROM artists", null)
+        val artistCursor = db.rawQuery(SQL_SELECT_ARTISTS, null)
         while (artistCursor.moveToNext()) {
             artists.add(getArtistData(artistCursor))
         }
@@ -72,7 +74,7 @@ class MusicDB(private val context: Context) {
         songCursor.close()
 
         val playlists = ArrayList<Playlist>()
-        val playlistCursor = db.rawQuery("SELECT * FROM playlists", null)
+        val playlistCursor = db.rawQuery(SQL_SELECT_PLAYLISTS, null)
         while (playlistCursor.moveToNext()) {
             playlists.add(getPlaylistData(playlistCursor))
         }
