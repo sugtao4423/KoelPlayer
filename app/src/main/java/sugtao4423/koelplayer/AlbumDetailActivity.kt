@@ -36,7 +36,7 @@ class AlbumDetailActivity : AppCompatActivity() {
         albumDetailArtist.text = album.artist.name
 
         val layoutManager = LinearLayoutManager(this)
-        val adapter = AlbumMusicAdapter(songs)
+        val adapter = AlbumMusicAdapter(songs, album.isCompilation)
         albumDetailMusicList.layoutManager = layoutManager
         albumDetailMusicList.adapter = adapter
     }

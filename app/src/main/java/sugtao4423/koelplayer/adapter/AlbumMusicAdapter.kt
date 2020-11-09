@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.R
 
-class AlbumMusicAdapter(private val songs: List<Song>) :
+class AlbumMusicAdapter(private val songs: List<Song>, private val isCompilation: Boolean) :
     RecyclerView.Adapter<AlbumMusicAdapter.AlbumMusicViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumMusicViewHolder {
@@ -24,11 +24,15 @@ class AlbumMusicAdapter(private val songs: List<Song>) :
         val hour = song.length.toInt() / 60 / 60
         val min = song.length.toInt() / 60 % 60
         val sec = (song.length.toInt() % 60).toString().padStart(2, '0')
-        val length = if (hour == 0) {
+        var length = if (hour == 0) {
             "$min:$sec"
         } else {
             val m = min.toString().padStart(2, '0')
             "$hour:$m:$sec"
+        }
+
+        if (isCompilation) {
+            length = song.artist.name + "・" + length
         }
         holder.duration.text = length
     }
