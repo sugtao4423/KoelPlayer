@@ -35,7 +35,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadMusicData() {
-        allMusicData = MusicDB(this).getAllMusicData()
+        val musicDB = MusicDB(this)
+        allMusicData = musicDB.getAllMusicData()
+        musicDB.close()
     }
 
     private fun setAdapter() {

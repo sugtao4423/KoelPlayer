@@ -29,7 +29,9 @@ class AlbumDetailActivity : AppCompatActivity() {
         albumDetailToolbar.setNavigationOnClickListener { finish() }
 
         val album = intent.getSerializableExtra(KEY_INTENT_ALBUM_DATA) as Album
-        val songs = MusicDB(this).getAlbumSongs(album.id)
+        val musicDB = MusicDB(this)
+        val songs = musicDB.getAlbumSongs(album.id)
+        musicDB.close()
 
         if (album.cover.endsWith("unknown-album.png")) {
             Glide.with(this).load(R.drawable.unknown_album).into(albumDetailCover)
