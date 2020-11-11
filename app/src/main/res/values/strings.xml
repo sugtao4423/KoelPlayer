@@ -18,4 +18,7 @@
     <!-- activity_album_detail.xml -->
     <string name="description_album_cover">アルバムアートワーク</string>
 
+    <!-- MusicService.kt -->
+    <string name="notification_channel">Now Playing</string>
+    <string name="notification_channel_description">@string/notification_channel</string>
 </resources>

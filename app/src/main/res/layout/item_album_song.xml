@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     android:paddingStart="@dimen/no_padding"
     android:paddingLeft="@dimen/no_padding"
     android:paddingTop="@dimen/album_song_item_text_padding"
     android:paddingEnd="@dimen/album_song_item_text_padding"
     android:paddingRight="@dimen/album_song_item_text_padding"
-    android:paddingBottom="@dimen/album_song_item_text_padding">
+    android:paddingBottom="@dimen/album_song_item_text_padding"
+    tools:ignore="UnusedAttribute">
 
     <TextView
         android:id="@+id/albumSongPosition"

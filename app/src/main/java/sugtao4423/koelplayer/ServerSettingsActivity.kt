@@ -25,7 +25,13 @@ class ServerSettingsActivity : AppCompatActivity() {
     }
 
     private fun saveKoelToken() {
-        val host = serverHost.text.toString()
+        val host = serverHost.text.toString().let {
+            if (it.endsWith("/")) {
+                it.removeSuffix("/")
+            } else {
+                it
+            }
+        }
         val email = serverEmail.text.toString()
         val password = serverPassword.text.toString()
 

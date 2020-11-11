@@ -7,9 +7,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.R
+import sugtao4423.koelplayer.playmusic.MusicService
 
 class AlbumMusicAdapter(private val songs: List<Song>, private val isCompilation: Boolean) :
     RecyclerView.Adapter<AlbumMusicAdapter.AlbumMusicViewHolder>() {
+
+    var musicService: MusicService? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumMusicViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -35,6 +38,10 @@ class AlbumMusicAdapter(private val songs: List<Song>, private val isCompilation
             length = song.artist.name + "・" + length
         }
         holder.duration.text = length
+
+        holder.itemView.setOnClickListener {
+            musicService?.playSong(song)
+        }
     }
 
     override fun getItemCount(): Int {

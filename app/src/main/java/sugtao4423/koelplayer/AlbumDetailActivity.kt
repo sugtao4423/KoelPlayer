@@ -1,6 +1,10 @@
 package sugtao4423.koelplayer
 
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -8,12 +12,15 @@ import kotlinx.android.synthetic.main.activity_album_detail.*
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koelplayer.adapter.AlbumMusicAdapter
 import sugtao4423.koelplayer.musicdb.MusicDB
+import sugtao4423.koelplayer.playmusic.MusicService
 
 class AlbumDetailActivity : AppCompatActivity() {
 
     companion object {
         const val KEY_INTENT_ALBUM_DATA = "albumData"
     }
+
+    private lateinit var adapter: AlbumMusicAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +43,26 @@ class AlbumDetailActivity : AppCompatActivity() {
         albumDetailArtist.text = album.artist.name
 
         val layoutManager = LinearLayoutManager(this)
-        val adapter = AlbumMusicAdapter(songs, album.isCompilation)
+        adapter = AlbumMusicAdapter(songs, album.isCompilation)
         albumDetailMusicList.layoutManager = layoutManager
         albumDetailMusicList.adapter = adapter
+
+        bindService(Intent(this, MusicService::class.java), serviceConnection, BIND_AUTO_CREATE)
+    }
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            adapter.musicService = (service as MusicService.MusicServiceBinder).musicService
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            adapter.musicService = null
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(serviceConnection)
     }
 
 }

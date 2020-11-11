@@ -9,6 +9,10 @@ class KoelEndpoints {
         fun playlistData(playlistId: Int): String {
             return "/api/playlist/$playlistId/songs"
         }
+
+        fun musicFile(auth: String, songId: String): String {
+            return "/api/$songId/play?jwt-token=$auth"
+        }
     }
 
 }
