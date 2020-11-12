@@ -36,14 +36,16 @@
                 android:id="@+id/albumTitle"
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:singleLine="true" />
 
             <TextView
                 android:id="@+id/albumArtist"
                 style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/albumTitle" />
+                android:layout_below="@+id/albumTitle"
+                android:singleLine="true" />
 
         </RelativeLayout>
 
