@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
+import sugtao4423.koelplayer.MainActivity
 import sugtao4423.koelplayer.Prefs
 
 class MusicService : MediaBrowserServiceCompat() {
@@ -82,9 +83,11 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     private fun initMediaSession() {
-        val sessionActivityPendingIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
-            PendingIntent.getActivity(this, 0, it, 0)
+        val appIntent = Intent(this, MainActivity::class.java).apply {
+            action = Intent.ACTION_MAIN
+            addCategory(Intent.CATEGORY_LAUNCHER)
         }
+        val sessionActivityPendingIntent = PendingIntent.getActivity(this, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         mediaSession = MediaSessionCompat(this, "MusicService").apply {
             setSessionActivity(sessionActivityPendingIntent)
             isActive = true
