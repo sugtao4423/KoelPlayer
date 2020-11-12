@@ -27,7 +27,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/albumCover"
-            android:padding="@dimen/album_item_text_padding">
+            android:paddingLeft="@dimen/album_item_text_padding"
+            android:paddingTop="@dimen/album_item_text_padding_top"
+            android:paddingRight="@dimen/album_item_text_padding"
+            android:paddingBottom="@dimen/album_item_text_padding">
 
             <TextView
                 android:id="@+id/albumTitle"
