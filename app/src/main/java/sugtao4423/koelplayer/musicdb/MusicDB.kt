@@ -84,74 +84,66 @@ class MusicDB(private val context: Context) {
     }
 
     private fun getAlbumData(c: Cursor): Album {
-        c.apply {
-            val albumArtist = let {
-                val id = it.getInt(5)
-                val name = it.getString(6)
-                val image = it.getString(7)
-                Artist(id, name, image)
-            }
-            val id = c.getInt(0)
-            val name = c.getString(1)
-            val cover = c.getString(2)
-            val createdAt = Date(c.getLong(3) * 1000)
-            val isCompilation = c.getString(4).toBoolean()
-
-            return Album(id, albumArtist, name, cover, createdAt, isCompilation)
+        val albumArtist = c.let {
+            val id = it.getInt(5)
+            val name = it.getString(6)
+            val image = it.getString(7)
+            Artist(id, name, image)
         }
+        val id = c.getInt(0)
+        val name = c.getString(1)
+        val cover = c.getString(2)
+        val createdAt = Date(c.getLong(3) * 1000)
+        val isCompilation = c.getString(4).toBoolean()
+
+        return Album(id, albumArtist, name, cover, createdAt, isCompilation)
     }
 
     private fun getArtistData(c: Cursor): Artist {
-        c.apply {
-            val id = c.getInt(0)
-            val name = c.getString(1)
-            val image = c.getString(2)
+        val id = c.getInt(0)
+        val name = c.getString(1)
+        val image = c.getString(2)
 
-            return Artist(id, name, image)
-        }
+        return Artist(id, name, image)
     }
 
     private fun getSongData(c: Cursor): Song {
-        c.apply {
-            val albumArtist = let {
-                val id = it.getInt(14)
-                val name = it.getString(15)
-                val image = it.getString(16)
-                Artist(id, name, image)
-            }
-            val album = let {
-                val id = it.getInt(6)
-                val name = it.getString(7)
-                val cover = it.getString(8)
-                val createdAt = Date(c.getLong(9) * 1000)
-                val isCompilation = c.getString(10).toBoolean()
-                Album(id, albumArtist, name, cover, createdAt, isCompilation)
-            }
-            val songArtist = let {
-                val id = it.getInt(11)
-                val name = it.getString(12)
-                val image = it.getString(13)
-                Artist(id, name, image)
-            }
-            val id = c.getString(0)
-            val title = c.getString(1)
-            val length = c.getDouble(2)
-            val track = c.getInt(3)
-            val disc = c.getInt(4)
-            val createdAt = Date(c.getLong(5) * 1000)
-
-            return Song(id, album, songArtist, title, length, track, disc, createdAt)
+        val albumArtist = c.let {
+            val id = it.getInt(14)
+            val name = it.getString(15)
+            val image = it.getString(16)
+            Artist(id, name, image)
         }
+        val album = c.let {
+            val id = it.getInt(6)
+            val name = it.getString(7)
+            val cover = it.getString(8)
+            val createdAt = Date(c.getLong(9) * 1000)
+            val isCompilation = c.getString(10).toBoolean()
+            Album(id, albumArtist, name, cover, createdAt, isCompilation)
+        }
+        val songArtist = c.let {
+            val id = it.getInt(11)
+            val name = it.getString(12)
+            val image = it.getString(13)
+            Artist(id, name, image)
+        }
+        val id = c.getString(0)
+        val title = c.getString(1)
+        val length = c.getDouble(2)
+        val track = c.getInt(3)
+        val disc = c.getInt(4)
+        val createdAt = Date(c.getLong(5) * 1000)
+
+        return Song(id, album, songArtist, title, length, track, disc, createdAt)
     }
 
     private fun getPlaylistData(c: Cursor): Playlist {
-        c.apply {
-            val id = c.getInt(0)
-            val name = c.getString(1)
-            val songs = c.getString(2).split(",")
+        val id = c.getInt(0)
+        val name = c.getString(1)
+        val songs = c.getString(2).split(",")
 
-            return Playlist(id, name, songs)
-        }
+        return Playlist(id, name, songs)
     }
 
     fun saveAllMusicData(musicData: AllMusicData) {
