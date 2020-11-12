@@ -17,7 +17,8 @@
         tools:targetApi="n">
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout">
+            android:configChanges="orientation|screenSize|screenLayout"
+            android:theme="@style/Theme.KoelPlayer.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
