@@ -4,7 +4,6 @@ import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import sugtao4423.koel4j.dataclass.AllMusicData
 import sugtao4423.koelplayer.adapter.AlbumAdapter
@@ -41,10 +40,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setAdapter() {
-        val adapter = AlbumAdapter(this, allMusicData.albums)
-        val layoutManager = GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false)
-        albumGrid.layoutManager = layoutManager
-        albumGrid.setHasFixedSize(true)
-        albumGrid.adapter = adapter
+        albumGrid.adapter = AlbumAdapter(this, allMusicData.albums)
     }
 }
