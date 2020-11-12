@@ -79,7 +79,14 @@ class KoelNotificationManager(
 
         private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? {
             return withContext(Dispatchers.IO) {
-                Glide.with(context).asBitmap().load(uri).submit(NOTIFICATION_LARGE_ICON_SIZE, NOTIFICATION_LARGE_ICON_SIZE).get()
+                val glideLoad = Glide.with(context).asBitmap().let {
+                    if (uri.toString().endsWith("unknown-album.png")) {
+                        it.load(R.drawable.unknown_album)
+                    } else {
+                        it.load(uri)
+                    }
+                }
+                glideLoad.submit(NOTIFICATION_LARGE_ICON_SIZE, NOTIFICATION_LARGE_ICON_SIZE).get()
             }
         }
     }
