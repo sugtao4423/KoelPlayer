@@ -40,7 +40,7 @@ class AlbumMusicAdapter(private val songs: List<Song>, private val isCompilation
         holder.duration.text = length
 
         holder.itemView.setOnClickListener {
-            musicService?.playSong(song)
+            musicService?.playSongs(songs, position)
         }
     }
 

@@ -34,7 +34,7 @@ class MusicService : MediaBrowserServiceCompat() {
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var notificationManager: KoelNotificationManager
     private lateinit var exoPlayer: ExoPlayer
-    private lateinit var metadataItem: MediaMetadataCompat
+    private var metadataItems: ArrayList<MediaMetadataCompat> = arrayListOf()
 
     private var isForegroundService = false
 
@@ -93,7 +93,7 @@ class MusicService : MediaBrowserServiceCompat() {
 
         val timelineQueueNavigator = object : TimelineQueueNavigator(mediaSession) {
             override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
-                return metadataItem.description
+                return metadataItems[windowIndex].description
             }
         }
 
@@ -166,9 +166,23 @@ class MusicService : MediaBrowserServiceCompat() {
         return ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(songUrl))
     }
 
-    fun playSong(song: Song) {
-        metadataItem = song.toMetadata()
-        exoPlayer.setMediaSource(song.toMediaSource())
+    private fun List<Song>.toMetadata(): List<MediaMetadataCompat> {
+        return List(this.size) { index ->
+            this[index].toMetadata()
+        }
+    }
+
+    private fun List<Song>.toMediaSource(): List<MediaSource> {
+        return List(this.size) { index ->
+            this[index].toMediaSource()
+        }
+    }
+
+    fun playSongs(songs: List<Song>, playPos: Int) {
+        metadataItems.clear()
+        metadataItems.addAll(songs.toMetadata())
+        exoPlayer.setMediaSources(songs.toMediaSource())
+        exoPlayer.seekTo(playPos, 0)
         exoPlayer.prepare()
         exoPlayer.play()
     }
