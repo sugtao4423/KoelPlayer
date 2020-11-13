@@ -114,6 +114,7 @@ class MusicService : MediaBrowserServiceCompat() {
             }
 
             override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
+                stopForeground(true)
                 isForegroundService = false
                 stopSelf()
             }
@@ -133,7 +134,6 @@ class MusicService : MediaBrowserServiceCompat() {
         mediaSession.isActive = false
         mediaSession.release()
         exoPlayer.release()
-        stopForeground(true)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
