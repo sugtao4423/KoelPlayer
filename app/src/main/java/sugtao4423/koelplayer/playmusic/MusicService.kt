@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
@@ -24,7 +25,7 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
-import sugtao4423.koelplayer.MainActivity
+import sugtao4423.koelplayer.NowPlayingActivity
 import sugtao4423.koelplayer.Prefs
 
 class MusicService : MediaBrowserServiceCompat() {
@@ -83,10 +84,7 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     private fun initMediaSession() {
-        val appIntent = Intent(this, MainActivity::class.java).apply {
-            action = Intent.ACTION_MAIN
-            addCategory(Intent.CATEGORY_LAUNCHER)
-        }
+        val appIntent = Intent(this, NowPlayingActivity::class.java)
         val sessionActivityPendingIntent = PendingIntent.getActivity(this, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         mediaSession = MediaSessionCompat(this, "MusicService").apply {
             setSessionActivity(sessionActivityPendingIntent)
@@ -188,6 +186,43 @@ class MusicService : MediaBrowserServiceCompat() {
         exoPlayer.seekTo(playPos, 0)
         exoPlayer.prepare()
         exoPlayer.play()
+    }
+
+    fun playingMetadata(): MediaMetadataCompat? = mediaSession.controller.metadata
+
+    fun isPlaying(): Boolean = exoPlayer.isPlaying
+    fun togglePlay() = if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
+    fun prev() = if (exoPlayer.currentPosition < 3000) exoPlayer.previous() else exoPlayer.seekTo(0)
+    fun next() = exoPlayer.next()
+
+    fun bufferedPosition(): Long = exoPlayer.bufferedPosition
+    fun currentPosition(): Long = exoPlayer.currentPosition
+    fun duration(): Long = exoPlayer.duration
+    fun seekTo(position: Long) = run { exoPlayer.seekTo(position) }
+
+    fun isShuffle(): Boolean = exoPlayer.shuffleModeEnabled
+    fun toggleShuffle() = run { exoPlayer.shuffleModeEnabled = !exoPlayer.shuffleModeEnabled }
+
+    fun isRepeat(): Boolean = exoPlayer.repeatMode == Player.REPEAT_MODE_ALL
+    fun isRepeatOne(): Boolean = exoPlayer.repeatMode == Player.REPEAT_MODE_ONE
+    fun repeat() = run { exoPlayer.repeatMode = Player.REPEAT_MODE_ALL }
+    fun repeatOne() = run { exoPlayer.repeatMode = Player.REPEAT_MODE_ONE }
+    fun repeatOff() = run { exoPlayer.repeatMode = Player.REPEAT_MODE_OFF }
+
+    fun setMediaControllerCallback(callback: MediaControllerCompat.Callback) {
+        mediaSession.controller.registerCallback(callback)
+    }
+
+    fun setPlayerEventListener(listener: Player.EventListener) {
+        exoPlayer.addListener(listener)
+    }
+
+    fun removeMediaControllerCallback(callback: MediaControllerCompat.Callback) {
+        mediaSession.controller.unregisterCallback(callback)
+    }
+
+    fun removePlayerEventListener(listener: Player.EventListener) {
+        exoPlayer.removeListener(listener)
     }
 
 }

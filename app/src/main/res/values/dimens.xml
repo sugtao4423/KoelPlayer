@@ -13,6 +13,13 @@
     <dimen name="album_song_item_title_text_size">16sp</dimen>
     <dimen name="album_detail_title_padding">8dp</dimen>
     <dimen name="album_detail_artist_padding">8dp</dimen>
+    <dimen name="now_playing_content_margin">24dp</dimen>
+    <dimen name="now_playing_title_top_margin">16dp</dimen>
+    <dimen name="now_playing_artist_top_margin">8dp</dimen>
+    <dimen name="now_playing_seek_top_margin">16dp</dimen>
+    <dimen name="now_playing_seek_side_margin">8dp</dimen>
+    <dimen name="now_playing_time_top_margin">4dp</dimen>
+    <dimen name="now_playing_control_top_margin">16dp</dimen>
 
     <dimen name="no_padding">0dp</dimen>
     <dimen name="no_height">0dp</dimen>
