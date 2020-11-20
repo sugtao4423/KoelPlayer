@@ -37,7 +37,8 @@
                 style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true" />
+                android:ellipsize="end"
+                android:maxLines="1" />
 
             <TextView
                 android:id="@+id/albumArtist"
@@ -45,7 +46,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/albumTitle"
-                android:singleLine="true" />
+                android:ellipsize="end"
+                android:maxLines="1" />
 
         </RelativeLayout>
 
