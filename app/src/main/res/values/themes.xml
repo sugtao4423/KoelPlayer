@@ -17,6 +17,10 @@
         <item name="colorControlNormal">@color/black</item>
     </style>
 
+    <style name="Theme.KoelPlayer.HomeButtonToolBar" parent="Theme.KoelPlayer">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
     <style name="Theme.KoelPlayer.NoActionBar" parent="Theme.KoelPlayer">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

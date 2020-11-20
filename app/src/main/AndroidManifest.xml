@@ -46,12 +46,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-
-        <activity
-            android:name=".NowPlayingActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
-            android:label="@string/now_playing"
-            android:launchMode="singleTask" />
     </application>
 
 </manifest>

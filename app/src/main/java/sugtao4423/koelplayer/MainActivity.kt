@@ -8,11 +8,10 @@ import androidx.fragment.app.commit
 import sugtao4423.koelplayer.fragment.AlbumFragment
 import sugtao4423.koelplayer.playmusic.MusicService
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseBottomNowPlayingActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
         val koelToken = Prefs(this).koelToken
         if (koelToken.isEmpty()) {

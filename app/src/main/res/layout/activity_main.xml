@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/mainAppbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -20,8 +21,11 @@
     <LinearLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="?attr/actionBarSize"
         android:orientation="horizontal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <include layout="@layout/bottom_sheet_now_playing" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
