@@ -1,49 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layoutDescription="@xml/motion_album_detail">
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/albumDetailCover"
+    <androidx.constraintlayout.motion.widget.MotionLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/description_album_cover"
-        app:layout_constraintTop_toBottomOf="@id/albumDetailToolbar"
-        app:srcCompat="@drawable/unknown_album" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="?attr/actionBarSize"
+        app:layoutDescription="@xml/motion_album_detail"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/albumDetailToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:navigationIcon="@drawable/ic_back" />
+        <ImageView
+            android:id="@+id/albumDetailCover"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/description_album_cover"
+            app:layout_constraintTop_toBottomOf="@id/albumDetailToolbar"
+            app:srcCompat="@drawable/unknown_album" />
 
-    <TextView
-        android:id="@+id/albumDetailTitle"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/album_detail_title_padding"
-        app:layout_constraintTop_toBottomOf="@id/albumDetailCover" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/albumDetailToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_back" />
 
-    <TextView
-        android:id="@+id/albumDetailArtist"
-        style="@style/TextAppearance.AppCompat.Body1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/album_detail_artist_padding"
-        android:paddingLeft="@dimen/album_detail_artist_padding"
-        android:paddingEnd="@dimen/no_padding"
-        android:paddingRight="@dimen/no_padding"
-        app:layout_constraintTop_toBottomOf="@id/albumDetailTitle" />
+        <TextView
+            android:id="@+id/albumDetailTitle"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/album_detail_title_padding"
+            app:layout_constraintTop_toBottomOf="@id/albumDetailCover" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/albumDetailMusicList"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/no_height"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/albumDetailArtist" />
+        <TextView
+            android:id="@+id/albumDetailArtist"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/album_detail_artist_padding"
+            android:paddingLeft="@dimen/album_detail_artist_padding"
+            android:paddingEnd="@dimen/no_padding"
+            android:paddingRight="@dimen/no_padding"
+            app:layout_constraintTop_toBottomOf="@id/albumDetailTitle" />
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/albumDetailMusicList"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/no_height"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/albumDetailArtist" />
+
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+
+    <include layout="@layout/bottom_sheet_now_playing" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

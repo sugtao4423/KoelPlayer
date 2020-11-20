@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
-import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.bottom_sheet_now_playing.*
 import sugtao4423.koelplayer.playmusic.MusicService
@@ -62,8 +61,7 @@ abstract class BaseBottomNowPlayingActivity(
     }
 
     private fun initActionBar() {
-        setSupportActionBar(nowPlayingToolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        nowPlayingToolbar.setNavigationOnClickListener { bottomSheet.toggleState() }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -82,7 +80,7 @@ abstract class BaseBottomNowPlayingActivity(
             nowPlayingSheetExpanded.alpha = 0f
         }
 
-        val bgAppbar = findViewById<AppBarLayout>(backgroundAppbarId)
+        val bgAppbar = findViewById<View>(backgroundAppbarId)
         bottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 val inverseOffset = 1 - slideOffset
@@ -201,12 +199,18 @@ abstract class BaseBottomNowPlayingActivity(
                 else -> Player.REPEAT_MODE_OFF
             }
             playerEventListener.onRepeatModeChanged(repeatMode)
+            onMusicServiceConnected(musicService!!)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             musicService = null
+            onMusicServiceDisconnected()
         }
     }
+
+    open fun onMusicServiceConnected(musicService: MusicService) {}
+
+    open fun onMusicServiceDisconnected() {}
 
     private val playerEventListener = object : Player.EventListener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {

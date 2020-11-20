@@ -1,11 +1,6 @@
 package sugtao4423.koelplayer
 
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_album_detail.*
@@ -14,7 +9,9 @@ import sugtao4423.koelplayer.adapter.AlbumMusicAdapter
 import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.playmusic.MusicService
 
-class AlbumDetailActivity : AppCompatActivity() {
+class AlbumDetailActivity : BaseBottomNowPlayingActivity(
+    R.layout.activity_album_detail, R.id.albumDetailToolbar
+) {
 
     companion object {
         const val KEY_INTENT_ALBUM_DATA = "albumData"
@@ -24,7 +21,6 @@ class AlbumDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_album_detail)
         setSupportActionBar(albumDetailToolbar)
         albumDetailToolbar.setNavigationOnClickListener { finish() }
 
@@ -48,23 +44,14 @@ class AlbumDetailActivity : AppCompatActivity() {
         adapter = AlbumMusicAdapter(songs, album.isCompilation)
         albumDetailMusicList.layoutManager = layoutManager
         albumDetailMusicList.adapter = adapter
-
-        bindService(Intent(this, MusicService::class.java), serviceConnection, BIND_AUTO_CREATE)
     }
 
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            adapter.musicService = (service as MusicService.MusicServiceBinder).musicService
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            adapter.musicService = null
-        }
+    override fun onMusicServiceConnected(musicService: MusicService) {
+        adapter.musicService = musicService
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unbindService(serviceConnection)
+    override fun onMusicServiceDisconnected() {
+        adapter.musicService = null
     }
 
 }
