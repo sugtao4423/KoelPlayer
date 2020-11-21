@@ -18,6 +18,7 @@
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
             android:contentDescription="@string/description_album_cover"
+            android:scaleType="centerCrop"
             app:srcCompat="@drawable/unknown_album" />
 
         <LinearLayout
