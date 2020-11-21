@@ -100,6 +100,13 @@ class MusicService : MediaBrowserServiceCompat() {
         val mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setPlayer(exoPlayer)
         mediaSessionConnector.setQueueNavigator(timelineQueueNavigator)
+        mediaSessionConnector.setMediaMetadataProvider {
+            if (metadataItems.size > it.currentWindowIndex) {
+                metadataItems[it.currentWindowIndex]
+            } else {
+                MediaMetadataCompat.Builder().build()
+            }
+        }
     }
 
     private fun initNotificationManager() {
@@ -157,6 +164,12 @@ class MusicService : MediaBrowserServiceCompat() {
                 it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, this[index].title)
                 it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, this[index].artist.name)
                 it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, this[index].album.cover)
+                it.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, (this[index].length * 1000).toLong())
+
+                it.putString(MediaMetadataCompat.METADATA_KEY_TITLE, this[index].title)
+                it.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, this[index].artist.name)
+                it.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, this[index].album.name)
+                it.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, this[index].album.artist.name)
                 it.build()
             }
         }
