@@ -97,14 +97,15 @@ class MusicService : MediaBrowserServiceCompat() {
             }
         }
 
-        val mediaSessionConnector = MediaSessionConnector(mediaSession)
-        mediaSessionConnector.setPlayer(exoPlayer)
-        mediaSessionConnector.setQueueNavigator(timelineQueueNavigator)
-        mediaSessionConnector.setMediaMetadataProvider {
-            if (metadataItems.size > it.currentWindowIndex) {
-                metadataItems[it.currentWindowIndex]
-            } else {
-                MediaMetadataCompat.Builder().build()
+        MediaSessionConnector(mediaSession).apply {
+            setPlayer(exoPlayer)
+            setQueueNavigator(timelineQueueNavigator)
+            setMediaMetadataProvider {
+                if (metadataItems.size > it.currentWindowIndex) {
+                    metadataItems[it.currentWindowIndex]
+                } else {
+                    MediaMetadataCompat.Builder().build()
+                }
             }
         }
     }
