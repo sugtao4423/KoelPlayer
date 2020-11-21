@@ -18,11 +18,7 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.util.Util
 import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.MainActivity
@@ -155,37 +151,28 @@ class MusicService : MediaBrowserServiceCompat() {
         result.sendResult(null)
     }
 
-    private fun Song.toMetadata(): MediaMetadataCompat {
-        return MediaMetadataCompat.Builder().let {
-            it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, title)
-            it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, artist.name)
-            it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, album.cover)
-            it.build()
-        }
-    }
-
-    private fun Song.toMediaSource(): MediaSource {
-        val songUrl = koelServer + KoelEndpoints.musicFile(koelToken, id)
-        val dataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(applicationContext, packageName))
-        return ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(songUrl))
-    }
-
     private fun List<Song>.toMetadata(): List<MediaMetadataCompat> {
         return List(this.size) { index ->
-            this[index].toMetadata()
+            MediaMetadataCompat.Builder().let {
+                it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, this[index].title)
+                it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, this[index].artist.name)
+                it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, this[index].album.cover)
+                it.build()
+            }
         }
     }
 
-    private fun List<Song>.toMediaSource(): List<MediaSource> {
+    private fun List<Song>.toMediaItem(): List<MediaItem> {
         return List(this.size) { index ->
-            this[index].toMediaSource()
+            val songUrl = koelServer + KoelEndpoints.musicFile(koelToken, this[index].id)
+            MediaItem.fromUri(songUrl)
         }
     }
 
     fun playSongs(songs: List<Song>, playPos: Int) {
         metadataItems.clear()
         metadataItems.addAll(songs.toMetadata())
-        exoPlayer.setMediaSources(songs.toMediaSource())
+        exoPlayer.setMediaItems(songs.toMediaItem())
         exoPlayer.seekTo(playPos, 0)
         exoPlayer.prepare()
         exoPlayer.play()
