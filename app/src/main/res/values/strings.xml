@@ -23,11 +23,12 @@
     <string name="notification_channel">Now Playing</string>
     <string name="notification_channel_description">@string/notification_channel</string>
 
-    <!-- bottom_sheet_now_playing.xml -->
+    <!-- bottom_sheet.xml -->
     <string name="now_playing">Now Playing</string>
     <string name="description_shuffle_button">シャッフル</string>
     <string name="description_prev_button">前の曲</string>
     <string name="description_play_button">再生・停止</string>
     <string name="description_next_button">次の曲</string>
     <string name="description_repeat_button">リピート</string>
+    <string name="queue">Queue</string>
 </resources>

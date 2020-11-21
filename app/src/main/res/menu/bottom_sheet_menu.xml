@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/bottomSheetNowPlayingButton"
+        android:icon="@drawable/ic_playing_play"
+        android:title="@string/now_playing" />
+
+    <item
+        android:id="@+id/bottomSheetQueueButton"
+        android:icon="@drawable/ic_queue"
+        android:title="@string/queue" />
+
+</menu>

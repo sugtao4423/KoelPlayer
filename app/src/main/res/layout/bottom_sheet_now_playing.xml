@@ -1,219 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bottomSheetLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:windowBackground"
-    app:behavior_peekHeight="?attr/actionBarSize"
-    app:layout_behavior="@string/bottom_sheet_behavior">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/nowPlayingSheetCollapsed"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/bottomNowPlayingCover"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
+            android:id="@+id/nowPlayingCover"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/now_playing_content_margin"
+            android:layout_marginRight="@dimen/now_playing_content_margin"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/description_album_cover"
             app:srcCompat="@drawable/unknown_album" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/nowPlayingTitle"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nowPlayingCover"
+            android:layout_marginLeft="@dimen/now_playing_content_margin"
+            android:layout_marginTop="@dimen/now_playing_title_top_margin"
+            android:layout_marginRight="@dimen/now_playing_content_margin"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/nowPlayingArtist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nowPlayingTitle"
+            android:layout_marginLeft="@dimen/now_playing_content_margin"
+            android:layout_marginTop="@dimen/now_playing_artist_top_margin"
+            android:layout_marginRight="@dimen/now_playing_content_margin"
+            android:gravity="center" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/nowPlayingSeek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nowPlayingArtist"
+            android:layout_marginLeft="@dimen/now_playing_seek_side_margin"
+            android:layout_marginTop="@dimen/now_playing_seek_top_margin"
+            android:layout_marginRight="@dimen/now_playing_seek_side_margin"
+            android:progressTint="?attr/colorPrimary"
+            android:secondaryProgressTint="?attr/colorPrimaryVariant"
+            android:thumbTint="?attr/colorPrimary"
+            tools:targetApi="lollipop" />
+
+        <TextView
+            android:id="@+id/nowPlayingCurrentTime"
             android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_marginStart="@dimen/bottom_now_playing_title_margin"
-            android:layout_marginLeft="@dimen/bottom_now_playing_title_margin"
-            android:layout_toEndOf="@id/bottomNowPlayingCover"
-            android:layout_toRightOf="@id/bottomNowPlayingCover"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nowPlayingSeek"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="@dimen/now_playing_content_margin"
+            android:layout_marginLeft="@dimen/now_playing_content_margin"
+            android:layout_marginTop="@dimen/now_playing_time_top_margin" />
 
-            <TextView
-                android:id="@+id/bottomNowPlayingTitle"
-                style="@style/TextAppearance.AppCompat.Title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1" />
-
-            <TextView
-                android:id="@+id/bottomNowPlayingArtist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/nowPlayingTotalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nowPlayingSeek"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="@dimen/now_playing_content_margin"
+            android:layout_marginRight="@dimen/now_playing_content_margin" />
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/nowPlayingSheetExpanded"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/now_playing_content_margin"
+        android:layout_marginTop="@dimen/now_playing_control_top_margin"
+        android:layout_marginRight="@dimen/now_playing_content_margin"
+        android:layout_marginBottom="@dimen/now_playing_content_margin">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <sugtao4423.koelplayer.view.SquareImageButton
+            android:id="@+id/nowPlayingShuffleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="@string/description_shuffle_button"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/ic_playing_shuffle"
+            tools:ignore="UnusedAttribute"
+            tools:targetApi="m" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/nowPlayingToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:theme="@style/Theme.KoelPlayer.HomeButtonToolBar"
-                app:navigationIcon="@drawable/ic_back"
-                app:title="@string/now_playing"
-                app:titleTextColor="@android:color/white" />
-        </com.google.android.material.appbar.AppBarLayout>
+        <sugtao4423.koelplayer.view.SquareImageButton
+            android:id="@+id/nowPlayingPrevButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="@string/description_prev_button"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/ic_playing_prev"
+            tools:ignore="UnusedAttribute"
+            tools:targetApi="m" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+        <sugtao4423.koelplayer.view.SquareImageButton
+            android:id="@+id/nowPlayingPlayButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="@string/description_play_button"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/ic_playing_play"
+            tools:ignore="UnusedAttribute"
+            tools:targetApi="m" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        <sugtao4423.koelplayer.view.SquareImageButton
+            android:id="@+id/nowPlayingNextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="@string/description_next_button"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/ic_playing_next"
+            tools:ignore="UnusedAttribute"
+            tools:targetApi="m" />
 
-                <ImageView
-                    android:id="@+id/nowPlayingCover"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/now_playing_content_margin"
-                    android:layout_marginRight="@dimen/now_playing_content_margin"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/description_album_cover"
-                    app:srcCompat="@drawable/unknown_album" />
-
-                <TextView
-                    android:id="@+id/nowPlayingTitle"
-                    style="@style/TextAppearance.AppCompat.Title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/nowPlayingCover"
-                    android:layout_marginLeft="@dimen/now_playing_content_margin"
-                    android:layout_marginTop="@dimen/now_playing_title_top_margin"
-                    android:layout_marginRight="@dimen/now_playing_content_margin"
-                    android:gravity="center" />
-
-                <TextView
-                    android:id="@+id/nowPlayingArtist"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/nowPlayingTitle"
-                    android:layout_marginLeft="@dimen/now_playing_content_margin"
-                    android:layout_marginTop="@dimen/now_playing_artist_top_margin"
-                    android:layout_marginRight="@dimen/now_playing_content_margin"
-                    android:gravity="center" />
-
-                <androidx.appcompat.widget.AppCompatSeekBar
-                    android:id="@+id/nowPlayingSeek"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/nowPlayingArtist"
-                    android:layout_marginLeft="@dimen/now_playing_seek_side_margin"
-                    android:layout_marginTop="@dimen/now_playing_seek_top_margin"
-                    android:layout_marginRight="@dimen/now_playing_seek_side_margin"
-                    android:progressTint="?attr/colorPrimary"
-                    android:secondaryProgressTint="?attr/colorPrimaryVariant"
-                    android:thumbTint="?attr/colorPrimary"
-                    tools:targetApi="lollipop" />
-
-                <TextView
-                    android:id="@+id/nowPlayingCurrentTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/nowPlayingSeek"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginStart="@dimen/now_playing_content_margin"
-                    android:layout_marginLeft="@dimen/now_playing_content_margin"
-                    android:layout_marginTop="@dimen/now_playing_time_top_margin" />
-
-                <TextView
-                    android:id="@+id/nowPlayingTotalTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/nowPlayingSeek"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginEnd="@dimen/now_playing_content_margin"
-                    android:layout_marginRight="@dimen/now_playing_content_margin" />
-            </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/now_playing_content_margin"
-                android:layout_marginTop="@dimen/now_playing_control_top_margin"
-                android:layout_marginRight="@dimen/now_playing_content_margin"
-                android:layout_marginBottom="@dimen/now_playing_content_margin">
-
-                <sugtao4423.koelplayer.view.SquareImageButton
-                    android:id="@+id/nowPlayingShuffleButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:contentDescription="@string/description_shuffle_button"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/ic_playing_shuffle"
-                    tools:ignore="UnusedAttribute"
-                    tools:targetApi="m" />
-
-                <sugtao4423.koelplayer.view.SquareImageButton
-                    android:id="@+id/nowPlayingPrevButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:contentDescription="@string/description_prev_button"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/ic_playing_prev"
-                    tools:ignore="UnusedAttribute"
-                    tools:targetApi="m" />
-
-                <sugtao4423.koelplayer.view.SquareImageButton
-                    android:id="@+id/nowPlayingPlayButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:contentDescription="@string/description_play_button"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/ic_playing_play"
-                    tools:ignore="UnusedAttribute"
-                    tools:targetApi="m" />
-
-                <sugtao4423.koelplayer.view.SquareImageButton
-                    android:id="@+id/nowPlayingNextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:contentDescription="@string/description_next_button"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/ic_playing_next"
-                    tools:ignore="UnusedAttribute"
-                    tools:targetApi="m" />
-
-                <sugtao4423.koelplayer.view.SquareImageButton
-                    android:id="@+id/nowPlayingRepeatButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:contentDescription="@string/description_repeat_button"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:srcCompat="@drawable/ic_playing_repeat"
-                    tools:ignore="UnusedAttribute"
-                    tools:targetApi="m" />
-            </LinearLayout>
-        </LinearLayout>
+        <sugtao4423.koelplayer.view.SquareImageButton
+            android:id="@+id/nowPlayingRepeatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:contentDescription="@string/description_repeat_button"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:srcCompat="@drawable/ic_playing_repeat"
+            tools:ignore="UnusedAttribute"
+            tools:targetApi="m" />
     </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
