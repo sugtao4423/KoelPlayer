@@ -3,7 +3,6 @@ package sugtao4423.koelplayer
 import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import sugtao4423.koelplayer.fragment.AlbumFragment
 import sugtao4423.koelplayer.playmusic.MusicService
