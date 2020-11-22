@@ -38,11 +38,13 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
 
     override fun onMusicServiceConnected(musicService: MusicService) {
         this.musicService = musicService
+        queueAdapter.musicService = musicService
         queueChanged()
         musicService.queueSongChangedListener = { queueChanged() }
     }
 
     override fun onMusicServiceDisconnected() {
+        queueAdapter.musicService = null
         musicService = null
     }
 

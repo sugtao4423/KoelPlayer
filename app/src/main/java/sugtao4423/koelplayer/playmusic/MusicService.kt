@@ -184,6 +184,10 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
+    fun changeSong(windowIndex: Int) {
+        exoPlayer.seekTo(windowIndex, 0)
+    }
+
     fun playSongs(songs: List<Song>, playPos: Int) {
         metadataItems.clear()
         metadataItems.addAll(songs.toMetadata())
