@@ -3,27 +3,39 @@ package sugtao4423.koelplayer.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.playmusic.MusicService
 
-abstract class BaseMusicAdapter : RecyclerView.Adapter<BaseMusicAdapter.MusicViewHolder>() {
+abstract class BaseMusicAdapter(private val viewType: Int) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    companion object {
+        const val VIEW_TYPE_ALBUM = 1
+        const val VIEW_TYPE_QUEUE = 2
+    }
 
     var musicService: MusicService? = null
     var isCompilation = false
 
     protected var songs = ArrayList<Song>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MusicViewHolder {
-        return MusicViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_album_song, parent, false))
+    override fun getItemViewType(position: Int): Int = viewType
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_ALBUM) {
+            AlbumMusicViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_album_song, parent, false))
+        } else {
+            QueueMusicViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_queue_song, parent, false))
+        }
     }
 
-    override fun onBindViewHolder(holder: MusicViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val song = songs[position]
-        holder.position.text = song.track.toString()
-        holder.title.text = song.title
 
         val hour = song.length.toInt() / 60 / 60
         val min = song.length.toInt() / 60 % 60
@@ -38,11 +50,32 @@ abstract class BaseMusicAdapter : RecyclerView.Adapter<BaseMusicAdapter.MusicVie
         if (isCompilation) {
             length = song.artist.name + "・" + length
         }
-        holder.duration.text = length
+
+        if (viewType == VIEW_TYPE_ALBUM) {
+            holder as AlbumMusicViewHolder
+            holder.position.text = song.track.toString()
+            holder.title.text = song.title
+            holder.duration.text = length
+        } else {
+            holder as QueueMusicViewHolder
+            if (song.album.cover.endsWith("unknown-album.png")) {
+                Glide.with(holder.itemView).load(R.drawable.unknown_album).into(holder.cover)
+            } else {
+                Glide.with(holder.itemView).load(song.album.cover).into(holder.cover)
+            }
+            holder.title.text = song.title
+            holder.duration.text = length
+        }
     }
 
     override fun getItemCount(): Int {
         return songs.size
+    }
+
+    fun clear() {
+        val size = songs.size
+        songs.clear()
+        notifyItemRangeRemoved(0, size)
     }
 
     fun add(song: Song) {
@@ -56,10 +89,16 @@ abstract class BaseMusicAdapter : RecyclerView.Adapter<BaseMusicAdapter.MusicVie
         notifyItemRangeInserted(lastItemIndex + 1, songs.size)
     }
 
-    inner class MusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class AlbumMusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val position: TextView = itemView.findViewById(R.id.albumSongPosition)
         val title: TextView = itemView.findViewById(R.id.albumSongTitle)
         val duration: TextView = itemView.findViewById(R.id.albumSongDuration)
+    }
+
+    inner class QueueMusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val cover: ImageView = itemView.findViewById(R.id.queueSongCover)
+        val title: TextView = itemView.findViewById(R.id.queueSongTitle)
+        val duration: TextView = itemView.findViewById(R.id.queueSongDuration)
     }
 
 }

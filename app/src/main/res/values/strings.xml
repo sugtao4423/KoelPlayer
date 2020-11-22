@@ -17,6 +17,7 @@
     <!-- item_album.xml -->
     <!-- activity_album_detail.xml -->
     <!-- bottom_sheet_now_playing.xml -->
+    <!-- item_queue_song.xml -->
     <string name="description_album_cover">アルバムアートワーク</string>
 
     <!-- MusicService.kt -->

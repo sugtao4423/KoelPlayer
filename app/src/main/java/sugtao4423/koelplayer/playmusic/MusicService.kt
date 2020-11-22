@@ -33,6 +33,7 @@ class MusicService : MediaBrowserServiceCompat() {
     private lateinit var notificationManager: KoelNotificationManager
     private lateinit var exoPlayer: ExoPlayer
     private var metadataItems: ArrayList<MediaMetadataCompat> = arrayListOf()
+    private var songQueue: ArrayList<Song> = arrayListOf()
 
     private var isForegroundService = false
 
@@ -186,6 +187,9 @@ class MusicService : MediaBrowserServiceCompat() {
     fun playSongs(songs: List<Song>, playPos: Int) {
         metadataItems.clear()
         metadataItems.addAll(songs.toMetadata())
+        songQueue.clear()
+        songQueue.addAll(songs)
+        queueSongChangedListener?.invoke()
         exoPlayer.setMediaItems(songs.toMediaItem())
         exoPlayer.seekTo(playPos, 0)
         exoPlayer.prepare()
@@ -228,5 +232,8 @@ class MusicService : MediaBrowserServiceCompat() {
     fun removePlayerEventListener(listener: Player.EventListener) {
         exoPlayer.removeListener(listener)
     }
+
+    var queueSongChangedListener: (() -> Unit)? = null
+    fun queueSongs(): ArrayList<Song> = songQueue
 
 }

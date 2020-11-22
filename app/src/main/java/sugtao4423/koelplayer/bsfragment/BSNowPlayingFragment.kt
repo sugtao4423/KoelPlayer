@@ -18,7 +18,7 @@ import sugtao4423.koelplayer.view.SquareImageButton
 
 class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFragmentInterface {
 
-    var musicService: MusicService? = null
+    private var musicService: MusicService? = null
     private lateinit var watchCurrentTimeHandler: Handler
     private lateinit var watchCurrentTimeRunnable: Runnable
 

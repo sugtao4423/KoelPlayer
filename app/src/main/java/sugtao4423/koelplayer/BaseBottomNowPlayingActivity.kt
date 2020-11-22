@@ -18,6 +18,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import sugtao4423.koelplayer.bsfragment.BSFragmentInterface
 import sugtao4423.koelplayer.bsfragment.BSNowPlayingFragment
+import sugtao4423.koelplayer.bsfragment.BSQueueFragment
 import sugtao4423.koelplayer.playmusic.MusicService
 
 abstract class BaseBottomNowPlayingActivity(
@@ -34,7 +35,7 @@ abstract class BaseBottomNowPlayingActivity(
         super.onCreate(savedInstanceState)
         setContentView(layoutResId)
 
-        bottomSheetFragments = listOf(BSNowPlayingFragment())
+        bottomSheetFragments = listOf(BSNowPlayingFragment(), BSQueueFragment())
 
         initActionBar()
         initBottomSheet()
@@ -113,8 +114,8 @@ abstract class BaseBottomNowPlayingActivity(
 
         bottomSheetBottomNav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.bottomSheetQueueButton -> null
                 R.id.bottomSheetNowPlayingButton -> showFragment(bottomSheetFragments[0])
+                R.id.bottomSheetQueueButton -> showFragment(bottomSheetFragments[1])
             }
             true
         }
