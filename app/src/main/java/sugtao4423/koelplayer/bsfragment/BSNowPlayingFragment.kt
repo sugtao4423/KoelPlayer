@@ -16,7 +16,7 @@ import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.playmusic.MusicService
 import sugtao4423.koelplayer.view.SquareImageButton
 
-class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing) {
+class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFragmentInterface {
 
     var musicService: MusicService? = null
     private lateinit var watchCurrentTimeHandler: Handler
@@ -43,7 +43,7 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing) {
         musicService?.removePlayerEventListener(playerEventListener)
     }
 
-    fun onMusicServiceConnected(musicService: MusicService) {
+    override fun onMusicServiceConnected(musicService: MusicService) {
         this.musicService = musicService
         musicService.setPlayerEventListener(playerEventListener)
         playerEventListener.onIsPlayingChanged(musicService.isPlaying())
@@ -56,12 +56,12 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing) {
         playerEventListener.onRepeatModeChanged(repeatMode)
     }
 
-    fun onMusicServiceDisconnected() {
+    override fun onMusicServiceDisconnected() {
         this.musicService = null
     }
 
     @SuppressLint("SetTextI18n")
-    fun updateMetadata(metadata: MediaMetadataCompat) {
+    override fun updateMetadata(metadata: MediaMetadataCompat) {
         Glide.with(this).let {
             if (metadata.description.iconUri == null || metadata.description.iconUri.toString().endsWith("unknown-album.png")) {
                 it.load(R.drawable.unknown_album)

@@ -16,6 +16,7 @@ import androidx.fragment.app.commit
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.bottom_sheet.*
+import sugtao4423.koelplayer.bsfragment.BSFragmentInterface
 import sugtao4423.koelplayer.bsfragment.BSNowPlayingFragment
 import sugtao4423.koelplayer.playmusic.MusicService
 
@@ -27,13 +28,13 @@ abstract class BaseBottomNowPlayingActivity(
     protected var musicService: MusicService? = null
     private lateinit var bottomSheet: BottomSheetBehavior<CoordinatorLayout>
 
-    private lateinit var nowPlayingFragment: BSNowPlayingFragment
+    private lateinit var bottomSheetFragments: List<BSFragmentInterface>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layoutResId)
 
-        nowPlayingFragment = BSNowPlayingFragment()
+        bottomSheetFragments = listOf(BSNowPlayingFragment())
 
         initActionBar()
         initBottomSheet()
@@ -94,21 +95,29 @@ abstract class BaseBottomNowPlayingActivity(
         }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun showFragment(fragment: BSFragmentInterface) {
         supportFragmentManager.commit {
-            replace(R.id.bottomSheetContainer, fragment)
+            bottomSheetFragments.forEach {
+                it as Fragment
+                if (fragment == it) show(it) else hide(it)
+            }
         }
     }
 
     private fun initBottomNav() {
+        supportFragmentManager.commit {
+            bottomSheetFragments.forEach {
+                add(R.id.bottomSheetContainer, it as Fragment)
+            }
+        }
+
         bottomSheetBottomNav.setOnNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.bottomSheetNowPlayingButton -> replaceFragment(nowPlayingFragment)
                 R.id.bottomSheetQueueButton -> null
+                R.id.bottomSheetNowPlayingButton -> showFragment(bottomSheetFragments[0])
             }
             true
         }
-        bottomSheetBottomNav.selectedItemId = R.id.bottomSheetNowPlayingButton
     }
 
     override fun onBackPressed() {
@@ -131,7 +140,9 @@ abstract class BaseBottomNowPlayingActivity(
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
             metadata?.let {
                 updateMetadata(it)
-                nowPlayingFragment.updateMetadata(it)
+                bottomSheetFragments.forEach { fragment ->
+                    fragment.updateMetadata(it)
+                }
             }
         }
     }
@@ -142,17 +153,23 @@ abstract class BaseBottomNowPlayingActivity(
             musicService!!.setMediaControllerCallback(mediaControllerCallback)
             musicService!!.playingMetadata()?.let {
                 updateMetadata(it)
-                nowPlayingFragment.updateMetadata(it)
+                bottomSheetFragments.forEach { fragment ->
+                    fragment.updateMetadata(it)
+                }
             }
 
             onMusicServiceConnected(musicService!!)
-            nowPlayingFragment.onMusicServiceConnected(musicService!!)
+            bottomSheetFragments.forEach { fragment ->
+                fragment.onMusicServiceConnected(musicService!!)
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             musicService = null
             onMusicServiceDisconnected()
-            nowPlayingFragment.onMusicServiceDisconnected()
+            bottomSheetFragments.forEach { fragment ->
+                fragment.onMusicServiceDisconnected()
+            }
         }
     }
 
