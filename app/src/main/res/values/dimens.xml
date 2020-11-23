@@ -6,6 +6,8 @@
     <dimen name="activity_content_margin">16dp</dimen>
     <dimen name="edit_text_margin">20dp</dimen>
     <dimen name="fab_margin">8dp</dimen>
+    <dimen name="playlist_item_text_padding_top">2dp</dimen>
+    <dimen name="playlist_item_text_padding">8dp</dimen>
     <dimen name="album_item_text_padding_top">2dp</dimen>
     <dimen name="album_item_text_padding">8dp</dimen>
     <dimen name="album_song_item_text_padding">8dp</dimen>

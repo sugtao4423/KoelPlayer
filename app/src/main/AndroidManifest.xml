@@ -46,6 +46,11 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".PlaylistDetailActivity"
+            android:configChanges="orientation|screenSize|screenLayout"
+            android:theme="@style/Theme.KoelPlayer.NoActionBar" />
     </application>
 
 </manifest>

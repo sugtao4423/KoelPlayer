@@ -3,11 +3,19 @@ package sugtao4423.koelplayer
 import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
-import androidx.fragment.app.commit
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import kotlinx.android.synthetic.main.activity_main.*
+import sugtao4423.koel4j.dataclass.AllMusicData
 import sugtao4423.koelplayer.fragment.AlbumFragment
+import sugtao4423.koelplayer.fragment.PlaylistFragment
+import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.playmusic.MusicService
 
 class MainActivity : BaseBottomNowPlayingActivity() {
+
+    private var allMusicData: AllMusicData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +31,34 @@ class MainActivity : BaseBottomNowPlayingActivity() {
 
         startService(Intent(this, MusicService::class.java))
 
-        supportFragmentManager.commit {
-            add(R.id.fragmentContainer, AlbumFragment())
+        MusicDB(this).let {
+            allMusicData = it.getAllMusicData()
+            it.close()
         }
+
+        mainViewPager.adapter = MainTabAdapter(supportFragmentManager)
+        mainTabLayout.setupWithViewPager(mainViewPager)
+    }
+
+    inner class MainTabAdapter(fm: FragmentManager) :
+        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+
+        override fun getItem(position: Int): Fragment {
+            return when (position) {
+                0 -> AlbumFragment(allMusicData!!)
+                else -> PlaylistFragment(allMusicData!!)
+            }
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return when (position) {
+                0 -> getString(R.string.album)
+                else -> getString(R.string.playlist)
+            }
+        }
+
+        override fun getCount(): Int = 2
+
     }
 
 }
