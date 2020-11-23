@@ -2,7 +2,6 @@ package sugtao4423.koelplayer
 
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_album_detail.*
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koelplayer.adapter.AlbumMusicAdapter
@@ -29,11 +28,7 @@ class AlbumDetailActivity : BaseBottomNowPlayingActivity(
         val songs = musicDB.getAlbumSongs(album.id)
         musicDB.close()
 
-        if (album.cover.endsWith("unknown-album.png")) {
-            Glide.with(this).load(R.drawable.unknown_album).into(albumDetailCover)
-        } else {
-            Glide.with(this).load(album.cover).into(albumDetailCover)
-        }
+        GlideUtil.load(this, album.cover, albumDetailCover)
         album.name.let {
             albumDetailTitle.text = it
             supportActionBar!!.title = it

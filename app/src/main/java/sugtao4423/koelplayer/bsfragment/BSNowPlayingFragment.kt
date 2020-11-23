@@ -9,9 +9,9 @@ import android.support.v4.media.MediaMetadataCompat
 import android.view.View
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import kotlinx.android.synthetic.main.bottom_sheet_now_playing.*
+import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.playmusic.MusicService
 import sugtao4423.koelplayer.view.SquareImageButton
@@ -62,14 +62,7 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
 
     @SuppressLint("SetTextI18n")
     override fun updateMetadata(metadata: MediaMetadataCompat) {
-        Glide.with(this).let {
-            if (metadata.description.iconUri == null || metadata.description.iconUri.toString().endsWith("unknown-album.png")) {
-                it.load(R.drawable.unknown_album)
-            } else {
-                it.load(metadata.description.iconUri.toString())
-            }
-        }.into(nowPlayingCover)
-
+        GlideUtil.load(this, metadata.description.iconUri, nowPlayingCover)
         nowPlayingTitle.text = metadata.description.title
         nowPlayingArtist.text = metadata.description.subtitle
 

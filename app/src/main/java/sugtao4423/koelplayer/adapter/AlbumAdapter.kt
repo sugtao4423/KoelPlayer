@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koelplayer.AlbumDetailActivity
+import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 
 class AlbumAdapter(
@@ -26,11 +26,7 @@ class AlbumAdapter(
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
         val album = albums[position]
-        if (album.cover.endsWith("unknown-album.png")) {
-            Glide.with(context).load(R.drawable.unknown_album).into(holder.image)
-        } else {
-            Glide.with(context).load(album.cover).into(holder.image)
-        }
+        GlideUtil.load(context, album.cover, holder.image)
         holder.title.text = album.name
         holder.artist.text = album.artist.name
         holder.itemView.setOnClickListener(albumClickListener(album))

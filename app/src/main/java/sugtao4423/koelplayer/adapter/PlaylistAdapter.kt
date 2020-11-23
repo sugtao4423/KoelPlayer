@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import sugtao4423.koel4j.dataclass.Playlist
 import sugtao4423.koel4j.dataclass.Song
+import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.PlaylistDetailActivity
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.view.SquareImageView
@@ -31,11 +31,7 @@ class PlaylistAdapter(
         val firstSongCover = songs.find {
             it.id == playlist.songs[0]
         }!!.album.cover
-        if (firstSongCover.endsWith("unknown-album.png")) {
-            Glide.with(context).load(R.drawable.unknown_album).into(holder.cover)
-        } else {
-            Glide.with(context).load(firstSongCover).into(holder.cover)
-        }
+        GlideUtil.load(context, firstSongCover, holder.cover)
         holder.title.text = playlist.name
         holder.itemView.setOnClickListener(playlistClickListener(playlist))
     }

@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import sugtao4423.koelplayer.bsfragment.BSFragmentInterface
@@ -179,14 +178,7 @@ abstract class BaseBottomNowPlayingActivity(
     open fun onMusicServiceDisconnected() {}
 
     private fun updateMetadata(metadata: MediaMetadataCompat) {
-        Glide.with(this).let {
-            if (metadata.description.iconUri == null || metadata.description.iconUri.toString().endsWith("unknown-album.png")) {
-                it.load(R.drawable.unknown_album)
-            } else {
-                it.load(metadata.description.iconUri.toString())
-            }
-        }.into(bottomNowPlayingCover)
-
+        GlideUtil.load(this, metadata.description.iconUri, bottomNowPlayingCover)
         bottomNowPlayingTitle.text = metadata.description.title
         bottomNowPlayingArtist.text = metadata.description.subtitle
     }

@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import sugtao4423.koel4j.dataclass.Song
+import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.playmusic.MusicService
 
@@ -58,11 +58,7 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
             holder.duration.text = length
         } else {
             holder as QueueMusicViewHolder
-            if (song.album.cover.endsWith("unknown-album.png")) {
-                Glide.with(holder.itemView).load(R.drawable.unknown_album).into(holder.cover)
-            } else {
-                Glide.with(holder.itemView).load(song.album.cover).into(holder.cover)
-            }
+            GlideUtil.load(holder.itemView, song.album.cover, holder.cover)
             holder.title.text = song.title
             holder.duration.text = length
         }
