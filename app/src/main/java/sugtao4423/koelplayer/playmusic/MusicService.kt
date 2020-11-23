@@ -184,17 +184,23 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
-    fun changeSong(windowIndex: Int) {
+    fun changeSong(playPos: Int) {
+        val windowIndex = if (isShuffle()) {
+            val song = queueSongs()[playPos]
+            songQueue.indexOf(song)
+        } else {
+            playPos
+        }
         exoPlayer.seekTo(windowIndex, 0)
     }
 
     fun playSongs(songs: List<Song>, playPos: Int) {
         metadataItems.clear()
         metadataItems.addAll(songs.toMetadata())
+        exoPlayer.setMediaItems(songs.toMediaItem())
         songQueue.clear()
         songQueue.addAll(songs)
         queueSongChangedListener?.invoke()
-        exoPlayer.setMediaItems(songs.toMediaItem())
         exoPlayer.seekTo(playPos, 0)
         exoPlayer.prepare()
         exoPlayer.play()
@@ -213,7 +219,10 @@ class MusicService : MediaBrowserServiceCompat() {
     fun seekTo(position: Long) = run { exoPlayer.seekTo(position) }
 
     fun isShuffle(): Boolean = exoPlayer.shuffleModeEnabled
-    fun toggleShuffle() = run { exoPlayer.shuffleModeEnabled = !exoPlayer.shuffleModeEnabled }
+    fun toggleShuffle() {
+        exoPlayer.shuffleModeEnabled = !exoPlayer.shuffleModeEnabled
+        queueSongChangedListener?.invoke()
+    }
 
     fun isRepeat(): Boolean = exoPlayer.repeatMode == Player.REPEAT_MODE_ALL
     fun isRepeatOne(): Boolean = exoPlayer.repeatMode == Player.REPEAT_MODE_ONE
@@ -238,6 +247,21 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     var queueSongChangedListener: (() -> Unit)? = null
-    fun queueSongs(): ArrayList<Song> = songQueue
+    fun queueSongs(): ArrayList<Song> {
+        if (!isShuffle()) {
+            return songQueue
+        }
+
+        val result = arrayListOf<Song>()
+        var index = exoPlayer.currentTimeline.getFirstWindowIndex(true)
+        while (true) {
+            result.add(songQueue[index])
+            index = exoPlayer.currentTimeline.getNextWindowIndex(index, Player.REPEAT_MODE_OFF, true)
+            if (index == C.INDEX_UNSET) {
+                break
+            }
+        }
+        return result
+    }
 
 }
