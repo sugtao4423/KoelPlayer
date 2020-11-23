@@ -45,7 +45,7 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
 
     override fun onMusicServiceConnected(musicService: MusicService) {
         this.musicService = musicService
-        musicService.setPlayerEventListener(playerEventListener)
+        musicService.addPlayerEventListener(playerEventListener)
         playerEventListener.onIsPlayingChanged(musicService.isPlaying())
         playerEventListener.onShuffleModeEnabledChanged(musicService.isShuffle())
         val repeatMode = when {

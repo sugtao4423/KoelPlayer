@@ -239,7 +239,7 @@ class MusicService : MediaBrowserServiceCompat() {
         mediaSession.controller.registerCallback(callback)
     }
 
-    fun setPlayerEventListener(listener: Player.EventListener) {
+    fun addPlayerEventListener(listener: Player.EventListener) {
         exoPlayer.addListener(listener)
     }
 
