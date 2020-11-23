@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
+import com.google.android.exoplayer2.source.ShuffleOrder
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
@@ -221,6 +222,9 @@ class MusicService : MediaBrowserServiceCompat() {
     fun isShuffle(): Boolean = exoPlayer.shuffleModeEnabled
     fun toggleShuffle() {
         exoPlayer.shuffleModeEnabled = !exoPlayer.shuffleModeEnabled
+        if (!isShuffle()) {
+            exoPlayer.setShuffleOrder(ShuffleOrder.DefaultShuffleOrder(songQueue.size))
+        }
         queueSongChangedListener?.invoke()
     }
 
