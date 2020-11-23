@@ -60,6 +60,9 @@ class MusicDB(private val context: Context) {
             songs.add(getSongData(songCursor))
         }
         songCursor.close()
+
+        songs.sortBy { it.track }
+        songs.sortBy { it.album.name }
         return songs
     }
 
