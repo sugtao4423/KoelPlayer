@@ -92,7 +92,10 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
         watchCurrentTimeHandler = Handler(Looper.getMainLooper())
         watchCurrentTimeRunnable = Runnable {
             musicService?.let {
+                val duration = it.duration()
                 val currentPosition = it.currentPosition()
+                nowPlayingTotalTime.text = it.duration().toTimeFormat()
+                nowPlayingSeek.max = (duration / 1000).toInt()
                 nowPlayingCurrentTime.text = currentPosition.toTimeFormat()
                 nowPlayingSeek.progress = (currentPosition / 1000).toInt()
                 nowPlayingSeek.secondaryProgress = (it.bufferedPosition() / 1000).toInt()
