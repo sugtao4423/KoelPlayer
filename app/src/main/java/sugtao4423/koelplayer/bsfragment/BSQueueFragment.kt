@@ -18,6 +18,8 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
     private var musicService: MusicService? = null
     private lateinit var queueAdapter: QueueAdapter
 
+    private var isScrollTop = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         queueAdapter = QueueAdapter()
@@ -53,12 +55,13 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
     }
 
     override fun updateMetadata(metadata: MediaMetadataCompat) {
-        if (queueAdapter.itemCount > 0) {
+        if (queueAdapter.itemCount > 0 && isScrollTop) {
             val playingPos = queueAdapter.songPosition(musicService!!.playingSong())
             if (playingPos >= 0) {
                 songQueue.smoothScrollToPosition(playingPos)
             }
         }
+        isScrollTop = true
     }
 
     override fun onDestroy() {
@@ -82,6 +85,7 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
     ) {
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            isScrollTop = false
             val fromPosition = viewHolder.adapterPosition
             val toPosition = target.adapterPosition
             queueAdapter.move(fromPosition, toPosition)
@@ -90,6 +94,7 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            isScrollTop = false
             val position = viewHolder.adapterPosition
             queueAdapter.remove(position)
             musicService?.removeSong(position)
