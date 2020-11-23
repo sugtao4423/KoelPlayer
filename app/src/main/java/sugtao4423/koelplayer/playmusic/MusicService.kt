@@ -269,4 +269,16 @@ class MusicService : MediaBrowserServiceCompat() {
         return result
     }
 
+    fun moveSong(from: Int, to: Int) {
+        metadataItems.add(to, metadataItems.removeAt(from))
+        songQueue.add(to, songQueue.removeAt(from))
+        exoPlayer.moveMediaItem(from, to)
+    }
+
+    fun removeSong(position: Int) {
+        metadataItems.removeAt(position)
+        songQueue.removeAt(position)
+        exoPlayer.removeMediaItem(position)
+    }
+
 }

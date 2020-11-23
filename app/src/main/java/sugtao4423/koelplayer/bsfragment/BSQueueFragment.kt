@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,7 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
             layoutManager = QueueLinearLayoutManager()
             adapter = queueAdapter
         }
+        ItemTouchHelper(moveSwipeCallback).attachToRecyclerView(songQueue)
     }
 
     private fun queueChanged() {
@@ -73,6 +75,24 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
             }
             linearSmoothScroller.targetPosition = position
             startSmoothScroll(linearSmoothScroller)
+        }
+    }
+
+    private val moveSwipeCallback = object : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
+    ) {
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            val fromPosition = viewHolder.adapterPosition
+            val toPosition = target.adapterPosition
+            queueAdapter.move(fromPosition, toPosition)
+            musicService?.moveSong(fromPosition, toPosition)
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val position = viewHolder.adapterPosition
+            queueAdapter.remove(position)
+            musicService?.removeSong(position)
         }
     }
 
