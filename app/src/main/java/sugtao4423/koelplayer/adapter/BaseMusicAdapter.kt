@@ -89,6 +89,10 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
         notifyItemRangeInserted(lastItemIndex + 1, songs.size)
     }
 
+    fun songPosition(song: Song): Int {
+        return songs.indexOf(song)
+    }
+
     inner class AlbumMusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val position: TextView = itemView.findViewById(R.id.albumSongPosition)
         val title: TextView = itemView.findViewById(R.id.albumSongTitle)

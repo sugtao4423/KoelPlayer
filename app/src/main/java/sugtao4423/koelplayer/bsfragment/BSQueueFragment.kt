@@ -5,6 +5,8 @@ import android.support.v4.media.MediaMetadataCompat
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.bottom_sheet_queue.*
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.adapter.QueueAdapter
@@ -24,7 +26,7 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
         super.onViewCreated(view, savedInstanceState)
         songQueue.apply {
             setHasFixedSize(true)
-            layoutManager = LinearLayoutManager(requireContext())
+            layoutManager = QueueLinearLayoutManager()
             adapter = queueAdapter
         }
     }
@@ -49,11 +51,29 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
     }
 
     override fun updateMetadata(metadata: MediaMetadataCompat) {
+        if (queueAdapter.itemCount > 0) {
+            val playingPos = queueAdapter.songPosition(musicService!!.playingSong())
+            if (playingPos >= 0) {
+                songQueue.smoothScrollToPosition(playingPos)
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         musicService?.queueSongChangedListener = null
+    }
+
+    inner class QueueLinearLayoutManager : LinearLayoutManager(context) {
+        override fun smoothScrollToPosition(recyclerView: RecyclerView?, state: RecyclerView.State?, position: Int) {
+            val linearSmoothScroller = object : LinearSmoothScroller(recyclerView?.context) {
+                override fun getVerticalSnapPreference(): Int {
+                    return SNAP_TO_START
+                }
+            }
+            linearSmoothScroller.targetPosition = position
+            startSmoothScroll(linearSmoothScroller)
+        }
     }
 
 }
