@@ -33,8 +33,7 @@ class MusicService : MediaBrowserServiceCompat() {
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var notificationManager: KoelNotificationManager
     private lateinit var exoPlayer: ExoPlayer
-    private var metadataItems: ArrayList<MediaMetadataCompat> = arrayListOf()
-    private var songQueue: ArrayList<Song> = arrayListOf()
+    private var songQueue: ArrayList<Pair<MediaMetadataCompat, Song>> = arrayListOf()
 
     private var isForegroundService = false
 
@@ -95,7 +94,7 @@ class MusicService : MediaBrowserServiceCompat() {
 
         val timelineQueueNavigator = object : TimelineQueueNavigator(mediaSession) {
             override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
-                return metadataItems[windowIndex].description
+                return songQueue[windowIndex].first.description
             }
         }
 
@@ -103,8 +102,8 @@ class MusicService : MediaBrowserServiceCompat() {
             setPlayer(exoPlayer)
             setQueueNavigator(timelineQueueNavigator)
             setMediaMetadataProvider {
-                if (metadataItems.size > it.currentWindowIndex) {
-                    metadataItems[it.currentWindowIndex]
+                if (songQueue.size > it.currentWindowIndex) {
+                    songQueue[it.currentWindowIndex].first
                 } else {
                     MediaMetadataCompat.Builder().build()
                 }
@@ -161,20 +160,18 @@ class MusicService : MediaBrowserServiceCompat() {
         result.sendResult(null)
     }
 
-    private fun List<Song>.toMetadata(): List<MediaMetadataCompat> {
-        return List(this.size) { index ->
-            MediaMetadataCompat.Builder().let {
-                it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, this[index].title)
-                it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, this[index].artist.name)
-                it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, this[index].album.cover)
-                it.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, (this[index].length * 1000).toLong())
+    private fun Song.toMetadata(): MediaMetadataCompat {
+        return MediaMetadataCompat.Builder().let {
+            it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, this.title)
+            it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, this.artist.name)
+            it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, this.album.cover)
+            it.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, (this.length * 1000).toLong())
 
-                it.putString(MediaMetadataCompat.METADATA_KEY_TITLE, this[index].title)
-                it.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, this[index].artist.name)
-                it.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, this[index].album.name)
-                it.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, this[index].album.artist.name)
-                it.build()
-            }
+            it.putString(MediaMetadataCompat.METADATA_KEY_TITLE, this.title)
+            it.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, this.artist.name)
+            it.putString(MediaMetadataCompat.METADATA_KEY_ALBUM, this.album.name)
+            it.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ARTIST, this.album.artist.name)
+            it.build()
         }
     }
 
@@ -187,8 +184,8 @@ class MusicService : MediaBrowserServiceCompat() {
 
     fun changeSong(playPos: Int) {
         val windowIndex = if (isShuffle()) {
-            val song = queueSongs()[playPos]
-            songQueue.indexOf(song)
+            val songData = songQueue.find { it.second == queueSongs()[playPos] }
+            songQueue.indexOf(songData)
         } else {
             playPos
         }
@@ -196,11 +193,11 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     fun playSongs(songs: List<Song>, playPos: Int) {
-        metadataItems.clear()
-        metadataItems.addAll(songs.toMetadata())
-        exoPlayer.setMediaItems(songs.toMediaItem())
         songQueue.clear()
-        songQueue.addAll(songs)
+        songs.forEach {
+            songQueue.add(Pair(it.toMetadata(), it))
+        }
+        exoPlayer.setMediaItems(songs.toMediaItem())
         queueSongChangedListener?.invoke()
         exoPlayer.seekTo(playPos, 0)
         exoPlayer.prepare()
@@ -210,7 +207,7 @@ class MusicService : MediaBrowserServiceCompat() {
     fun playingMetadata(): MediaMetadataCompat? = mediaSession.controller.metadata
 
     fun isPlaying(): Boolean = exoPlayer.isPlaying
-    fun playingSong(): Song = songQueue[exoPlayer.currentWindowIndex]
+    fun playingSong(): Song = songQueue[exoPlayer.currentWindowIndex].second
     fun togglePlay() = if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
     fun prev() = if (exoPlayer.currentPosition < 3000) exoPlayer.previous() else exoPlayer.seekTo(0)
     fun next() = exoPlayer.next()
@@ -252,15 +249,15 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     var queueSongChangedListener: (() -> Unit)? = null
-    fun queueSongs(): ArrayList<Song> {
+    fun queueSongs(): List<Song> {
         if (!isShuffle()) {
-            return songQueue
+            return songQueue.map { it.second }.toList()
         }
 
         val result = arrayListOf<Song>()
         var index = exoPlayer.currentTimeline.getFirstWindowIndex(true)
         while (true) {
-            result.add(songQueue[index])
+            result.add(songQueue[index].second)
             index = exoPlayer.currentTimeline.getNextWindowIndex(index, Player.REPEAT_MODE_OFF, true)
             if (index == C.INDEX_UNSET) {
                 break
@@ -270,13 +267,11 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     fun moveSong(from: Int, to: Int) {
-        metadataItems.add(to, metadataItems.removeAt(from))
         songQueue.add(to, songQueue.removeAt(from))
         exoPlayer.moveMediaItem(from, to)
     }
 
     fun removeSong(position: Int) {
-        metadataItems.removeAt(position)
         songQueue.removeAt(position)
         exoPlayer.removeMediaItem(position)
     }
