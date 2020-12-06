@@ -34,6 +34,7 @@ class MusicService : MediaBrowserServiceCompat() {
     private lateinit var notificationManager: KoelNotificationManager
     private lateinit var exoPlayer: ExoPlayer
     private var songQueue: ArrayList<Pair<MediaMetadataCompat, Song>> = arrayListOf()
+    private var shuffleOrder = ShuffleOrder.DefaultShuffleOrder(0) as ShuffleOrder
 
     private var isForegroundService = false
 
@@ -182,6 +183,11 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
+    private fun resetShuffleOrder() {
+        shuffleOrder = ShuffleOrder.DefaultShuffleOrder(songQueue.size)
+        exoPlayer.setShuffleOrder(shuffleOrder)
+    }
+
     fun changeSong(playPos: Int) {
         val windowIndex = if (isShuffle()) {
             val songData = songQueue.find { it.second == queueSongs()[playPos] }
@@ -198,6 +204,7 @@ class MusicService : MediaBrowserServiceCompat() {
             songQueue.add(Pair(it.toMetadata(), it))
         }
         exoPlayer.setMediaItems(songs.toMediaItem())
+        resetShuffleOrder()
         queueSongChangedListener?.invoke()
         exoPlayer.seekTo(playPos, 0)
         exoPlayer.prepare()
@@ -221,7 +228,7 @@ class MusicService : MediaBrowserServiceCompat() {
     fun toggleShuffle() {
         exoPlayer.shuffleModeEnabled = !exoPlayer.shuffleModeEnabled
         if (!isShuffle()) {
-            exoPlayer.setShuffleOrder(ShuffleOrder.DefaultShuffleOrder(songQueue.size))
+            resetShuffleOrder()
         }
         queueSongChangedListener?.invoke()
     }
@@ -250,30 +257,47 @@ class MusicService : MediaBrowserServiceCompat() {
 
     var queueSongChangedListener: (() -> Unit)? = null
     fun queueSongs(): List<Song> {
-        if (!isShuffle()) {
-            return songQueue.map { it.second }.toList()
-        }
-
-        val result = arrayListOf<Song>()
-        var index = exoPlayer.currentTimeline.getFirstWindowIndex(true)
-        while (true) {
-            result.add(songQueue[index].second)
-            index = exoPlayer.currentTimeline.getNextWindowIndex(index, Player.REPEAT_MODE_OFF, true)
-            if (index == C.INDEX_UNSET) {
-                break
+        return if (isShuffle()) {
+            val result = arrayListOf<Song>()
+            var index = shuffleOrder.firstIndex
+            for (i in 0 until shuffleOrder.length) {
+                result.add(songQueue[index].second)
+                index = shuffleOrder.getNextIndex(index)
             }
+            result
+        } else {
+            songQueue.map { it.second }.toList()
         }
-        return result
     }
 
     fun moveSong(from: Int, to: Int) {
-        songQueue.add(to, songQueue.removeAt(from))
-        exoPlayer.moveMediaItem(from, to)
+        if (isShuffle()) {
+            val shuffled = arrayListOf<Int>()
+            var shuffleIndex = shuffleOrder.firstIndex
+            for (i in 0 until shuffleOrder.length) {
+                shuffled.add(shuffleIndex)
+                shuffleIndex = shuffleOrder.getNextIndex(shuffleIndex)
+            }
+            shuffled.add(to, shuffled.removeAt(from))
+            shuffleOrder = ShuffleOrder.DefaultShuffleOrder(shuffled.toIntArray(), shuffled.size.toLong())
+            exoPlayer.setShuffleOrder(shuffleOrder)
+        } else {
+            songQueue.add(to, songQueue.removeAt(from))
+            exoPlayer.moveMediaItem(from, to)
+        }
     }
 
     fun removeSong(position: Int) {
-        songQueue.removeAt(position)
-        exoPlayer.removeMediaItem(position)
+        if (isShuffle()) {
+            val unShuffledIndex = songQueue.indexOf(songQueue.find { pair -> pair.second == queueSongs()[position] })
+            songQueue.removeAt(unShuffledIndex)
+            exoPlayer.removeMediaItem(unShuffledIndex)
+            shuffleOrder = shuffleOrder.cloneAndRemove(unShuffledIndex, unShuffledIndex + 1)
+            exoPlayer.setShuffleOrder(shuffleOrder)
+        } else {
+            songQueue.removeAt(position)
+            exoPlayer.removeMediaItem(position)
+        }
     }
 
 }
