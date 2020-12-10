@@ -24,6 +24,7 @@ import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.MainActivity
 import sugtao4423.koelplayer.Prefs
+import sugtao4423.koelplayer.download.KoelDLUtil
 
 class MusicService : MediaBrowserServiceCompat() {
 
@@ -177,9 +178,16 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     private fun List<Song>.toMediaItem(): List<MediaItem> {
+        val dlUtil = KoelDLUtil(applicationContext)
         return List(this.size) { index ->
-            val songUrl = koelServer + KoelEndpoints.musicFile(koelToken, this[index].id)
-            MediaItem.fromUri(songUrl)
+            val song = this[index]
+            if (dlUtil.isDownloaded(song)) {
+                val downloadedUri = dlUtil.getSongFilePath(song)
+                MediaItem.fromUri(downloadedUri)
+            } else {
+                val songUrl = koelServer + KoelEndpoints.musicFile(koelToken, song.id)
+                MediaItem.fromUri(songUrl)
+            }
         }
     }
 

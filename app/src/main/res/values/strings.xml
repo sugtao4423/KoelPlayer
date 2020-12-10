@@ -37,4 +37,7 @@
     <string name="description_next_button">次の曲</string>
     <string name="description_repeat_button">リピート</string>
     <string name="queue">Queue</string>
+
+    <!-- KoelDLService.kt -->
+    <string name="download_done">Download Done!</string>
 </resources>
