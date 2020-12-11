@@ -63,9 +63,7 @@ class KoelDLService : Service() {
             startForeground(NOTIFICATION_ID, notification)
 
             withContext(Dispatchers.IO) {
-                songs.forEachIndexed { index, song ->
-                    saveSong(index, songs.size, song)
-                }
+                saveSongs(songs)
             }
 
             notification = notificationBuilder(-1, -1).let {
@@ -82,22 +80,31 @@ class KoelDLService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun saveSong(index: Int, maxSize: Int, song: Song) {
-        notification = notificationBuilder(maxSize, index + 1, song.title).build()
-        notificationManager.notify(NOTIFICATION_ID, notification)
+    private fun saveSongs(songs: Array<Song>) {
+        var index = 0
+        while (index < songs.size) {
+            val song = songs[index]
+            notification = notificationBuilder(songs.size, index + 1, song.title).build()
+            notificationManager.notify(NOTIFICATION_ID, notification)
 
-        val url = koelServer + KoelEndpoints.musicFile(koelToken, song.id)
-        val inputStream = let {
+            val url = koelServer + KoelEndpoints.musicFile(koelToken, song.id)
             val request = Request.Builder().let {
                 it.addHeader("User-Agent", Koel4j.USER_AGENT)
                 it.url(url)
                 it.build()
             }
-            OkHttpClient().newCall(request).execute().body!!.byteStream()
-        }
-        val downloadPath = KoelDLUtil(this).getSongFilePath(song)
-        File(downloadPath).outputStream().use {
-            inputStream.copyTo(it)
+            val response = OkHttpClient().newCall(request).execute()
+            val inputStream = if (response.code in 200 until 300 && response.body != null) {
+                response.body!!.byteStream()
+            } else {
+                Thread.sleep(1000)
+                continue
+            }
+            val downloadPath = KoelDLUtil(this).getSongFilePath(song)
+            File(downloadPath).outputStream().use {
+                inputStream.copyTo(it)
+            }
+            index++
         }
     }
 
