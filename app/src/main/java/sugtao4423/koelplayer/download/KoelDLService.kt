@@ -27,7 +27,6 @@ class KoelDLService : Service() {
         const val INTENT_KEY_SONGS = "songs"
         const val NOTIFICATION_ID = 1919810
         const val NOTIFICATION_CHANNEL_ID = "download"
-        const val NOTIFICATION_TITLE_PROGRESS = "%d /%d  %s"
     }
 
     private val notificationManager by lazy {
@@ -109,8 +108,9 @@ class KoelDLService : Service() {
         }
         val pendingIntent = PendingIntent.getActivity(applicationContext, NOTIFICATION_ID, appIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID).run {
-            setContentTitle(NOTIFICATION_TITLE_PROGRESS.format(progress, progressMax, songTitle))
+            setContentTitle(songTitle)
             if (progressMax >= 0 || progress >= 0) {
+                setContentText(getString(R.string.param_song_progress, progress, progressMax))
                 setProgress(progressMax, progress, false)
             }
             setSmallIcon(android.R.drawable.stat_sys_download)

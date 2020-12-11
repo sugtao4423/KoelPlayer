@@ -40,4 +40,5 @@
 
     <!-- KoelDLService.kt -->
     <string name="download_done">Download Done!</string>
+    <string name="param_song_progress">%1$d / %2$d 曲</string>
 </resources>
