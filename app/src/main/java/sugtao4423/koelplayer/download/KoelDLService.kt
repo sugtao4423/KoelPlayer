@@ -87,6 +87,11 @@ class KoelDLService : Service() {
             notification = notificationBuilder(songs.size, index + 1, song.title).build()
             notificationManager.notify(NOTIFICATION_ID, notification)
 
+            if (KoelDLUtil(applicationContext).isDownloaded(song)) {
+                index++
+                continue
+            }
+
             val url = koelServer + KoelEndpoints.musicFile(koelToken, song.id)
             val request = Request.Builder().let {
                 it.addHeader("User-Agent", Koel4j.USER_AGENT)
