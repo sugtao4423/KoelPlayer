@@ -154,8 +154,19 @@ class MusicService : MediaBrowserServiceCompat() {
         result.sendResult(null)
     }
 
+    private fun Song.toUriString(): String {
+        val dlUtil = KoelDLUtil(applicationContext)
+        return if (dlUtil.isDownloaded(this)) {
+            dlUtil.getSongFilePath(this)
+        } else {
+            koelServer + KoelEndpoints.musicFile(koelToken, this.id)
+        }
+    }
+
     private fun Song.toMetadata(): MediaMetadataCompat {
         return MediaMetadataCompat.Builder().let {
+            it.putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, this.toUriString())
+
             it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, this.title)
             it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, this.artist.name)
             it.putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, this.album.cover)
@@ -170,16 +181,9 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     private fun List<Song>.toMediaItem(): List<MediaItem> {
-        val dlUtil = KoelDLUtil(applicationContext)
         return List(this.size) { index ->
-            val song = this[index]
-            if (dlUtil.isDownloaded(song)) {
-                val downloadedUri = dlUtil.getSongFilePath(song)
-                MediaItem.fromUri(downloadedUri)
-            } else {
-                val songUrl = koelServer + KoelEndpoints.musicFile(koelToken, song.id)
-                MediaItem.fromUri(songUrl)
-            }
+            val uri = this[index].toUriString()
+            MediaItem.fromUri(uri)
         }
     }
 
