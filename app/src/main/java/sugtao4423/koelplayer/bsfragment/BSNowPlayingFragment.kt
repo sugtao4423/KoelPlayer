@@ -24,6 +24,7 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initTextViewMarquee()
         initControlButtons()
         initMusicTimes()
     }
@@ -77,6 +78,11 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
             nowPlayingCurrentTime.text = currentPosition.toTimeFormat()
             nowPlayingSeek.progress = (currentPosition / 1000).toInt()
         }
+    }
+
+    private fun initTextViewMarquee() {
+        nowPlayingTitle.isSelected = true
+        nowPlayingArtist.isSelected = true
     }
 
     private fun initControlButtons() {

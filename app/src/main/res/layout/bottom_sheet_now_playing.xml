@@ -21,32 +21,50 @@
             android:contentDescription="@string/description_album_cover"
             app:srcCompat="@drawable/unknown_album" />
 
-        <TextView
-            android:id="@+id/nowPlayingTitle"
-            style="@style/TextAppearance.AppCompat.Title"
+        <LinearLayout
+            android:id="@+id/wrapNowPlayingTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/nowPlayingCover"
             android:layout_marginLeft="@dimen/now_playing_content_margin"
             android:layout_marginTop="@dimen/now_playing_title_top_margin"
-            android:layout_marginRight="@dimen/now_playing_content_margin"
-            android:gravity="center" />
+            android:layout_marginRight="@dimen/now_playing_content_margin">
 
-        <TextView
-            android:id="@+id/nowPlayingArtist"
+            <TextView
+                android:id="@+id/nowPlayingTitle"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wrapNowPlayingArtist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/nowPlayingTitle"
+            android:layout_below="@id/wrapNowPlayingTitle"
             android:layout_marginLeft="@dimen/now_playing_content_margin"
             android:layout_marginTop="@dimen/now_playing_artist_top_margin"
-            android:layout_marginRight="@dimen/now_playing_content_margin"
-            android:gravity="center" />
+            android:layout_marginRight="@dimen/now_playing_content_margin">
+
+            <TextView
+                android:id="@+id/nowPlayingArtist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true" />
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatSeekBar
             android:id="@+id/nowPlayingSeek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/nowPlayingArtist"
+            android:layout_below="@id/wrapNowPlayingArtist"
             android:layout_marginLeft="@dimen/now_playing_seek_side_margin"
             android:layout_marginTop="@dimen/now_playing_seek_top_margin"
             android:layout_marginRight="@dimen/now_playing_seek_side_margin"
