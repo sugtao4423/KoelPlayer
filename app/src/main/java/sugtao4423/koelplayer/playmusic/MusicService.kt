@@ -138,7 +138,7 @@ class MusicService : MediaBrowserServiceCompat() {
         exoPlayer.release()
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intent: Intent?): IBinder {
         return MusicServiceBinder()
     }
 
@@ -146,7 +146,7 @@ class MusicService : MediaBrowserServiceCompat() {
         val musicService = this@MusicService
     }
 
-    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): BrowserRoot? {
+    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): BrowserRoot {
         return BrowserRoot("media_root_id", null)
     }
 

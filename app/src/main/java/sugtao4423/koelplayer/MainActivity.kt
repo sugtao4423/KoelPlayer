@@ -53,7 +53,7 @@ class MainActivity : BaseBottomNowPlayingActivity() {
             }
         }
 
-        override fun getPageTitle(position: Int): CharSequence? {
+        override fun getPageTitle(position: Int): CharSequence {
             return when (position) {
                 0 -> getString(R.string.album)
                 else -> getString(R.string.playlist)
