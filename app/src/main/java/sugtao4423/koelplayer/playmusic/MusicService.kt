@@ -69,6 +69,7 @@ class MusicService : MediaBrowserServiceCompat() {
 
         exoPlayer = SimpleExoPlayer.Builder(this).build().apply {
             setAudioAttributes(attr, true)
+            setHandleAudioBecomingNoisy(true)
             addListener(playerEventListener)
         }
     }
