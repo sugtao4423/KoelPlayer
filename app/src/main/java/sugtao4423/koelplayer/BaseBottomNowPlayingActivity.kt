@@ -11,6 +11,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -137,13 +138,19 @@ abstract class BaseBottomNowPlayingActivity(
     }
 
     private val mediaControllerCallback = object : MediaControllerCompat.Callback() {
+        private var beforeSongUri = "".toUri()
+
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            if (beforeSongUri == (metadata?.description?.mediaUri ?: "".toUri())) {
+                return
+            }
             metadata?.let {
                 updateMetadata(it)
                 bottomSheetFragments.forEach { fragment ->
                     fragment.updateMetadata(it)
                 }
             }
+            beforeSongUri = (metadata?.description?.mediaUri ?: "".toUri())
         }
     }
 
