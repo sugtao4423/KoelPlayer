@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">KoelPlayer</string>
     <string name="loading">Loading…</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 
     <!-- MainActivity.kt -->
     <string name="playlist">プレイリスト</string>
     <string name="album">アルバム</string>
+    <string name="settings">設定</string>
 
     <!-- activity_server_settings.xml -->
     <string name="server_host">Server Host</string>
@@ -41,4 +44,9 @@
     <!-- KoelDLService.kt -->
     <string name="download_done">Download Done!</string>
     <string name="param_song_progress">%1$d / %2$d 曲</string>
+
+    <!-- preferences.xml -->
+    <string name="preferences_download">ダウンロード</string>
+    <string name="preferences_all_download">すべての曲をダウンロードする</string>
+    <string name="preferences_all_download_description">携帯回線でもWi-Fi回線でもお構いなしにダウンロードします。\nよろしいですか？</string>
 </resources>

@@ -55,6 +55,10 @@
         <service
             android:name=".download.KoelDLService"
             android:exported="false" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings" />
     </application>
 
 </manifest>
