@@ -61,17 +61,8 @@ class MusicService : MediaBrowserServiceCompat() {
 
         val playerEventListener = object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                when (playbackState) {
-                    Player.STATE_BUFFERING,
-                    Player.STATE_READY -> {
-                        notificationManager.setPlayer(exoPlayer)
-                        if (playbackState == Player.STATE_READY && !playWhenReady) {
-                            stopForeground(false)
-                        }
-                    }
-                    else -> {
-                        notificationManager.setPlayer(null)
-                    }
+                if (playbackState == Player.STATE_ENDED) {
+                    notificationManager.setPlayer(null)
                 }
             }
         }
