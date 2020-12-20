@@ -25,19 +25,10 @@
                 app:customColorValue="@android:color/transparent" />
         </Constraint>
         <Constraint
-            android:id="@+id/songListCover"
+            android:id="@+id/songListDetails"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <Constraint
-            android:id="@+id/songListTitle"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/songListCover" />
-        <Constraint
-            android:id="@+id/songListArtist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/songListTitle" />
+            app:layout_constraintTop_toBottomOf="@id/songListToolbar" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/songListCollapsed">
@@ -53,16 +44,10 @@
                 app:customColorValue="@android:color/white" />
         </Constraint>
         <Constraint
-            android:id="@+id/songListCover"
+            android:id="@id/songListDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/songListToolbar" />
-        <Constraint
-            android:id="@+id/songListTitle"
-            android:visibility="gone" />
-        <Constraint
-            android:id="@+id/songListArtist"
-            android:visibility="gone" />
+            app:layout_constraintBottom_toTopOf="parent" />
         <Constraint
             android:id="@+id/songListMusicList"
             android:layout_width="match_parent"

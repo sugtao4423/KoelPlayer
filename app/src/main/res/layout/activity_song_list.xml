@@ -11,14 +11,46 @@
         app:layoutDescription="@xml/motion_song_list"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <ImageView
-            android:id="@+id/songListCover"
+        <LinearLayout
+            android:id="@+id/songListDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/description_album_cover"
-            app:layout_constraintTop_toBottomOf="@id/songListToolbar"
-            app:srcCompat="@drawable/unknown_album" />
+            android:orientation="horizontal"
+            android:padding="@dimen/activity_content_margin"
+            app:layout_constraintTop_toBottomOf="@id/songListToolbar">
+
+            <ImageView
+                android:id="@+id/songListCover"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/description_album_cover"
+                app:srcCompat="@drawable/unknown_album" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/song_list_cover_text_margin"
+                android:layout_marginLeft="@dimen/song_list_cover_text_margin"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/songListTitle"
+                    style="@style/TextAppearance.AppCompat.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/songListArtist"
+                    style="@style/TextAppearance.AppCompat.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/song_list_artist_margin" />
+            </LinearLayout>
+        </LinearLayout>
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/songListToolbar"
@@ -26,32 +58,12 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back" />
 
-        <TextView
-            android:id="@+id/songListTitle"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/song_list_title_padding"
-            app:layout_constraintTop_toBottomOf="@id/songListCover" />
-
-        <TextView
-            android:id="@+id/songListArtist"
-            style="@style/TextAppearance.AppCompat.Body1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/song_list_artist_padding"
-            android:paddingLeft="@dimen/song_list_artist_padding"
-            android:paddingEnd="@dimen/no_padding"
-            android:paddingRight="@dimen/no_padding"
-            app:layout_constraintTop_toBottomOf="@id/songListTitle" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/songListMusicList"
             android:layout_width="match_parent"
             android:layout_height="@dimen/no_height"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/songListArtist" />
-
+            app:layout_constraintTop_toBottomOf="@id/songListDetails" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 
