@@ -54,7 +54,7 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         val isCompilation = data[DATA_KEY_IS_COMPILATION] as Boolean?
         val songs = (data[DATA_KEY_SONGS] as List<*>).map { it as Song }
 
-        GlideUtil.load(this, coverUrl, songListCover)
+        GlideUtil.load(this, coverUrl, songListCover, true)
         songListTitle.text = title
         supportActionBar!!.title = title
         val songTime = getSongsTime(songs)
