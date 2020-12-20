@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Transition
-        app:constraintSetEnd="@id/albumDetailCollapsed"
-        app:constraintSetStart="@id/albumDetailExpanded">
+        app:constraintSetEnd="@id/songListCollapsed"
+        app:constraintSetStart="@id/songListExpanded">
         <OnSwipe
             app:dragDirection="dragUp"
             app:onTouchUp="autoComplete"
-            app:touchAnchorId="@id/albumDetailMusicList"
+            app:touchAnchorId="@id/songListMusicList"
             app:touchAnchorSide="top" />
     </Transition>
 
-    <ConstraintSet android:id="@+id/albumDetailExpanded">
+    <ConstraintSet android:id="@+id/songListExpanded">
         <Constraint
-            android:id="@+id/albumDetailToolbar"
+            android:id="@+id/songListToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
             <CustomAttribute
@@ -25,24 +25,24 @@
                 app:customColorValue="@android:color/transparent" />
         </Constraint>
         <Constraint
-            android:id="@+id/albumDetailCover"
+            android:id="@+id/songListCover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <Constraint
-            android:id="@+id/albumDetailTitle"
+            android:id="@+id/songListTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/albumDetailCover" />
+            app:layout_constraintTop_toBottomOf="@id/songListCover" />
         <Constraint
-            android:id="@+id/albumDetailArtist"
+            android:id="@+id/songListArtist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/albumDetailTitle" />
+            app:layout_constraintTop_toBottomOf="@id/songListTitle" />
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/albumDetailCollapsed">
+    <ConstraintSet android:id="@+id/songListCollapsed">
         <Constraint
-            android:id="@+id/albumDetailToolbar"
+            android:id="@+id/songListToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
             <CustomAttribute
@@ -53,22 +53,22 @@
                 app:customColorValue="@android:color/white" />
         </Constraint>
         <Constraint
-            android:id="@+id/albumDetailCover"
+            android:id="@+id/songListCover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/albumDetailToolbar" />
+            app:layout_constraintBottom_toTopOf="@id/songListToolbar" />
         <Constraint
-            android:id="@+id/albumDetailTitle"
+            android:id="@+id/songListTitle"
             android:visibility="gone" />
         <Constraint
-            android:id="@+id/albumDetailArtist"
+            android:id="@+id/songListArtist"
             android:visibility="gone" />
         <Constraint
-            android:id="@+id/albumDetailMusicList"
+            android:id="@+id/songListMusicList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/albumDetailToolbar" />
+            app:layout_constraintTop_toBottomOf="@id/songListToolbar" />
     </ConstraintSet>
 
 </MotionScene>

@@ -8,34 +8,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?attr/actionBarSize"
-        app:layoutDescription="@xml/motion_album_detail"
+        app:layoutDescription="@xml/motion_song_list"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ImageView
-            android:id="@+id/albumDetailCover"
+            android:id="@+id/songListCover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:contentDescription="@string/description_album_cover"
-            app:layout_constraintTop_toBottomOf="@id/albumDetailToolbar"
+            app:layout_constraintTop_toBottomOf="@id/songListToolbar"
             app:srcCompat="@drawable/unknown_album" />
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/albumDetailToolbar"
+            android:id="@+id/songListToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back" />
 
         <TextView
-            android:id="@+id/albumDetailTitle"
+            android:id="@+id/songListTitle"
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/album_detail_title_padding"
-            app:layout_constraintTop_toBottomOf="@id/albumDetailCover" />
+            app:layout_constraintTop_toBottomOf="@id/songListCover" />
 
         <TextView
-            android:id="@+id/albumDetailArtist"
+            android:id="@+id/songListArtist"
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,14 +43,14 @@
             android:paddingLeft="@dimen/album_detail_artist_padding"
             android:paddingEnd="@dimen/no_padding"
             android:paddingRight="@dimen/no_padding"
-            app:layout_constraintTop_toBottomOf="@id/albumDetailTitle" />
+            app:layout_constraintTop_toBottomOf="@id/songListTitle" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/albumDetailMusicList"
+            android:id="@+id/songListMusicList"
             android:layout_width="match_parent"
             android:layout_height="@dimen/no_height"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/albumDetailArtist" />
+            app:layout_constraintTop_toBottomOf="@id/songListArtist" />
 
 
     </androidx.constraintlayout.motion.widget.MotionLayout>

@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Playlist
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.GlideUtil
-import sugtao4423.koelplayer.PlaylistDetailActivity
 import sugtao4423.koelplayer.R
+import sugtao4423.koelplayer.SongListActivity
 import sugtao4423.koelplayer.view.SquareImageView
 
 class PlaylistAdapter(
@@ -38,8 +38,10 @@ class PlaylistAdapter(
 
     private fun playlistClickListener(playlist: Playlist): View.OnClickListener {
         return View.OnClickListener {
-            val intent = Intent(context, PlaylistDetailActivity::class.java)
-            intent.putExtra(PlaylistDetailActivity.KEY_INTENT_PLAYLIST_DATA, playlist)
+            val intent = Intent(context, SongListActivity::class.java).apply {
+                putExtra(SongListActivity.KEY_INTENT_TYPE, SongListActivity.INTENT_TYPE_PLAYLIST)
+                putExtra(SongListActivity.KEY_INTENT_PLAYLIST_DATA, playlist)
+            }
             context.startActivity(intent)
         }
     }

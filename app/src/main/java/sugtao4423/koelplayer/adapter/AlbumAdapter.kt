@@ -9,9 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Album
-import sugtao4423.koelplayer.AlbumDetailActivity
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
+import sugtao4423.koelplayer.SongListActivity
 
 class AlbumAdapter(
     private val context: Context,
@@ -34,8 +34,10 @@ class AlbumAdapter(
 
     private fun albumClickListener(album: Album): View.OnClickListener {
         return View.OnClickListener {
-            val intent = Intent(context, AlbumDetailActivity::class.java)
-            intent.putExtra(AlbumDetailActivity.KEY_INTENT_ALBUM_DATA, album)
+            val intent = Intent(context, SongListActivity::class.java).apply {
+                putExtra(SongListActivity.KEY_INTENT_TYPE, SongListActivity.INTENT_TYPE_ALBUM)
+                putExtra(SongListActivity.KEY_INTENT_ALBUM_DATA, album)
+            }
             context.startActivity(intent)
         }
     }

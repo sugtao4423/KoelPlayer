@@ -30,7 +30,7 @@
             android:configChanges="orientation|screenSize|screenLayout"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".AlbumDetailActivity"
+            android:name=".SongListActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:theme="@style/Theme.KoelPlayer.NoActionBar" />
 
@@ -46,11 +46,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-
-        <activity
-            android:name=".PlaylistDetailActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
-            android:theme="@style/Theme.KoelPlayer.NoActionBar" />
 
         <service
             android:name=".download.KoelDLService"
