@@ -31,7 +31,7 @@
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/album_detail_title_padding"
+            android:padding="@dimen/song_list_title_padding"
             app:layout_constraintTop_toBottomOf="@id/songListCover" />
 
         <TextView
@@ -39,8 +39,8 @@
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/album_detail_artist_padding"
-            android:paddingLeft="@dimen/album_detail_artist_padding"
+            android:paddingStart="@dimen/song_list_artist_padding"
+            android:paddingLeft="@dimen/song_list_artist_padding"
             android:paddingEnd="@dimen/no_padding"
             android:paddingRight="@dimen/no_padding"
             app:layout_constraintTop_toBottomOf="@id/songListTitle" />
