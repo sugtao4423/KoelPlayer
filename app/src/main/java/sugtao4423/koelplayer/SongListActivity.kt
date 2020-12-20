@@ -57,8 +57,11 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         GlideUtil.load(this, coverUrl, songListCover)
         songListTitle.text = title
         supportActionBar!!.title = title
-        artist?.let {
-            songListArtist.text = it
+        val songTime = getSongsTime(songs)
+        songListArtist.text = if (artist == null) {
+            songTime
+        } else {
+            "$artist・$songTime"
         }
 
         adapter = when (type) {
@@ -108,5 +111,19 @@ class SongListActivity : BaseBottomNowPlayingActivity(
             DATA_KEY_TITLE to playlist.name,
             DATA_KEY_SONGS to songs,
         )
+    }
+
+    private fun getSongsTime(songs: List<Song>): String {
+        var second = 0.0
+        songs.forEach { second += it.length }
+        val sec = second.toInt()
+        val h = sec / 60 / 60
+        val m = (sec / 60 % 60).toString().padStart(2, '0')
+        val s = (sec % 60).toString().padStart(2, '0')
+        return if (h == 0) {
+            "$m:$s"
+        } else {
+            "$h:$m:$s"
+        }
     }
 }
