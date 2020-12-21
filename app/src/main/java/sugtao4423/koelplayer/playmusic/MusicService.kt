@@ -319,6 +319,7 @@ class MusicService : MediaBrowserServiceCompat() {
         } else {
             songQueue.removeAt(position)
             exoPlayer.removeMediaItem(position)
+            shuffleOrder = shuffleOrder.cloneAndRemove(position, position + 1)
         }
     }
 
