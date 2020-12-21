@@ -13,6 +13,12 @@
     <dimen name="album_song_item_text_padding">8dp</dimen>
     <dimen name="album_song_item_position_width">60dp</dimen>
     <dimen name="album_song_item_title_text_size">16sp</dimen>
+    <dimen name="album_song_item_more_button_width">40dp</dimen>
+    <dimen name="playlist_song_item_cover_size">50dp</dimen>
+    <dimen name="playlist_song_item_title_text_size">16sp</dimen>
+    <dimen name="playlist_song_item_title_margin">8dp</dimen>
+    <dimen name="playlist_song_item_text_padding">4dp</dimen>
+    <dimen name="playlist_song_item_more_button_width">40dp</dimen>
     <dimen name="song_list_cover_text_margin">8dp</dimen>
     <dimen name="song_list_artist_margin">8dp</dimen>
     <dimen name="song_list_buttons_horizontal_margin">16dp</dimen>

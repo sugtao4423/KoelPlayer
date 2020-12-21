@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -28,6 +29,8 @@
         style="@style/TextAppearance.AppCompat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/albumSongMore"
+        android:layout_toLeftOf="@id/albumSongMore"
         android:layout_toEndOf="@id/albumSongPosition"
         android:layout_toRightOf="@id/albumSongPosition"
         android:textSize="@dimen/album_song_item_title_text_size" />
@@ -40,6 +43,21 @@
         android:layout_below="@id/albumSongTitle"
         android:layout_alignStart="@id/albumSongTitle"
         android:layout_alignLeft="@id/albumSongTitle"
+        android:layout_toStartOf="@id/albumSongMore"
+        android:layout_toLeftOf="@id/albumSongMore"
         android:textSize="@dimen/default_text_size" />
+
+    <ImageButton
+        android:id="@+id/albumSongMore"
+        android:layout_width="@dimen/album_song_item_more_button_width"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/albumSongDuration"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/description_more_button"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:srcCompat="@drawable/ic_more_vertical" />
 
 </RelativeLayout>

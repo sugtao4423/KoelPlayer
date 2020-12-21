@@ -180,10 +180,13 @@ class MusicService : MediaBrowserServiceCompat() {
         }
     }
 
+    private fun Song.toMediaItem(): MediaItem {
+        return MediaItem.fromUri(this.toUriString())
+    }
+
     private fun List<Song>.toMediaItem(): List<MediaItem> {
         return List(this.size) { index ->
-            val uri = this[index].toUriString()
-            MediaItem.fromUri(uri)
+            this[index].toMediaItem()
         }
     }
 
@@ -231,6 +234,33 @@ class MusicService : MediaBrowserServiceCompat() {
         changeSong(0)
         exoPlayer.prepare()
         exoPlayer.play()
+    }
+
+    private fun addQueue(song: Song) {
+        songQueue.add(Pair(song.toMetadata(), song))
+        exoPlayer.addMediaItem(song.toMediaItem())
+        shuffleOrder = shuffleOrder.cloneAndInsert(songQueue.lastIndex, 1)
+        exoPlayer.setShuffleOrder(shuffleOrder)
+        if (songQueue.size == 1) {
+            exoPlayer.prepare()
+        }
+    }
+
+    fun addQueueLast(song: Song) {
+        addQueue(song)
+        queueSongChangedListener?.invoke()
+    }
+
+    fun addQueueNext(song: Song) {
+        addQueue(song)
+        if (songQueue.size > 1) {
+            queueSongs().let {
+                val fromIndex = it.indexOf(song)
+                val toIndex = it.indexOf(playingSong()) + 1
+                moveSong(fromIndex, toIndex)
+            }
+        }
+        queueSongChangedListener?.invoke()
     }
 
     fun playingMetadata(): MediaMetadataCompat? = mediaSession.controller.metadata

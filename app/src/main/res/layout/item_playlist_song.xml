@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:paddingStart="@dimen/no_padding"
+    android:paddingLeft="@dimen/no_padding"
+    android:paddingTop="@dimen/playlist_song_item_text_padding"
+    android:paddingEnd="@dimen/playlist_song_item_text_padding"
+    android:paddingRight="@dimen/playlist_song_item_text_padding"
+    tools:ignore="UnusedAttribute">
+
+    <ImageView
+        android:id="@+id/playlistSongCover"
+        android:layout_width="@dimen/playlist_song_item_cover_size"
+        android:layout_height="@dimen/playlist_song_item_cover_size"
+        android:contentDescription="@string/description_album_cover"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/unknown_album" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/playlistSongCover"
+        android:layout_alignBottom="@id/playlistSongCover"
+        android:layout_marginStart="@dimen/playlist_song_item_title_margin"
+        android:layout_marginLeft="@dimen/playlist_song_item_title_margin"
+        android:layout_toStartOf="@id/playlistSongMore"
+        android:layout_toLeftOf="@id/playlistSongMore"
+        android:layout_toEndOf="@id/playlistSongCover"
+        android:layout_toRightOf="@id/playlistSongCover"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/playlistSongTitle"
+            style="@style/TextAppearance.AppCompat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="@dimen/playlist_song_item_title_text_size" />
+
+        <TextView
+            android:id="@+id/playlistSongDuration"
+            style="@style/TextAppearance.AppCompat.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="@dimen/default_text_size" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/playlistSongMore"
+        android:layout_width="@dimen/playlist_song_item_more_button_width"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/playlistSongCover"
+        android:layout_alignBottom="@id/playlistSongCover"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/description_more_button"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:srcCompat="@drawable/ic_more_vertical" />
+
+</RelativeLayout>

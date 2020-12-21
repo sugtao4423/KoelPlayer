@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/songMorePlayNext"
+        android:title="@string/play_next" />
+
+    <item
+        android:id="@+id/songMoreAddQueue"
+        android:title="@string/add_queue" />
+
+</menu>
