@@ -1,6 +1,7 @@
 package sugtao4423.koelplayer
 
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_song_list.*
 import sugtao4423.koel4j.dataclass.Album
@@ -32,6 +33,7 @@ class SongListActivity : BaseBottomNowPlayingActivity(
     }
 
     private lateinit var adapter: BaseMusicAdapter
+    private lateinit var songs: List<Song>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +54,7 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         val title = data[DATA_KEY_TITLE] as String
         val artist = data[DATA_KEY_ARTIST] as String?
         val isCompilation = data[DATA_KEY_IS_COMPILATION] as Boolean?
-        val songs = (data[DATA_KEY_SONGS] as List<*>).map { it as Song }
+        songs = (data[DATA_KEY_SONGS] as List<*>).map { it as Song }
 
         GlideUtil.load(this, coverUrl, songListCover, true)
         songListTitle.text = title
@@ -126,4 +128,13 @@ class SongListActivity : BaseBottomNowPlayingActivity(
             "$h:$m:$s"
         }
     }
+
+    fun clickPlayButton(@Suppress("UNUSED_PARAMETER") v: View) {
+        musicService?.playSongs(songs)
+    }
+
+    fun clickShuffleButton(@Suppress("UNUSED_PARAMETER") v: View) {
+        musicService?.shufflePlaySongs(songs)
+    }
+
 }

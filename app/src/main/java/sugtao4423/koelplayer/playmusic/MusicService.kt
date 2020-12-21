@@ -202,15 +202,33 @@ class MusicService : MediaBrowserServiceCompat() {
         exoPlayer.seekTo(windowIndex, 0)
     }
 
-    fun playSongs(songs: List<Song>, playPos: Int) {
+    private fun prepareSongs(songs: List<Song>) {
         songQueue.clear()
         songs.forEach {
             songQueue.add(Pair(it.toMetadata(), it))
         }
         exoPlayer.setMediaItems(songs.toMediaItem())
         resetShuffleOrder()
+    }
+
+    fun playSongs(songs: List<Song>, playPos: Int = 0) {
+        prepareSongs(songs)
+        if (isShuffle()) {
+            toggleShuffle()
+        }
         queueSongChangedListener?.invoke()
         exoPlayer.seekTo(playPos, 0)
+        exoPlayer.prepare()
+        exoPlayer.play()
+    }
+
+    fun shufflePlaySongs(songs: List<Song>) {
+        prepareSongs(songs)
+        if (!isShuffle()) {
+            toggleShuffle()
+        }
+        queueSongChangedListener?.invoke()
+        changeSong(0)
         exoPlayer.prepare()
         exoPlayer.play()
     }

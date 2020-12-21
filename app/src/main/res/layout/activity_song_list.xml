@@ -52,6 +52,35 @@
             </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/songListButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/song_list_buttons_horizontal_margin"
+            android:paddingBottom="@dimen/activity_content_margin"
+            app:layout_constraintTop_toBottomOf="@id/songListDetails">
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/song_list_buttons_distance_margin"
+                android:layout_marginRight="@dimen/song_list_buttons_distance_margin"
+                android:layout_weight="1"
+                android:onClick="clickPlayButton"
+                android:text="@string/play" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/song_list_buttons_distance_margin"
+                android:layout_marginLeft="@dimen/song_list_buttons_distance_margin"
+                android:layout_weight="1"
+                android:onClick="clickShuffleButton"
+                android:text="@string/shuffle" />
+        </LinearLayout>
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/songListToolbar"
             android:layout_width="match_parent"
@@ -63,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/no_height"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/songListDetails" />
+            app:layout_constraintTop_toBottomOf="@id/songListButtons" />
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 

@@ -23,10 +23,14 @@
 
     <!-- item_album.xml -->
     <!-- item_playlist.xml -->
-    <!-- activity_album_detail.xml -->
+    <!-- activity_song_list.xml -->
     <!-- bottom_sheet_now_playing.xml -->
     <!-- item_queue_song.xml -->
     <string name="description_album_cover">アルバムアートワーク</string>
+
+    <!-- activity_song_list.xml -->
+    <string name="play">再生</string>
+    <string name="shuffle">シャッフル</string>
 
     <!-- MusicService.kt -->
     <string name="notification_channel">Now Playing</string>
