@@ -68,7 +68,9 @@
                 android:layout_marginRight="@dimen/song_list_buttons_distance_margin"
                 android:layout_weight="1"
                 android:onClick="clickPlayButton"
-                android:text="@string/play" />
+                android:text="@string/play"
+                app:icon="@drawable/ic_playing_play"
+                app:iconGravity="textStart" />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -78,7 +80,9 @@
                 android:layout_marginLeft="@dimen/song_list_buttons_distance_margin"
                 android:layout_weight="1"
                 android:onClick="clickShuffleButton"
-                android:text="@string/shuffle" />
+                android:text="@string/shuffle"
+                app:icon="@drawable/ic_playing_shuffle"
+                app:iconGravity="textStart" />
         </LinearLayout>
 
         <androidx.appcompat.widget.Toolbar
