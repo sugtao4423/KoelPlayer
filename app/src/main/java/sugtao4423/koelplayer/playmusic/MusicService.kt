@@ -236,10 +236,10 @@ class MusicService : MediaBrowserServiceCompat() {
         exoPlayer.play()
     }
 
-    private fun addQueue(song: Song) {
-        songQueue.add(Pair(song.toMetadata(), song))
-        exoPlayer.addMediaItem(song.toMediaItem())
-        shuffleOrder = shuffleOrder.cloneAndInsert(songQueue.lastIndex, 1)
+    private fun addQueue(song: Song, insertPosition: Int) {
+        songQueue.add(insertPosition, Pair(song.toMetadata(), song))
+        exoPlayer.addMediaItem(insertPosition, song.toMediaItem())
+        shuffleOrder = shuffleOrder.cloneAndInsert(insertPosition, 1)
         exoPlayer.setShuffleOrder(shuffleOrder)
         if (songQueue.size == 1) {
             exoPlayer.prepare()
@@ -247,7 +247,7 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     fun addQueueLast(song: Song) {
-        addQueue(song)
+        addQueue(song, songQueue.lastIndex)
         if (isShuffle()) {
             val insertedPos = queueSongs().indexOf(song)
             moveSong(insertedPos, songQueue.lastIndex)
@@ -256,12 +256,12 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     fun addQueueNext(song: Song) {
-        addQueue(song)
-        if (songQueue.size > 1) {
+        addQueue(song, exoPlayer.currentWindowIndex + 1)
+        if (isShuffle()) {
             queueSongs().let {
-                val fromIndex = it.indexOf(song)
-                val toIndex = it.indexOf(playingSong()) + 1
-                moveSong(fromIndex, toIndex)
+                val fromPos = it.indexOf(song)
+                val toPos = it.indexOf(playingSong()) + 1
+                moveSong(fromPos, toPos)
             }
         }
         queueSongChangedListener?.invoke()
