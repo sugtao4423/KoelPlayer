@@ -248,6 +248,10 @@ class MusicService : MediaBrowserServiceCompat() {
 
     fun addQueueLast(song: Song) {
         addQueue(song)
+        if (isShuffle()) {
+            val insertedPos = queueSongs().indexOf(song)
+            moveSong(insertedPos, songQueue.lastIndex)
+        }
         queueSongChangedListener?.invoke()
     }
 
