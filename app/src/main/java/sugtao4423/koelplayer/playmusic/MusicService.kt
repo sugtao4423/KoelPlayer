@@ -197,8 +197,7 @@ class MusicService : MediaBrowserServiceCompat() {
 
     fun changeSong(playPos: Int) {
         val windowIndex = if (isShuffle()) {
-            val songData = songQueue.find { it.second == queueSongs()[playPos] }
-            songQueue.indexOf(songData)
+            shuffleOrder.getOrder()[playPos]
         } else {
             playPos
         }
@@ -247,9 +246,9 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     fun addQueueLast(song: Song) {
-        addQueue(song, songQueue.lastIndex)
+        addQueue(song, songQueue.size)
         if (isShuffle()) {
-            val insertedPos = queueSongs().indexOf(song)
+            val insertedPos = shuffleOrder.getOrder().indexOf(songQueue.lastIndex)
             moveSong(insertedPos, songQueue.lastIndex)
         }
         queueSongChangedListener?.invoke()
@@ -258,9 +257,10 @@ class MusicService : MediaBrowserServiceCompat() {
     fun addQueueNext(song: Song) {
         addQueue(song, exoPlayer.currentWindowIndex + 1)
         if (isShuffle()) {
-            queueSongs().let {
-                val fromPos = it.indexOf(song)
-                val toPos = it.indexOf(playingSong()) + 1
+            shuffleOrder.getOrder().let {
+                val fromPos = it.indexOf(exoPlayer.currentWindowIndex + 1)
+                var toPos = it.indexOf(exoPlayer.currentWindowIndex) + 1
+                if (fromPos < toPos) toPos--
                 moveSong(fromPos, toPos)
             }
         }
@@ -315,10 +315,8 @@ class MusicService : MediaBrowserServiceCompat() {
     fun queueSongs(): List<Song> {
         return if (isShuffle()) {
             val result = arrayListOf<Song>()
-            var index = shuffleOrder.firstIndex
-            for (i in 0 until shuffleOrder.length) {
-                result.add(songQueue[index].second)
-                index = shuffleOrder.getNextIndex(index)
+            shuffleOrder.getOrder().forEach {
+                result.add(songQueue[it].second)
             }
             result
         } else {
@@ -328,13 +326,9 @@ class MusicService : MediaBrowserServiceCompat() {
 
     fun moveSong(from: Int, to: Int) {
         if (isShuffle()) {
-            val shuffled = arrayListOf<Int>()
-            var shuffleIndex = shuffleOrder.firstIndex
-            for (i in 0 until shuffleOrder.length) {
-                shuffled.add(shuffleIndex)
-                shuffleIndex = shuffleOrder.getNextIndex(shuffleIndex)
+            val shuffled = shuffleOrder.getOrder().also {
+                it.add(to, it.removeAt(from))
             }
-            shuffled.add(to, shuffled.removeAt(from))
             shuffleOrder = ShuffleOrder.DefaultShuffleOrder(shuffled.toIntArray(), shuffled.size.toLong())
             exoPlayer.setShuffleOrder(shuffleOrder)
         } else {
@@ -345,16 +339,26 @@ class MusicService : MediaBrowserServiceCompat() {
 
     fun removeSong(position: Int) {
         if (isShuffle()) {
-            val unShuffledIndex = songQueue.indexOf(songQueue.find { pair -> pair.second == queueSongs()[position] })
-            songQueue.removeAt(unShuffledIndex)
-            exoPlayer.removeMediaItem(unShuffledIndex)
-            shuffleOrder = shuffleOrder.cloneAndRemove(unShuffledIndex, unShuffledIndex + 1)
+            val windowIndex = shuffleOrder.getOrder()[position]
+            songQueue.removeAt(windowIndex)
+            exoPlayer.removeMediaItem(windowIndex)
+            shuffleOrder = shuffleOrder.cloneAndRemove(windowIndex, windowIndex + 1)
             exoPlayer.setShuffleOrder(shuffleOrder)
         } else {
             songQueue.removeAt(position)
             exoPlayer.removeMediaItem(position)
             shuffleOrder = shuffleOrder.cloneAndRemove(position, position + 1)
         }
+    }
+
+    private fun ShuffleOrder.getOrder(): ArrayList<Int> {
+        val shuffled = arrayListOf<Int>()
+        var shuffleIndex = this.firstIndex
+        for (i in 0 until this.length) {
+            shuffled.add(shuffleIndex)
+            shuffleIndex = this.getNextIndex(shuffleIndex)
+        }
+        return shuffled
     }
 
 }
