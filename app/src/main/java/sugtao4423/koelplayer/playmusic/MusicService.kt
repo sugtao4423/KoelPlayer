@@ -255,6 +255,10 @@ class MusicService : MediaBrowserServiceCompat() {
     }
 
     fun addQueueNext(song: Song) {
+        if (songQueue.isEmpty()) {
+            addQueueLast(song)
+            return
+        }
         addQueue(song, exoPlayer.currentWindowIndex + 1)
         if (isShuffle()) {
             shuffleOrder.getOrder().let {
