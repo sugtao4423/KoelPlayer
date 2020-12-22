@@ -41,6 +41,10 @@
     <string name="play_next">次に再生</string>
     <string name="add_queue">キューに追加</string>
 
+    <!-- BaseMusicAdapter.kt -->
+    <string name="add_queue_song">曲をキューに追加しました</string>
+    <string name="play_next_song">次にこの曲が再生されます</string>
+
     <!-- MusicService.kt -->
     <string name="notification_channel">Now Playing</string>
     <string name="notification_channel_description">@string/notification_channel</string>

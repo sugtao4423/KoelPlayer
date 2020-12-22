@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Song
@@ -130,10 +131,16 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
     private fun clickMoreButton(anchor: View, position: Int) {
         PopupMenu(context, anchor).apply {
             menuInflater.inflate(R.menu.song_more_menu, menu)
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.songMorePlayNext -> musicService?.addQueueNext(songs[position])
-                    R.id.songMoreAddQueue -> musicService?.addQueueLast(songs[position])
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.songMorePlayNext -> musicService?.let {
+                        it.addQueueNext(songs[position])
+                        Toast.makeText(context.applicationContext, R.string.play_next_song, Toast.LENGTH_SHORT).show()
+                    }
+                    R.id.songMoreAddQueue -> musicService?.let {
+                        it.addQueueLast(songs[position])
+                        Toast.makeText(context.applicationContext, R.string.add_queue_song, Toast.LENGTH_SHORT).show()
+                    }
                 }
                 true
             }
