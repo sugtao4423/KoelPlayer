@@ -35,18 +35,20 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
         ItemTouchHelper(moveSwipeCallback).attachToRecyclerView(songQueue)
     }
 
-    private fun queueChanged() {
-        musicService?.let {
-            queueAdapter.clear()
-            queueAdapter.addAll(it.queueSongs())
+    private val onQueueChangedListener = object : MusicService.OnQueueChangedListener {
+        override fun onChanged() {
+            musicService?.let {
+                queueAdapter.clear()
+                queueAdapter.addAll(it.queueSongs())
+            }
         }
     }
 
     override fun onMusicServiceConnected(musicService: MusicService) {
         this.musicService = musicService
         queueAdapter.musicService = musicService
-        queueChanged()
-        musicService.queueSongChangedListener = { queueChanged() }
+        onQueueChangedListener.onChanged()
+        musicService.addOnQueueChangedListener(onQueueChangedListener)
     }
 
     override fun onMusicServiceDisconnected() {
@@ -66,7 +68,7 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
 
     override fun onDestroy() {
         super.onDestroy()
-        musicService?.queueSongChangedListener = null
+        musicService?.removeOnQueueChangedListener(onQueueChangedListener)
     }
 
     inner class QueueLinearLayoutManager : LinearLayoutManager(context) {

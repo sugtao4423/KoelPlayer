@@ -218,7 +218,7 @@ class MusicService : MediaBrowserServiceCompat() {
         if (isShuffle()) {
             toggleShuffle()
         }
-        queueSongChangedListener?.invoke()
+        invokeQueueChangedListeners()
         exoPlayer.seekTo(playPos, 0)
         exoPlayer.prepare()
         exoPlayer.play()
@@ -229,7 +229,7 @@ class MusicService : MediaBrowserServiceCompat() {
         if (!isShuffle()) {
             toggleShuffle()
         }
-        queueSongChangedListener?.invoke()
+        invokeQueueChangedListeners()
         changeSong(0)
         exoPlayer.prepare()
         exoPlayer.play()
@@ -251,7 +251,7 @@ class MusicService : MediaBrowserServiceCompat() {
             val insertedPos = shuffleOrder.getOrder().indexOf(songQueue.lastIndex)
             moveSong(insertedPos, songQueue.lastIndex)
         }
-        queueSongChangedListener?.invoke()
+        invokeQueueChangedListeners()
     }
 
     fun addQueueNext(song: Song) {
@@ -268,7 +268,7 @@ class MusicService : MediaBrowserServiceCompat() {
                 moveSong(fromPos, toPos)
             }
         }
-        queueSongChangedListener?.invoke()
+        invokeQueueChangedListeners()
     }
 
     fun playingMetadata(): MediaMetadataCompat? = mediaSession.controller.metadata
@@ -290,7 +290,7 @@ class MusicService : MediaBrowserServiceCompat() {
         if (!isShuffle()) {
             resetShuffleOrder()
         }
-        queueSongChangedListener?.invoke()
+        invokeQueueChangedListeners()
     }
 
     fun isRepeat(): Boolean = exoPlayer.repeatMode == Player.REPEAT_MODE_ALL
@@ -315,7 +315,24 @@ class MusicService : MediaBrowserServiceCompat() {
         exoPlayer.removeListener(listener)
     }
 
-    var queueSongChangedListener: (() -> Unit)? = null
+    interface OnQueueChangedListener {
+        fun onChanged()
+    }
+
+    private var queueChangedListeners = arrayListOf<OnQueueChangedListener>()
+
+    private fun invokeQueueChangedListeners() {
+        queueChangedListeners.forEach { it.onChanged() }
+    }
+
+    fun addOnQueueChangedListener(listener: OnQueueChangedListener) {
+        queueChangedListeners.add(listener)
+    }
+
+    fun removeOnQueueChangedListener(listener: OnQueueChangedListener) {
+        queueChangedListeners.remove(listener)
+    }
+
     fun queueSongs(): List<Song> {
         return if (isShuffle()) {
             val result = arrayListOf<Song>()
