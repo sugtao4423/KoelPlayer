@@ -26,7 +26,7 @@ class MainActivity : BaseBottomNowPlayingActivity() {
         super.onCreate(savedInstanceState)
         setSupportActionBar(mainToolbar)
 
-        val koelToken = Prefs(this).koelToken
+        val koelToken = (applicationContext as App).koelToken
         if (koelToken.isEmpty()) {
             startActivity(Intent(this, ServerSettingsActivity::class.java))
             finish()

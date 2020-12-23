@@ -15,8 +15,8 @@ import okhttp3.Request
 import sugtao4423.koel4j.Koel4j
 import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
+import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.MainActivity
-import sugtao4423.koelplayer.Prefs
 import sugtao4423.koelplayer.R
 import java.io.File
 import java.util.*
@@ -33,13 +33,6 @@ class KoelDLService : Service() {
         NotificationManagerCompat.from(applicationContext)
     }
     private lateinit var notification: Notification
-
-    private val koelServer by lazy {
-        Prefs(applicationContext).koelServer
-    }
-    private val koelToken by lazy {
-        Prefs(applicationContext).koelToken
-    }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -81,6 +74,8 @@ class KoelDLService : Service() {
     }
 
     private fun saveSongs(songs: Array<Song>) {
+        val koelServer = (applicationContext as App).koelServer
+        val koelToken = (applicationContext as App).koelToken
         var index = 0
         while (index < songs.size) {
             val song = songs[index]

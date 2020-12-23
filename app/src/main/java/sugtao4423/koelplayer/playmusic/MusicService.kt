@@ -22,14 +22,11 @@ import com.google.android.exoplayer2.source.ShuffleOrder
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
+import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.MainActivity
-import sugtao4423.koelplayer.Prefs
 import sugtao4423.koelplayer.download.KoelDLUtil
 
 class MusicService : MediaBrowserServiceCompat() {
-
-    private lateinit var koelServer: String
-    private lateinit var koelToken: String
 
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var notificationManager: KoelNotificationManager
@@ -41,15 +38,9 @@ class MusicService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
-        initPrefs()
         initExoPlayer()
         initMediaSession()
         initNotificationManager()
-    }
-
-    private fun initPrefs() {
-        koelServer = Prefs(this).koelServer
-        koelToken = Prefs(this).koelToken
     }
 
     private fun initExoPlayer() {
@@ -159,6 +150,8 @@ class MusicService : MediaBrowserServiceCompat() {
         return if (dlUtil.isDownloaded(this)) {
             dlUtil.getSongFilePath(this)
         } else {
+            val koelServer = (applicationContext as App).koelServer
+            val koelToken = (applicationContext as App).koelToken
             koelServer + KoelEndpoints.musicFile(koelToken, this.id)
         }
     }

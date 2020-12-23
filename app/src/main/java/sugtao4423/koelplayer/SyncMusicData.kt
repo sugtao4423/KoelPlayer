@@ -17,8 +17,8 @@ class SyncMusicData(private val context: Context) {
             val progressDialog = loadingDialog()
             progressDialog.show()
 
-            val server = Prefs(context).koelServer
-            val token = Prefs(context).koelToken
+            val server = (context.applicationContext as App).koelServer
+            val token = (context.applicationContext as App).koelToken
             val allMusicData = withContext(Dispatchers.IO) {
                 Koel4j(server, token).allMusicData()
             }

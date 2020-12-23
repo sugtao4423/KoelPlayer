@@ -43,8 +43,8 @@ class ServerSettingsActivity : AppCompatActivity() {
                 errorGetToken()
                 return@launch
             }
-            Prefs(this@ServerSettingsActivity).koelServer = host
-            Prefs(this@ServerSettingsActivity).koelToken = token
+            (applicationContext as App).koelServer = host
+            (applicationContext as App).koelToken = token
             SyncMusicData(this@ServerSettingsActivity).sync {
                 startActivity(Intent(this@ServerSettingsActivity, MainActivity::class.java))
                 finish()
