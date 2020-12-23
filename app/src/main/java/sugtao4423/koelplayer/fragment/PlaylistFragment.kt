@@ -7,12 +7,20 @@ import kotlinx.android.synthetic.main.fragment_playlist.*
 import sugtao4423.koel4j.dataclass.AllMusicData
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.adapter.PlaylistAdapter
+import sugtao4423.koelplayer.playmusic.MusicService
 
-class PlaylistFragment(private val allMusicData: AllMusicData) :
-    Fragment(R.layout.fragment_playlist) {
+class PlaylistFragment(allMusicData: AllMusicData) : Fragment(R.layout.fragment_playlist) {
+
+    var musicService: MusicService? = null
+        set(value) {
+            field = value
+            playlistAdapter.musicService = value
+        }
+
+    private val playlistAdapter = PlaylistAdapter(allMusicData.playlists, allMusicData.songs)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        playlistView.adapter = PlaylistAdapter(requireContext(), allMusicData.playlists, allMusicData.songs)
+        playlistView.adapter = playlistAdapter
     }
 
 }

@@ -235,37 +235,47 @@ class MusicService : MediaBrowserServiceCompat() {
         exoPlayer.play()
     }
 
-    private fun addQueue(song: Song, insertPosition: Int) {
-        songQueue.add(insertPosition, Pair(song.toMetadata(), song))
-        exoPlayer.addMediaItem(insertPosition, song.toMediaItem())
-        shuffleOrder = shuffleOrder.cloneAndInsert(insertPosition, 1)
+    private fun addQueue(songs: List<Song>, insertPosition: Int) {
+        val songPairs = List(songs.size) { index ->
+            Pair(songs[index].toMetadata(), songs[index])
+        }
+        val songMediaItems = List(songs.size) { index ->
+            songs[index].toMediaItem()
+        }
+        songQueue.addAll(insertPosition, songPairs)
+        exoPlayer.addMediaItems(insertPosition, songMediaItems)
+        shuffleOrder = shuffleOrder.cloneAndInsert(insertPosition, songs.size)
         exoPlayer.setShuffleOrder(shuffleOrder)
-        if (songQueue.size == 1) {
+        if (songQueue.size == songs.size) {
             exoPlayer.prepare()
         }
     }
 
-    fun addQueueLast(song: Song) {
-        addQueue(song, songQueue.size)
+    fun addQueueLast(songs: List<Song>) {
+        addQueue(songs, songQueue.size)
         if (isShuffle()) {
-            val insertedPos = shuffleOrder.getOrder().indexOf(songQueue.lastIndex)
-            moveSong(insertedPos, songQueue.lastIndex)
+            for (i in songs.indices) {
+                val insertedPos = shuffleOrder.getOrder().indexOf(songQueue.lastIndex - songs.lastIndex + i)
+                moveSong(insertedPos, songQueue.lastIndex)
+            }
         }
         invokeQueueChangedListeners()
     }
 
-    fun addQueueNext(song: Song) {
+    fun addQueueNext(songs: List<Song>) {
         if (songQueue.isEmpty()) {
-            addQueueLast(song)
+            addQueueLast(songs)
             return
         }
-        addQueue(song, exoPlayer.currentWindowIndex + 1)
+        addQueue(songs, exoPlayer.currentWindowIndex + 1)
         if (isShuffle()) {
-            shuffleOrder.getOrder().let {
-                val fromPos = it.indexOf(exoPlayer.currentWindowIndex + 1)
-                var toPos = it.indexOf(exoPlayer.currentWindowIndex) + 1
-                if (fromPos < toPos) toPos--
-                moveSong(fromPos, toPos)
+            for (i in songs.indices) {
+                shuffleOrder.getOrder().let {
+                    val fromPos = it.indexOf(exoPlayer.currentWindowIndex + 1 + songs.lastIndex - i)
+                    var toPos = it.indexOf(exoPlayer.currentWindowIndex) + 1
+                    if (fromPos < toPos) toPos--
+                    moveSong(fromPos, toPos)
+                }
             }
         }
         invokeQueueChangedListeners()

@@ -19,6 +19,9 @@ class MainActivity : BaseBottomNowPlayingActivity() {
 
     private var allMusicData: AllMusicData? = null
 
+    private lateinit var albumFragment: AlbumFragment
+    private lateinit var playlistFragment: PlaylistFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(mainToolbar)
@@ -38,9 +41,21 @@ class MainActivity : BaseBottomNowPlayingActivity() {
             allMusicData = it.getAllMusicData()
             it.close()
         }
+        albumFragment = AlbumFragment(allMusicData!!)
+        playlistFragment = PlaylistFragment(allMusicData!!)
 
         mainViewPager.adapter = MainTabAdapter(supportFragmentManager)
         mainTabLayout.setupWithViewPager(mainViewPager)
+    }
+
+    override fun onMusicServiceConnected(musicService: MusicService) {
+        albumFragment.musicService = musicService
+        playlistFragment.musicService = musicService
+    }
+
+    override fun onMusicServiceDisconnected() {
+        albumFragment.musicService = null
+        playlistFragment.musicService = null
     }
 
     inner class MainTabAdapter(fm: FragmentManager) :
@@ -48,8 +63,8 @@ class MainActivity : BaseBottomNowPlayingActivity() {
 
         override fun getItem(position: Int): Fragment {
             return when (position) {
-                0 -> AlbumFragment(allMusicData!!)
-                else -> PlaylistFragment(allMusicData!!)
+                0 -> albumFragment
+                else -> playlistFragment
             }
         }
 

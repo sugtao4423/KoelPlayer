@@ -134,11 +134,11 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.songMorePlayNext -> musicService?.let {
-                        it.addQueueNext(songs[position])
+                        it.addQueueNext(listOf(songs[position]))
                         Toast.makeText(context.applicationContext, R.string.play_next_song, Toast.LENGTH_SHORT).show()
                     }
                     R.id.songMoreAddQueue -> musicService?.let {
-                        it.addQueueLast(songs[position])
+                        it.addQueueLast(listOf(songs[position]))
                         Toast.makeText(context.applicationContext, R.string.add_queue_song, Toast.LENGTH_SHORT).show()
                     }
                 }
