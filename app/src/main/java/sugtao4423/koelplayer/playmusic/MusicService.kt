@@ -284,7 +284,7 @@ class MusicService : MediaBrowserServiceCompat() {
     fun playingMetadata(): MediaMetadataCompat? = mediaSession.controller.metadata
 
     fun isPlaying(): Boolean = exoPlayer.isPlaying
-    fun playingSong(): Song = songQueue[exoPlayer.currentWindowIndex].second
+    fun playingPosition(): Int = if (isShuffle()) shuffleOrder.getOrder().indexOf(exoPlayer.currentWindowIndex) else exoPlayer.currentWindowIndex
     fun togglePlay() = if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
     fun prev() = if (exoPlayer.currentPosition < 3000) exoPlayer.previous() else exoPlayer.seekTo(0)
     fun next() = exoPlayer.next()

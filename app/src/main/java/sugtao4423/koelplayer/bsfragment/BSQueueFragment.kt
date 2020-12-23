@@ -58,9 +58,9 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
 
     override fun updateMetadata(metadata: MediaMetadataCompat) {
         if (queueAdapter.itemCount > 0 && isScrollTop) {
-            val playingPos = queueAdapter.songPosition(musicService!!.playingSong())
-            if (playingPos >= 0) {
-                songQueue.smoothScrollToPosition(playingPos)
+            val playingPosition = musicService!!.playingPosition()
+            if (playingPosition >= 0) {
+                songQueue.smoothScrollToPosition(playingPosition)
             }
         }
         isScrollTop = true
