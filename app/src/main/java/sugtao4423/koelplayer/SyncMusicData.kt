@@ -25,6 +25,7 @@ class SyncMusicData(private val context: Context) {
                 Koel4j(server, token).allMusicData()
             }
             if (allMusicData == null) {
+                progressDialog.dismiss()
                 errorGetAllMusicData()
                 return@launch
             }
