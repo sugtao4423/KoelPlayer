@@ -66,10 +66,9 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         songListTitle.text = title
         supportActionBar!!.title = title
         val songTime = getSongsTime(songs)
-        songListArtist.text = when {
-            artist != null && theseSongsAllDownloaded -> "$artist・$songTime\n$theseSongsFileSize"
-            artist != null && !theseSongsAllDownloaded -> "$artist・$songTime"
-            else -> songTime
+        songListArtist.text = if (artist == null) songTime else "$artist・$songTime"
+        if (theseSongsAllDownloaded) {
+            songListDlSize.text = theseSongsFileSize
         }
 
         adapter = when (type) {
