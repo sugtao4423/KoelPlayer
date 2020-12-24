@@ -36,6 +36,7 @@ class ServerSettingsActivity : AppCompatActivity() {
             serverHost.isEnabled = false
         }
         fab.setOnClickListener {
+            it.isEnabled = false
             saveKoelToken()
         }
     }
@@ -78,6 +79,7 @@ class ServerSettingsActivity : AppCompatActivity() {
             setMessage(R.string.error_get_token)
             show()
         }
+        fab.isEnabled = true
     }
 
     fun hideKeyboard(v: View) {
