@@ -24,11 +24,15 @@ class ServerSettingsActivity : AppCompatActivity() {
         intent.getBooleanExtra(INTENT_KEY_IS_RE_AUTH, false)
     }
 
+    private val app by lazy {
+        applicationContext as App
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_server_settings)
         if (isReAuth) {
-            serverHost.setText((applicationContext as App).koelServer)
+            serverHost.setText(app.koelServer)
             serverHost.isEnabled = false
         }
         fab.setOnClickListener {
@@ -55,10 +59,10 @@ class ServerSettingsActivity : AppCompatActivity() {
                 errorGetToken()
                 return@launch
             }
-            (applicationContext as App).koelServer = host
-            (applicationContext as App).koelToken = token
+            app.koelServer = host
+            app.koelToken = token
             if (isReAuth) {
-                (applicationContext as App).reloadServerSettings()
+                app.reloadServerSettings()
                 finish()
                 return@launch
             }
