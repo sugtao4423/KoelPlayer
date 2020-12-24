@@ -48,6 +48,16 @@ class MainActivity : BaseBottomNowPlayingActivity() {
         mainTabLayout.setupWithViewPager(mainViewPager)
     }
 
+    override fun onResume() {
+        super.onResume()
+        val app = applicationContext as App
+        if (app.reloadedAllMusicData) {
+            app.reloadedAllMusicData = false
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
+    }
+
     override fun onMusicServiceConnected(musicService: MusicService) {
         albumFragment.musicService = musicService
         playlistFragment.musicService = musicService

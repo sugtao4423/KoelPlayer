@@ -5,6 +5,9 @@
         <Preference
             android:key="reAuth"
             android:title="@string/preferences_re_auth" />
+        <Preference
+            android:key="syncMusicData"
+            android:title="@string/preferences_sync_music_data" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/preferences_download">

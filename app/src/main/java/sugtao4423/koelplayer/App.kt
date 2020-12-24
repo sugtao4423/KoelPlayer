@@ -41,4 +41,6 @@ class App : Application() {
         _koelToken = pref.getString(PREF_KEY_KOEL_TOKEN, "") ?: ""
     }
 
+    var reloadedAllMusicData = false
+
 }

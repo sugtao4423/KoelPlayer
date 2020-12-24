@@ -40,6 +40,11 @@ class SettingsActivity : AppCompatActivity() {
                 true
             }
 
+            findPreference<Preference>("syncMusicData")?.setOnPreferenceClickListener {
+                syncMusicData()
+                true
+            }
+
             findPreference<Preference>("allDownload")?.setOnPreferenceClickListener {
                 downloadAllMusic()
                 true
@@ -52,6 +57,11 @@ class SettingsActivity : AppCompatActivity() {
                 putExtra(ServerSettingsActivity.INTENT_KEY_IS_RE_AUTH, true)
             }
             startActivity(intent)
+        }
+
+        private fun syncMusicData() {
+            SyncMusicData(requireContext()).sync()
+            (requireContext().applicationContext as App).reloadedAllMusicData = true
         }
 
         private fun downloadAllMusic() {

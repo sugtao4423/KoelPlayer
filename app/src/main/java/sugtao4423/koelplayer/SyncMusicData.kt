@@ -8,11 +8,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import sugtao4423.koel4j.Koel4j
+import sugtao4423.koel4j.dataclass.Song
+import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.musicdb.MusicDB
 
 class SyncMusicData(private val context: Context) {
 
-    fun sync(completeCallBack: () -> Unit) {
+    fun sync(completeCallBack: (() -> Unit)? = null) {
         CoroutineScope(Dispatchers.Main).launch {
             val progressDialog = loadingDialog()
             progressDialog.show()
@@ -31,9 +33,10 @@ class SyncMusicData(private val context: Context) {
                 musicDB.resetDatabase()
                 musicDB.saveAllMusicData(allMusicData)
                 musicDB.close()
+                syncDownloadedMusicFiles(allMusicData.songs)
             }
             progressDialog.dismiss()
-            completeCallBack()
+            completeCallBack?.invoke()
         }
     }
 
@@ -51,6 +54,10 @@ class SyncMusicData(private val context: Context) {
             setMessage(R.string.error_get_all_music_data)
             show()
         }
+    }
+
+    private fun syncDownloadedMusicFiles(songs: List<Song>) {
+        KoelDLUtil(context).deleteUnusedMusicFiles(songs)
     }
 
 }
