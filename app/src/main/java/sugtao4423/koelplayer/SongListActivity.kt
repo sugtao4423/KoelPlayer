@@ -10,6 +10,7 @@ import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.adapter.AlbumMusicAdapter
 import sugtao4423.koelplayer.adapter.BaseMusicAdapter
 import sugtao4423.koelplayer.adapter.PlaylistMusicAdapter
+import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.playmusic.MusicService
 
@@ -56,14 +57,19 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         val isCompilation = data[DATA_KEY_IS_COMPILATION] as Boolean?
         songs = (data[DATA_KEY_SONGS] as List<*>).map { it as Song }
 
+        val dlUtil = KoelDLUtil(this)
+        val downloadedCount = songs.filter { dlUtil.isDownloaded(it) }.size
+        val theseSongsAllDownloaded = songs.size == downloadedCount
+        val theseSongsFileSize = dlUtil.getSongFilesSize(songs)
+
         GlideUtil.load(this, coverUrl, songListCover, true)
         songListTitle.text = title
         supportActionBar!!.title = title
         val songTime = getSongsTime(songs)
-        songListArtist.text = if (artist == null) {
-            songTime
-        } else {
-            "$artist・$songTime"
+        songListArtist.text = when {
+            artist != null && theseSongsAllDownloaded -> "$artist・$songTime\n$theseSongsFileSize"
+            artist != null && !theseSongsAllDownloaded -> "$artist・$songTime"
+            else -> songTime
         }
 
         adapter = when (type) {

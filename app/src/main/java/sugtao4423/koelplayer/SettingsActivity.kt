@@ -12,7 +12,6 @@ import androidx.preference.PreferenceFragmentCompat
 import sugtao4423.koelplayer.download.KoelDLService
 import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.musicdb.MusicDB
-import java.text.DecimalFormat
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -102,22 +101,10 @@ class SettingsActivity : AppCompatActivity() {
             val allSongs = musicDB.getAllMusicData().songs
             musicDB.close()
             val dlUtil = KoelDLUtil(requireContext())
-            var downloadedCount = 0
-            var downloadedSize = 0L
-            allSongs.forEach {
-                if (dlUtil.isDownloaded(it)) {
-                    downloadedCount++
-                    downloadedSize += dlUtil.getSongFileSize(it)
-                }
-            }
+            val downloadedSongs = allSongs.filter { dlUtil.isDownloaded(it) }
+            val downloadedSize = dlUtil.getSongFilesSize(downloadedSongs)
 
-            val fileSizeMb = downloadedSize / 1024f / 1024f
-            val fileSizeGb = fileSizeMb / 1024f
-            val fileSizeText = DecimalFormat("0.00").let {
-                if (fileSizeMb > 1024) it.format(fileSizeGb) + "GB" else it.format(fileSizeMb) + "MB"
-            }
-
-            val message = getString(R.string.preferences_downloaded_info_message, downloadedCount, allSongs.size, fileSizeText)
+            val message = getString(R.string.preferences_downloaded_info_message, downloadedSongs.size, allSongs.size, downloadedSize)
             AlertDialog.Builder(requireContext()).apply {
                 setTitle(R.string.preferences_downloaded_info)
                 setMessage(message)
