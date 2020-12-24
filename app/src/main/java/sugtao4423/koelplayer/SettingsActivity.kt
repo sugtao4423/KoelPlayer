@@ -60,8 +60,14 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun syncMusicData() {
-            SyncMusicData(requireContext()).sync()
-            (requireContext().applicationContext as App).reloadedAllMusicData = true
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle(R.string.preferences_sync_music_data)
+                setMessage(R.string.preferences_sync_music_data_description)
+                setNegativeButton(R.string.cancel, null)
+            }.setPositiveButton(R.string.ok) { _, _ ->
+                SyncMusicData(requireContext()).sync()
+                (requireContext().applicationContext as App).reloadedAllMusicData = true
+            }.show()
         }
 
         private fun downloadAllMusic() {
