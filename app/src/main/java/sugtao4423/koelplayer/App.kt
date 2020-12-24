@@ -16,9 +16,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         pref = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-
-        _koelServer = pref.getString(PREF_KEY_KOEL_SERVER, "") ?: ""
-        _koelToken = pref.getString(PREF_KEY_KOEL_TOKEN, "") ?: ""
+        reloadServerSettings()
     }
 
     private lateinit var _koelServer: String
@@ -37,5 +35,10 @@ class App : Application() {
             pref.edit().putString(PREF_KEY_KOEL_TOKEN, value).apply()
             _koelToken = value
         }
+
+    fun reloadServerSettings() {
+        _koelServer = pref.getString(PREF_KEY_KOEL_SERVER, "") ?: ""
+        _koelToken = pref.getString(PREF_KEY_KOEL_TOKEN, "") ?: ""
+    }
 
 }

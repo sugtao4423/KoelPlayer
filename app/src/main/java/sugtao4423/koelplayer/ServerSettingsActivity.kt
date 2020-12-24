@@ -16,9 +16,21 @@ import sugtao4423.koel4j.Koel4j
 
 class ServerSettingsActivity : AppCompatActivity() {
 
+    companion object {
+        const val INTENT_KEY_IS_RE_AUTH = "isReAuth"
+    }
+
+    private val isReAuth by lazy {
+        intent.getBooleanExtra(INTENT_KEY_IS_RE_AUTH, false)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_server_settings)
+        if (isReAuth) {
+            serverHost.setText((applicationContext as App).koelServer)
+            serverHost.isEnabled = false
+        }
         fab.setOnClickListener {
             saveKoelToken()
         }
@@ -45,6 +57,11 @@ class ServerSettingsActivity : AppCompatActivity() {
             }
             (applicationContext as App).koelServer = host
             (applicationContext as App).koelToken = token
+            if (isReAuth) {
+                (applicationContext as App).reloadServerSettings()
+                finish()
+                return@launch
+            }
             SyncMusicData(this@ServerSettingsActivity).sync {
                 startActivity(Intent(this@ServerSettingsActivity, MainActivity::class.java))
                 finish()

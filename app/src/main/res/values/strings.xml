@@ -71,6 +71,8 @@
     <string name="param_song_progress">%1$d / %2$d 曲</string>
 
     <!-- preferences.xml -->
+    <string name="preferences_koel_server">Koel Server</string>
+    <string name="preferences_re_auth">再認証する</string>
     <string name="preferences_download">ダウンロード</string>
     <string name="preferences_all_download">すべての曲をダウンロードする</string>
     <string name="preferences_all_download_description">携帯回線でもWi-Fi回線でもお構いなしにダウンロードします。\nよろしいですか？</string>
