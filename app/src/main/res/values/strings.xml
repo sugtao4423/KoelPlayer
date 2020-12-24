@@ -78,4 +78,6 @@
     <string name="preferences_download">ダウンロード</string>
     <string name="preferences_all_download">すべての曲をダウンロードする</string>
     <string name="preferences_all_download_description">携帯回線でもWi-Fi回線でもお構いなしにダウンロードします。\nよろしいですか？</string>
+    <string name="preferences_downloaded_info">ダウンロード済み情報</string>
+    <string name="preferences_downloaded_info_message">ダウンロード済み: %1$d / %2$d 曲\n合計: %3$s</string>
 </resources>

@@ -16,6 +16,10 @@ class KoelDLUtil(context: Context) {
         return File(getSongFilePath(song)).exists()
     }
 
+    fun getSongFileSize(song: Song): Long {
+        return File(getSongFilePath(song)).length()
+    }
+
     fun deleteUnusedMusicFiles(songs: List<Song>) {
         val deleteFiles = ArrayList(downloadDirectory.listFiles()!!.filterNotNull().map { it.absolutePath })
         songs.forEach {

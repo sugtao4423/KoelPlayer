@@ -10,7 +10,9 @@ import androidx.fragment.app.commit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import sugtao4423.koelplayer.download.KoelDLService
+import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.musicdb.MusicDB
+import java.text.DecimalFormat
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -47,6 +49,11 @@ class SettingsActivity : AppCompatActivity() {
 
             findPreference<Preference>("allDownload")?.setOnPreferenceClickListener {
                 downloadAllMusic()
+                true
+            }
+
+            findPreference<Preference>("showDownloadedInfo")?.setOnPreferenceClickListener {
+                showDownloadedInfo()
                 true
             }
 
@@ -88,6 +95,35 @@ class SettingsActivity : AppCompatActivity() {
                     requireContext().startService(intent)
                 }
             }.show()
+        }
+
+        private fun showDownloadedInfo() {
+            val musicDB = MusicDB(requireContext())
+            val allSongs = musicDB.getAllMusicData().songs
+            musicDB.close()
+            val dlUtil = KoelDLUtil(requireContext())
+            var downloadedCount = 0
+            var downloadedSize = 0L
+            allSongs.forEach {
+                if (dlUtil.isDownloaded(it)) {
+                    downloadedCount++
+                    downloadedSize += dlUtil.getSongFileSize(it)
+                }
+            }
+
+            val fileSizeMb = downloadedSize / 1024f / 1024f
+            val fileSizeGb = fileSizeMb / 1024f
+            val fileSizeText = DecimalFormat("0.00").let {
+                if (fileSizeMb > 1024) it.format(fileSizeGb) + "GB" else it.format(fileSizeMb) + "MB"
+            }
+
+            val message = getString(R.string.preferences_downloaded_info_message, downloadedCount, allSongs.size, fileSizeText)
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle(R.string.preferences_downloaded_info)
+                setMessage(message)
+                setPositiveButton(R.string.ok, null)
+                show()
+            }
         }
     }
 
