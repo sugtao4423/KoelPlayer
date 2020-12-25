@@ -90,15 +90,15 @@ class MainActivity : BaseBottomNowPlayingActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.settings)?.apply {
-            setIcon(R.drawable.ic_settings)
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        if (menu == null) {
+            return true
         }
+        menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == Menu.FIRST) {
+        if (item.itemId == R.id.menuSettings) {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
         return true
