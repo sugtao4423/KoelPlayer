@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -94,6 +95,8 @@ class MainActivity : BaseBottomNowPlayingActivity() {
             return true
         }
         menuInflater.inflate(R.menu.main_menu, menu)
+        val searchView = menu.findItem(R.id.menuSearch).actionView as SearchView
+        setupSearchView(searchView)
         return true
     }
 
@@ -102,6 +105,23 @@ class MainActivity : BaseBottomNowPlayingActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
         return true
+    }
+
+    private fun setupSearchView(searchView: SearchView) {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText == null) {
+                    return true
+                }
+                albumFragment.filter(newText)
+                playlistFragment.filter(newText)
+                return true
+            }
+        })
     }
 
 }

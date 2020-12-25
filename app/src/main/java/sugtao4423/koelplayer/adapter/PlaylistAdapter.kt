@@ -19,12 +19,12 @@ import sugtao4423.koelplayer.playmusic.MusicService
 import sugtao4423.koelplayer.view.SquareImageView
 
 class PlaylistAdapter(
-    private val playlists: List<Playlist>,
     private val songs: List<Song>
 ) :
     RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
 
     var musicService: MusicService? = null
+    var playlists = listOf<Playlist>()
 
     private lateinit var context: Context
 

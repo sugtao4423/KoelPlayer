@@ -17,12 +17,10 @@ import sugtao4423.koelplayer.SongListActivity
 import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.playmusic.MusicService
 
-class AlbumAdapter(
-    private val albums: List<Album>,
-) :
-    RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
+class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
     var musicService: MusicService? = null
+    var albums = listOf<Album>()
 
     private lateinit var context: Context
 

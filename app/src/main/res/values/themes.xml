@@ -26,4 +26,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="Theme.KoelPlayer.SearchToolbar" parent="Widget.Design.CollapsingToolbar">
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
 </resources>
