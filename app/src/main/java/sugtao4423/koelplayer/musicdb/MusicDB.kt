@@ -62,8 +62,6 @@ class MusicDB(private val context: Context) {
             }
             songCursor.close()
         }
-        songs.sortBy { it.track }
-        songs.sortBy { it.album.name }
         return songs
     }
 

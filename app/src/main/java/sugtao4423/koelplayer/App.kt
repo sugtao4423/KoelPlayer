@@ -3,6 +3,7 @@ package sugtao4423.koelplayer
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import sugtao4423.koel4j.dataclass.Playlist
 
 class App : Application() {
 
@@ -42,5 +43,17 @@ class App : Application() {
     }
 
     var reloadedAllMusicData = false
+
+    private fun getPlaylistSortOrderKey(playlist: Playlist): String {
+        return "playlistOrder_${playlist.id}"
+    }
+
+    fun getPlaylistSortOrder(playlist: Playlist): Int {
+        return pref.getInt(getPlaylistSortOrderKey(playlist), 0)
+    }
+
+    fun setPlaylistSortOrder(playlist: Playlist, order: Int) {
+        pref.edit().putInt(getPlaylistSortOrderKey(playlist), order).apply()
+    }
 
 }

@@ -1,7 +1,11 @@
 package sugtao4423.koelplayer
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_song_list.*
 import sugtao4423.koel4j.dataclass.Album
@@ -33,6 +37,9 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         private const val DATA_KEY_SONGS = "songs"
     }
 
+    private val intentType by lazy {
+        intent.getIntExtra(KEY_INTENT_TYPE, -1)
+    }
     private lateinit var adapter: BaseMusicAdapter
     private lateinit var songs: List<Song>
 
@@ -41,8 +48,7 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         setSupportActionBar(songListToolbar)
         songListToolbar.setNavigationOnClickListener { finish() }
 
-        val type = intent.getIntExtra(KEY_INTENT_TYPE, -1)
-        val data = when (type) {
+        val data = when (intentType) {
             INTENT_TYPE_ALBUM -> getAlbumData()
             INTENT_TYPE_PLAYLIST -> getPlaylistData()
             else -> {
@@ -71,7 +77,7 @@ class SongListActivity : BaseBottomNowPlayingActivity(
             songListDlSize.text = theseSongsFileSize
         }
 
-        adapter = when (type) {
+        adapter = when (intentType) {
             INTENT_TYPE_ALBUM -> AlbumMusicAdapter(songs, isCompilation)
             INTENT_TYPE_PLAYLIST -> PlaylistMusicAdapter(songs)
             else -> {
@@ -111,8 +117,14 @@ class SongListActivity : BaseBottomNowPlayingActivity(
     private fun getPlaylistData(): Map<String, Any?> {
         val playlist = intent.getSerializableExtra(KEY_INTENT_PLAYLIST_DATA) as Playlist
         val musicDB = MusicDB(this)
-        val songs = musicDB.getSongsById(playlist.songs)
+        var songs = musicDB.getSongsById(playlist.songs)
         musicDB.close()
+
+        val sortOrder = (applicationContext as App).getPlaylistSortOrder(playlist)
+        if (sortOrder == 1) {
+            songs = songs.sortedBy { it.track }.sortedBy { it.album.name }
+        }
+
         return mapOf(
             DATA_KEY_COVER_URL to songs.randomOrNull()?.album?.cover,
             DATA_KEY_TITLE to playlist.name,
@@ -140,6 +152,41 @@ class SongListActivity : BaseBottomNowPlayingActivity(
 
     fun clickShuffleButton(@Suppress("UNUSED_PARAMETER") v: View) {
         musicService?.shufflePlaySongs(songs)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (intentType == INTENT_TYPE_PLAYLIST) {
+            menu?.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.sort)
+        }
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (intentType == INTENT_TYPE_PLAYLIST && item.itemId == Menu.FIRST) {
+            showSortDialog()
+        }
+        return true
+    }
+
+    private fun showSortDialog() {
+        val playlist = (intent.getSerializableExtra(KEY_INTENT_PLAYLIST_DATA) as Playlist)
+        val order = (applicationContext as App).getPlaylistSortOrder(playlist)
+        AlertDialog.Builder(this).apply {
+            setSingleChoiceItems(R.array.sort_items, order) { dialogInterface, which ->
+                if (order == which) {
+                    dialogInterface.dismiss()
+                } else {
+                    (applicationContext as App).setPlaylistSortOrder(playlist, which)
+                    val intent = Intent(context, SongListActivity::class.java).apply {
+                        putExtra(KEY_INTENT_TYPE, INTENT_TYPE_PLAYLIST)
+                        putExtra(KEY_INTENT_PLAYLIST_DATA, playlist)
+                    }
+                    startActivity(intent)
+                    finish()
+                }
+            }
+            show()
+        }
     }
 
 }

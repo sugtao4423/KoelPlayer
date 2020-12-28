@@ -42,6 +42,13 @@
     <string name="play_next">次に再生</string>
     <string name="add_queue">キューに追加</string>
 
+    <!-- SongListActivity.kt -->
+    <string name="sort">ソート</string>
+    <string-array name="sort_items">
+        <item>なし</item>
+        <item>トラック番号 - アルバム名</item>
+    </string-array>
+
     <!-- BaseMusicAdapter.kt -->
     <string name="add_queue_song">曲をキューに追加しました</string>
     <string name="play_next_song">次にこの曲が再生されます</string>
