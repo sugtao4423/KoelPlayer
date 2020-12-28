@@ -24,6 +24,7 @@ class SyncMusicData(private val context: Context) {
             val allMusicData = withContext(Dispatchers.IO) {
                 Koel4j(server, token).allMusicData()
             }
+            (context.applicationContext as App).clearPlaylistOrderSettings()
             if (allMusicData == null) {
                 progressDialog.dismiss()
                 errorGetAllMusicData()

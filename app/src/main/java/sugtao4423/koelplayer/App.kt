@@ -56,4 +56,12 @@ class App : Application() {
         pref.edit().putInt(getPlaylistSortOrderKey(playlist), order).apply()
     }
 
+    fun clearPlaylistOrderSettings() {
+        val server = koelServer
+        val token = koelToken
+        pref.edit().clear().apply()
+        koelServer = server
+        koelToken = token
+    }
+
 }
