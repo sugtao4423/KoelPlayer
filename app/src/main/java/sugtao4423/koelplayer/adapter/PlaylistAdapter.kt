@@ -38,7 +38,7 @@ class PlaylistAdapter(
         val playlist = playlists[position]
         val firstSongCover = songs.find {
             it.id == playlist.songs[0]
-        }!!.album.cover
+        }?.album?.cover
         GlideUtil.load(context, firstSongCover, holder.cover)
         holder.title.text = playlist.name
         holder.itemView.setOnClickListener(playlistClickListener(playlist))

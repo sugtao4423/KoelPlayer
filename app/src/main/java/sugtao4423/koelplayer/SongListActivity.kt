@@ -51,10 +51,10 @@ class SongListActivity : BaseBottomNowPlayingActivity(
             }
         }
 
-        val coverUrl = data[DATA_KEY_COVER_URL] as String
+        val coverUrl = data[DATA_KEY_COVER_URL] as String?
         val title = data[DATA_KEY_TITLE] as String
         val artist = data[DATA_KEY_ARTIST] as String?
-        val isCompilation = data[DATA_KEY_IS_COMPILATION] as Boolean?
+        val isCompilation = (data[DATA_KEY_IS_COMPILATION] as Boolean?) ?: false
         songs = (data[DATA_KEY_SONGS] as List<*>).map { it as Song }
 
         val dlUtil = KoelDLUtil(this)
@@ -72,7 +72,7 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         }
 
         adapter = when (type) {
-            INTENT_TYPE_ALBUM -> AlbumMusicAdapter(songs, isCompilation!!)
+            INTENT_TYPE_ALBUM -> AlbumMusicAdapter(songs, isCompilation)
             INTENT_TYPE_PLAYLIST -> PlaylistMusicAdapter(songs)
             else -> {
                 finish()
@@ -94,7 +94,7 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         adapter.musicService = null
     }
 
-    private fun getAlbumData(): Map<String, Any> {
+    private fun getAlbumData(): Map<String, Any?> {
         val album = intent.getSerializableExtra(KEY_INTENT_ALBUM_DATA) as Album
         val musicDB = MusicDB(this)
         val songs = musicDB.getAlbumSongs(album.id)
@@ -108,13 +108,13 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         )
     }
 
-    private fun getPlaylistData(): Map<String, Any> {
+    private fun getPlaylistData(): Map<String, Any?> {
         val playlist = intent.getSerializableExtra(KEY_INTENT_PLAYLIST_DATA) as Playlist
         val musicDB = MusicDB(this)
         val songs = musicDB.getSongsById(playlist.songs)
         musicDB.close()
         return mapOf(
-            DATA_KEY_COVER_URL to songs.random().album.cover,
+            DATA_KEY_COVER_URL to songs.randomOrNull()?.album?.cover,
             DATA_KEY_TITLE to playlist.name,
             DATA_KEY_SONGS to songs,
         )
