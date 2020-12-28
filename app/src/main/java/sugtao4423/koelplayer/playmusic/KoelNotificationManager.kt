@@ -45,7 +45,7 @@ class KoelNotificationManager(
             setUseNextActionInCompactView(true)
             setUseStopAction(true)
             setMediaSessionToken(sessionToken)
-            setSmallIcon(R.drawable.ic_launcher_foreground)
+            setSmallIcon(R.drawable.ic_notification_playing)
             setControlDispatcher(DefaultControlDispatcher(0, 0))
         }
     }
