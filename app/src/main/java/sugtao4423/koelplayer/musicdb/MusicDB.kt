@@ -52,15 +52,16 @@ class MusicDB(private val context: Context) {
     }
 
     fun getSongsById(songIds: List<String>): List<Song> {
-        var sql = "$SQL_SELECT_SONGS WHERE " + " songs.id = ? OR".repeat(songIds.size)
-        sql = sql.removeSuffix("OR")
         val songs = ArrayList<Song>()
-        val songCursor = db.rawQuery(sql, songIds.toTypedArray())
-        while (songCursor.moveToNext()) {
-            songs.add(getSongData(songCursor))
+        songIds.chunked(500) {
+            var sql = "$SQL_SELECT_SONGS WHERE " + " songs.id = ? OR".repeat(it.size)
+            sql = sql.removeSuffix("OR")
+            val songCursor = db.rawQuery(sql, it.toTypedArray())
+            while (songCursor.moveToNext()) {
+                songs.add(getSongData(songCursor))
+            }
+            songCursor.close()
         }
-        songCursor.close()
-
         songs.sortBy { it.track }
         songs.sortBy { it.album.name }
         return songs
