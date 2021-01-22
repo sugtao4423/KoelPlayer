@@ -8,6 +8,10 @@ import kotlin.collections.ArrayList
 
 class ParseAllMusicData(private val json: JSONObject, private val playlists: List<Playlist>) {
 
+    companion object {
+        private const val koelDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    }
+
     fun parse(): AllMusicData {
         val artists = parseArtists()
         val albums = parseAlbums(artists)
@@ -31,7 +35,7 @@ class ParseAllMusicData(private val json: JSONObject, private val playlists: Lis
 
     private fun parseAlbums(artists: List<Artist>): List<Album> {
         val result = ArrayList<Album>()
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val sdf = SimpleDateFormat(koelDateFormat, Locale.getDefault())
         val objects = json.getJSONArray("albums")
         for (i in 0 until objects.length()) {
             val obj = objects.getJSONObject(i)
@@ -51,7 +55,7 @@ class ParseAllMusicData(private val json: JSONObject, private val playlists: Lis
 
     private fun parseSongs(artists: List<Artist>, albums: List<Album>): List<Song> {
         val result = ArrayList<Song>()
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val sdf = SimpleDateFormat(koelDateFormat, Locale.getDefault())
         val objects = json.getJSONArray("songs")
         for (i in 0 until objects.length()) {
             val obj = objects.getJSONObject(i)
