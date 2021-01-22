@@ -20,7 +20,12 @@ import sugtao4423.koelplayer.playmusic.MusicService
 class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
     var musicService: MusicService? = null
+
     var albums = listOf<Album>()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     private lateinit var context: Context
 

@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<sugtao4423.koelplayer.view.GridRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/albumGrid"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scrollbars="vertical" />
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/albumProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <sugtao4423.koelplayer.view.GridRecyclerView
+        android:id="@+id/albumGrid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+
+</FrameLayout>

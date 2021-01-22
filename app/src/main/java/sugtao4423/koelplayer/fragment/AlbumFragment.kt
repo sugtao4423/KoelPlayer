@@ -10,7 +10,7 @@ import sugtao4423.koelplayer.adapter.AlbumAdapter
 import sugtao4423.koelplayer.playmusic.MusicService
 import java.util.*
 
-class AlbumFragment(private val allMusicData: AllMusicData) : Fragment(R.layout.fragment_album) {
+class AlbumFragment : Fragment(R.layout.fragment_album) {
 
     var musicService: MusicService? = null
         set(value) {
@@ -20,19 +20,29 @@ class AlbumFragment(private val allMusicData: AllMusicData) : Fragment(R.layout.
 
     private val albumAdapter = AlbumAdapter()
 
+    var allMusicData: AllMusicData? = null
+        set(value) {
+            field = value
+            value ?: return
+
+            albumProgressBar?.visibility = View.GONE
+            albumAdapter.albums = value.albums
+        }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        albumAdapter.albums = allMusicData.albums
         albumGrid.adapter = albumAdapter
     }
 
     fun filter(filterText: String) {
+        allMusicData ?: return
+
         albumAdapter.albums = if (filterText.isEmpty()) {
-            allMusicData.albums
+            allMusicData!!.albums
         } else {
             val searchText = filterText.toLowerCase(Locale.ROOT)
-            allMusicData.albums.filter { album ->
+            allMusicData!!.albums.filter { album ->
                 album.name.toLowerCase(Locale.ROOT).contains(searchText) ||
-                        allMusicData.songs.filter { it.album.id == album.id }.any {
+                        allMusicData!!.songs.filter { it.album.id == album.id }.any {
                             it.title.toLowerCase(Locale.ROOT).contains(searchText) ||
                                     it.artist.name.toLowerCase(Locale.ROOT).contains(searchText)
                         }

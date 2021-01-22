@@ -10,15 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import kotlinx.android.synthetic.main.activity_main.*
-import sugtao4423.koel4j.dataclass.AllMusicData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sugtao4423.koelplayer.fragment.AlbumFragment
 import sugtao4423.koelplayer.fragment.PlaylistFragment
 import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.playmusic.MusicService
 
 class MainActivity : BaseBottomNowPlayingActivity() {
-
-    private var allMusicData: AllMusicData? = null
 
     private lateinit var albumFragment: AlbumFragment
     private lateinit var playlistFragment: PlaylistFragment
@@ -38,15 +39,22 @@ class MainActivity : BaseBottomNowPlayingActivity() {
 
         startService(Intent(this, MusicService::class.java))
 
-        MusicDB(this).let {
-            allMusicData = it.getAllMusicData()
-            it.close()
-        }
-        albumFragment = AlbumFragment(allMusicData!!)
-        playlistFragment = PlaylistFragment(allMusicData!!)
+        albumFragment = AlbumFragment()
+        playlistFragment = PlaylistFragment()
 
         mainViewPager.adapter = MainTabAdapter(supportFragmentManager)
         mainTabLayout.setupWithViewPager(mainViewPager)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val allMusicData = withContext(Dispatchers.IO) {
+                val musicDB = MusicDB(this@MainActivity)
+                val allMusicData = musicDB.getAllMusicData()
+                musicDB.close()
+                allMusicData
+            }
+            albumFragment.allMusicData = allMusicData
+            playlistFragment.allMusicData = allMusicData
+        }
     }
 
     override fun onResume() {
