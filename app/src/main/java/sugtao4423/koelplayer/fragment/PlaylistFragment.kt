@@ -19,12 +19,14 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
         }
 
     private val playlistAdapter = PlaylistAdapter()
+    private var hideLoading = false
 
     var allMusicData: AllMusicData? = null
         set(value) {
             field = value
             value ?: return
 
+            hideLoading = true
             playlistProgressBar?.visibility = View.GONE
             playlistAdapter.songs = value.songs
             playlistAdapter.playlists = value.playlists
@@ -32,6 +34,9 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         playlistView.adapter = playlistAdapter
+        if (hideLoading) {
+            playlistProgressBar.visibility = View.GONE
+        }
     }
 
     fun filter(filterText: String) {

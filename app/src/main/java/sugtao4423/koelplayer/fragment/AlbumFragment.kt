@@ -19,18 +19,23 @@ class AlbumFragment : Fragment(R.layout.fragment_album) {
         }
 
     private val albumAdapter = AlbumAdapter()
+    private var hideLoading = false
 
     var allMusicData: AllMusicData? = null
         set(value) {
             field = value
             value ?: return
 
+            hideLoading = true
             albumProgressBar?.visibility = View.GONE
             albumAdapter.albums = value.albums
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         albumGrid.adapter = albumAdapter
+        if (hideLoading) {
+            albumProgressBar.visibility = View.GONE
+        }
     }
 
     fun filter(filterText: String) {
