@@ -11,7 +11,7 @@ class KoelEndpoints {
         }
 
         fun musicFile(auth: String, songId: String): String {
-            return "/api/$songId/play?jwt-token=$auth"
+            return "/play/${songId}?api_token=$auth"
         }
     }
 
