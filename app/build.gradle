@@ -5,13 +5,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    compileSdkVersion 34
 
     namespace 'sugtao4423.koelplayer'
     defaultConfig {
         applicationId "sugtao4423.koelplayer"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
