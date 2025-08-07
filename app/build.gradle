@@ -8,7 +8,7 @@ android {
 
     namespace 'sugtao4423.koelplayer'
     defaultConfig {
-        applicationId "sugtao4423.koelplayer"
+        applicationId 'sugtao4423.koelplayer'
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
