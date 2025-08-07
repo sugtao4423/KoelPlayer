@@ -44,12 +44,12 @@ class AlbumFragment : Fragment(R.layout.fragment_album) {
         albumAdapter.albums = if (filterText.isEmpty()) {
             allMusicData!!.albums
         } else {
-            val searchText = filterText.toLowerCase(Locale.ROOT)
+            val searchText = filterText.lowercase(Locale.ROOT)
             allMusicData!!.albums.filter { album ->
-                album.name.toLowerCase(Locale.ROOT).contains(searchText) ||
+                album.name.lowercase(Locale.ROOT).contains(searchText) ||
                         allMusicData!!.songs.filter { it.album.id == album.id }.any {
-                            it.title.toLowerCase(Locale.ROOT).contains(searchText) ||
-                                    it.artist.name.toLowerCase(Locale.ROOT).contains(searchText)
+                            it.title.lowercase(Locale.ROOT).contains(searchText) ||
+                                    it.artist.name.lowercase(Locale.ROOT).contains(searchText)
                         }
             }
         }

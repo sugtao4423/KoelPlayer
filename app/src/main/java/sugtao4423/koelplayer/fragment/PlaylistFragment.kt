@@ -45,13 +45,13 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
         playlistAdapter.playlists = if (filterText.isEmpty()) {
             allMusicData!!.playlists
         } else {
-            val searchText = filterText.toLowerCase(Locale.ROOT)
+            val searchText = filterText.lowercase(Locale.ROOT)
             allMusicData!!.playlists.filter { playlist ->
-                playlist.name.toLowerCase(Locale.ROOT).contains(searchText) ||
+                playlist.name.lowercase(Locale.ROOT).contains(searchText) ||
                         playlist.songs.map { songId -> allMusicData!!.songs.find { it.id == songId }!! }.any {
-                            it.title.toLowerCase(Locale.ROOT).contains(searchText) ||
-                                    it.artist.name.toLowerCase(Locale.ROOT).contains(searchText) ||
-                                    it.album.name.toLowerCase(Locale.ROOT).contains(searchText)
+                            it.title.lowercase(Locale.ROOT).contains(searchText) ||
+                                    it.artist.name.lowercase(Locale.ROOT).contains(searchText) ||
+                                    it.album.name.lowercase(Locale.ROOT).contains(searchText)
                         }
             }
         }
