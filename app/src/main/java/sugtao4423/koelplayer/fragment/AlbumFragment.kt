@@ -1,16 +1,20 @@
 package sugtao4423.koelplayer.fragment
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_album.*
 import sugtao4423.koel4j.dataclass.AllMusicData
-import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.adapter.AlbumAdapter
+import sugtao4423.koelplayer.databinding.FragmentAlbumBinding
 import sugtao4423.koelplayer.playmusic.MusicService
 import java.util.*
 
-class AlbumFragment : Fragment(R.layout.fragment_album) {
+class AlbumFragment : Fragment() {
+
+    private var _binding: FragmentAlbumBinding? = null
+    private val binding get() = _binding!!
 
     var musicService: MusicService? = null
         set(value) {
@@ -27,15 +31,25 @@ class AlbumFragment : Fragment(R.layout.fragment_album) {
             value ?: return
 
             hideLoading = true
-            albumProgressBar?.visibility = View.GONE
+            binding.albumProgressBar.visibility = View.GONE
             albumAdapter.albums = value.albums
         }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentAlbumBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        albumGrid.adapter = albumAdapter
+        binding.albumGrid.adapter = albumAdapter
         if (hideLoading) {
-            albumProgressBar.visibility = View.GONE
+            binding.albumProgressBar.visibility = View.GONE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     fun filter(filterText: String) {

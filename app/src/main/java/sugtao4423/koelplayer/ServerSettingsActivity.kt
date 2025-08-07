@@ -7,18 +7,20 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_server_settings.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import sugtao4423.koel4j.Koel4j
+import sugtao4423.koelplayer.databinding.ActivityServerSettingsBinding
 
 class ServerSettingsActivity : AppCompatActivity() {
 
     companion object {
         const val INTENT_KEY_IS_RE_AUTH = "isReAuth"
     }
+
+    private lateinit var binding: ActivityServerSettingsBinding
 
     private val isReAuth by lazy {
         intent.getBooleanExtra(INTENT_KEY_IS_RE_AUTH, false)
@@ -30,27 +32,28 @@ class ServerSettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_server_settings)
+        binding = ActivityServerSettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         if (isReAuth) {
-            serverHost.setText(app.koelServer)
-            serverHost.isEnabled = false
+            binding.serverHost.setText(app.koelServer)
+            binding.serverHost.isEnabled = false
         }
-        fab.setOnClickListener {
+        binding.fab.setOnClickListener {
             it.isEnabled = false
             saveKoelToken()
         }
     }
 
     private fun saveKoelToken() {
-        val host = serverHost.text.toString().let {
+        val host = binding.serverHost.text.toString().let {
             if (it.endsWith("/")) {
                 it.removeSuffix("/")
             } else {
                 it
             }
         }
-        val email = serverEmail.text.toString()
-        val password = serverPassword.text.toString()
+        val email = binding.serverEmail.text.toString()
+        val password = binding.serverPassword.text.toString()
 
         CoroutineScope(Dispatchers.Main).launch {
             val token = withContext(Dispatchers.IO) {
@@ -79,7 +82,7 @@ class ServerSettingsActivity : AppCompatActivity() {
             setMessage(R.string.error_get_token)
             show()
         }
-        fab.isEnabled = true
+        binding.fab.isEnabled = true
     }
 
     fun hideKeyboard(v: View) {
