@@ -45,12 +45,12 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private fun initExoPlayer() {
         val attr = AudioAttributes.Builder().run {
-            setContentType(C.CONTENT_TYPE_MUSIC)
+            setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             setUsage(C.USAGE_MEDIA)
             build()
         }
 
-        val playerEventListener = object : Player.EventListener {
+        val playerEventListener = object : Player.Listener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED) {
                     notificationManager.setPlayer(null)
@@ -306,7 +306,7 @@ class MusicService : MediaBrowserServiceCompat() {
         mediaSession.controller.registerCallback(callback)
     }
 
-    fun addPlayerEventListener(listener: Player.EventListener) {
+    fun addPlayerEventListener(listener: Player.Listener) {
         exoPlayer.addListener(listener)
     }
 
@@ -314,7 +314,7 @@ class MusicService : MediaBrowserServiceCompat() {
         mediaSession.controller.unregisterCallback(callback)
     }
 
-    fun removePlayerEventListener(listener: Player.EventListener) {
+    fun removePlayerEventListener(listener: Player.Listener) {
         exoPlayer.removeListener(listener)
     }
 

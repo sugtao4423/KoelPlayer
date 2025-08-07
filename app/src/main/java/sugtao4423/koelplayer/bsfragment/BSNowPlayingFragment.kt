@@ -147,7 +147,7 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
         }
     }
 
-    private val playerEventListener = object : Player.EventListener {
+    private val playerEventListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             val res = if (isPlaying) R.drawable.ic_playing_pause else R.drawable.ic_playing_play
             nowPlayingPlayButton.setImageResource(res)
