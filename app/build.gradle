@@ -8,6 +8,7 @@ android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
 
+    namespace 'sugtao4423.koelplayer'
     defaultConfig {
         applicationId "sugtao4423.koelplayer"
         minSdkVersion 16
