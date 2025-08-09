@@ -114,5 +114,8 @@
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 
-    <include layout="@layout/bottom_sheet" />
+    <include
+        android:id="@+id/songListBottomSheet"
+        layout="@layout/bottom_sheet" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

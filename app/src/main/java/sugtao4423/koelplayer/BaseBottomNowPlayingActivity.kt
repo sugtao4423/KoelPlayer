@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Bundle
 import android.os.IBinder
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -21,27 +20,18 @@ import sugtao4423.koelplayer.bsfragment.BSQueueFragment
 import sugtao4423.koelplayer.databinding.BottomSheetBinding
 import sugtao4423.koelplayer.playmusic.MusicService
 
-abstract class BaseBottomNowPlayingActivity(
-    private val layoutResId: Int = R.layout.activity_main,
-    private val backgroundAppbarId: Int = R.id.mainAppbar
-) : AppCompatActivity() {
+abstract class BaseBottomNowPlayingActivity : AppCompatActivity() {
 
-    private lateinit var binding: BottomSheetBinding
+    protected abstract val bsBinding: BottomSheetBinding
 
     protected var musicService: MusicService? = null
-    private lateinit var bottomSheet: BottomSheetBehavior<CoordinatorLayout>
 
-    private lateinit var bottomSheetFragments: List<BSFragmentInterface>
+    private val bottomSheet: BottomSheetBehavior<CoordinatorLayout> by lazy {
+        BottomSheetBehavior.from(bsBinding.root)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(layoutResId)
-        binding = BottomSheetBinding.inflate(layoutInflater)
-        bottomSheetFragments = listOf(BSNowPlayingFragment(), BSQueueFragment())
-
-        initActionBar()
-        initBottomSheet()
-        initBottomNav()
+    private val bottomSheetFragments: List<BSFragmentInterface> by lazy {
+        listOf(BSNowPlayingFragment(), BSQueueFragment())
     }
 
     override fun onStart() {
@@ -59,8 +49,14 @@ abstract class BaseBottomNowPlayingActivity(
         musicService?.removeMediaControllerCallback(mediaControllerCallback)
     }
 
+    protected fun initViews(backgroundAppbar: View) {
+        initActionBar()
+        initBottomSheet(backgroundAppbar)
+        initBottomNav()
+    }
+
     private fun initActionBar() {
-        binding.nowPlayingToolbar.setNavigationOnClickListener { bottomSheet.toggleState() }
+        bsBinding.nowPlayingToolbar.setNavigationOnClickListener { bottomSheet.toggleState() }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -69,32 +65,30 @@ abstract class BaseBottomNowPlayingActivity(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun initBottomSheet() {
-        bottomSheet = BottomSheetBehavior.from(findViewById(R.id.bottomSheetLayout))
+    private fun initBottomSheet(backgroundAppbar: View) {
         if (bottomSheet.state == BottomSheetBehavior.STATE_EXPANDED) {
-            binding.nowPlayingSheetCollapsed.alpha = 0f
-            binding.nowPlayingSheetExpanded.alpha = 1f
+            bsBinding.nowPlayingSheetCollapsed.alpha = 0f
+            bsBinding.nowPlayingSheetExpanded.alpha = 1f
         } else if (bottomSheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
-            binding.nowPlayingSheetCollapsed.alpha = 1f
-            binding.nowPlayingSheetExpanded.alpha = 0f
+            bsBinding.nowPlayingSheetCollapsed.alpha = 1f
+            bsBinding.nowPlayingSheetExpanded.alpha = 0f
         }
 
-        val bgAppbar = findViewById<View>(backgroundAppbarId)
         bottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 val inverseOffset = 1 - slideOffset
-                binding.nowPlayingSheetCollapsed.alpha = inverseOffset
-                binding.nowPlayingSheetExpanded.alpha = slideOffset
-                bgAppbar.alpha = inverseOffset
+                bsBinding.nowPlayingSheetCollapsed.alpha = inverseOffset
+                bsBinding.nowPlayingSheetExpanded.alpha = slideOffset
+                backgroundAppbar.alpha = inverseOffset
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                bgAppbar.visibility =
+                backgroundAppbar.visibility =
                     if (newState == BottomSheetBehavior.STATE_EXPANDED) View.GONE else View.VISIBLE
             }
         })
-        binding.nowPlayingSheetExpanded.setOnTouchListener { _, _ -> true }
-        binding.nowPlayingToolbar.setOnClickListener {
+        bsBinding.nowPlayingSheetExpanded.setOnTouchListener { _, _ -> true }
+        bsBinding.nowPlayingToolbar.setOnClickListener {
             bottomSheet.toggleState()
         }
     }
@@ -115,7 +109,7 @@ abstract class BaseBottomNowPlayingActivity(
             }
         }
 
-        binding.bottomSheetBottomNav.setOnNavigationItemSelectedListener {
+        bsBinding.bottomSheetBottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.bottomSheetNowPlayingButton -> showFragment(bottomSheetFragments[0])
                 R.id.bottomSheetQueueButton -> showFragment(bottomSheetFragments[1])
@@ -188,9 +182,9 @@ abstract class BaseBottomNowPlayingActivity(
     open fun onMusicServiceDisconnected() {}
 
     private fun updateMetadata(metadata: MediaMetadataCompat) {
-        GlideUtil.load(this, metadata.description.iconUri, binding.bottomNowPlayingCover)
-        binding.bottomNowPlayingTitle.text = metadata.description.title
-        binding.bottomNowPlayingArtist.text = metadata.description.subtitle
+        GlideUtil.load(this, metadata.description.iconUri, bsBinding.bottomNowPlayingCover)
+        bsBinding.bottomNowPlayingTitle.text = metadata.description.title
+        bsBinding.bottomNowPlayingArtist.text = metadata.description.subtitle
     }
 
 }

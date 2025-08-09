@@ -14,13 +14,12 @@ import sugtao4423.koelplayer.adapter.AlbumMusicAdapter
 import sugtao4423.koelplayer.adapter.BaseMusicAdapter
 import sugtao4423.koelplayer.adapter.PlaylistMusicAdapter
 import sugtao4423.koelplayer.databinding.ActivitySongListBinding
+import sugtao4423.koelplayer.databinding.BottomSheetBinding
 import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.playmusic.MusicService
 
-class SongListActivity : BaseBottomNowPlayingActivity(
-    R.layout.activity_song_list, R.id.songListToolbar
-) {
+class SongListActivity : BaseBottomNowPlayingActivity() {
 
     companion object {
         const val KEY_INTENT_TYPE = "songsType"
@@ -37,7 +36,13 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         private const val DATA_KEY_SONGS = "songs"
     }
 
-    private lateinit var binding: ActivitySongListBinding
+    private val binding: ActivitySongListBinding by lazy {
+        ActivitySongListBinding.inflate(layoutInflater)
+    }
+
+    override val bsBinding: BottomSheetBinding by lazy {
+        binding.songListBottomSheet
+    }
 
     private val intentType by lazy {
         intent.getIntExtra(KEY_INTENT_TYPE, -1)
@@ -47,9 +52,10 @@ class SongListActivity : BaseBottomNowPlayingActivity(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySongListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.songListToolbar)
         binding.songListToolbar.setNavigationOnClickListener { finish() }
+        initViews(binding.songListToolbar)
 
         val data = when (intentType) {
             INTENT_TYPE_ALBUM -> getAlbumData()

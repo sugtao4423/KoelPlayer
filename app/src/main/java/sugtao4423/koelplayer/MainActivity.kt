@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import sugtao4423.koelplayer.databinding.ActivityMainBinding
+import sugtao4423.koelplayer.databinding.BottomSheetBinding
 import sugtao4423.koelplayer.fragment.AlbumFragment
 import sugtao4423.koelplayer.fragment.PlaylistFragment
 import sugtao4423.koelplayer.musicdb.MusicDB
@@ -21,15 +22,18 @@ import sugtao4423.koelplayer.playmusic.MusicService
 
 class MainActivity : BaseBottomNowPlayingActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
+    override val bsBinding: BottomSheetBinding by lazy { binding.mainBottomSheet }
 
     private lateinit var albumFragment: AlbumFragment
     private lateinit var playlistFragment: PlaylistFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setSupportActionBar(binding.mainToolbar)
+        initViews(binding.mainAppbar)
 
         val koelToken = (applicationContext as App).koelToken
         if (koelToken.isEmpty()) {
