@@ -26,7 +26,7 @@ class Koel4j(private var host: String, private val token: String = "") {
         val endpoint = KoelEndpoints.authentication
         val body = mapOf(
             "email" to email,
-            "password" to password
+            "password" to password,
         )
         val json = postKoelApi(endpoint, body)
         return json?.getString("token")
@@ -64,18 +64,13 @@ class Koel4j(private var host: String, private val token: String = "") {
     }
 
     private fun postKoelApi(
-        endpoint: String,
-        body: Map<String, String> = mapOf(),
-        isResultArray: Boolean = false
+        endpoint: String, body: Map<String, String> = mapOf(), isResultArray: Boolean = false
     ): JSONObject? {
         return accessKoelApi("POST", endpoint, body, isResultArray)
     }
 
     private fun accessKoelApi(
-        method: String,
-        endpoint: String,
-        body: Map<String, String>,
-        isResultArray: Boolean
+        method: String, endpoint: String, body: Map<String, String>, isResultArray: Boolean
     ): JSONObject? {
         val headers = mapOf(
             "Content-Type" to "application/json",

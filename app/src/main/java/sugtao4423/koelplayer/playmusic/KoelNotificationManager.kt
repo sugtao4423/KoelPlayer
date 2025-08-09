@@ -9,7 +9,11 @@ import android.support.v4.media.session.MediaSessionCompat
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sugtao4423.koelplayer.R
 
 class KoelNotificationManager(
@@ -50,16 +54,24 @@ class KoelNotificationManager(
         notificationManager.setPlayer(player)
     }
 
-    private inner class DescriptionAdapter(private val controller: MediaControllerCompat) : PlayerNotificationManager.MediaDescriptionAdapter {
+    private inner class DescriptionAdapter(private val controller: MediaControllerCompat) :
+        PlayerNotificationManager.MediaDescriptionAdapter {
 
         var currentIconUri: Uri? = null
         var currentBitmap: Bitmap? = null
 
-        override fun createCurrentContentIntent(player: Player): PendingIntent? = controller.sessionActivity
-        override fun getCurrentContentText(player: Player) = controller.metadata.description.subtitle.toString()
-        override fun getCurrentContentTitle(player: Player) = controller.metadata.description.title.toString()
+        override fun createCurrentContentIntent(player: Player): PendingIntent? =
+            controller.sessionActivity
 
-        override fun getCurrentLargeIcon(player: Player, callback: PlayerNotificationManager.BitmapCallback): Bitmap? {
+        override fun getCurrentContentText(player: Player) =
+            controller.metadata.description.subtitle.toString()
+
+        override fun getCurrentContentTitle(player: Player) =
+            controller.metadata.description.title.toString()
+
+        override fun getCurrentLargeIcon(
+            player: Player, callback: PlayerNotificationManager.BitmapCallback
+        ): Bitmap? {
             val iconUri = controller.metadata.description.iconUri
             return if (currentIconUri != iconUri || currentBitmap == null) {
                 currentIconUri = iconUri

@@ -65,11 +65,20 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
                     when (menuItem.itemId) {
                         R.id.songMorePlayNext -> musicService?.let {
                             it.addQueueNext(songs)
-                            Toast.makeText(context.applicationContext, R.string.play_next_album, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context.applicationContext,
+                                R.string.play_next_album,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+
                         R.id.songMoreAddQueue -> musicService?.let {
                             it.addQueueLast(songs)
-                            Toast.makeText(context.applicationContext, R.string.add_queue_album, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context.applicationContext,
+                                R.string.add_queue_album,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                     true

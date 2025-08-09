@@ -1,6 +1,10 @@
 package sugtao4423.koelplayer.download
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
@@ -19,7 +23,7 @@ import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.MainActivity
 import sugtao4423.koelplayer.R
 import java.io.File
-import java.util.*
+import java.util.Arrays
 
 class KoelDLService : Service() {
 
@@ -47,7 +51,11 @@ class KoelDLService : Service() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                NOTIFICATION_CHANNEL_ID,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationManager.createNotificationChannel(channel)
         }
 
@@ -108,12 +116,16 @@ class KoelDLService : Service() {
         }
     }
 
-    private fun notificationBuilder(progressMax: Int, progress: Int, songTitle: String = ""): NotificationCompat.Builder {
+    private fun notificationBuilder(
+        progressMax: Int, progress: Int, songTitle: String = ""
+    ): NotificationCompat.Builder {
         val appIntent = Intent(this, MainActivity::class.java).apply {
             action = Intent.ACTION_MAIN
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
-        val pendingIntent = PendingIntent.getActivity(applicationContext, NOTIFICATION_ID, appIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext, NOTIFICATION_ID, appIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
         return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID).run {
             setContentTitle(songTitle)
             if (progressMax >= 0 || progress >= 0) {

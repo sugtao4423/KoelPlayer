@@ -5,5 +5,5 @@ import java.io.Serializable
 data class Artist(
     val id: Int,
     val name: String,
-    val image: String?
+    val image: String?,
 ) : Serializable

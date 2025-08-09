@@ -69,11 +69,20 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>
                     when (menuItem.itemId) {
                         R.id.songMorePlayNext -> musicService?.let {
                             it.addQueueNext(songs)
-                            Toast.makeText(context.applicationContext, R.string.play_next_playlist, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context.applicationContext,
+                                R.string.play_next_playlist,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
+
                         R.id.songMoreAddQueue -> musicService?.let {
                             it.addQueueLast(songs)
-                            Toast.makeText(context.applicationContext, R.string.add_queue_playlist, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context.applicationContext,
+                                R.string.add_queue_playlist,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                     true

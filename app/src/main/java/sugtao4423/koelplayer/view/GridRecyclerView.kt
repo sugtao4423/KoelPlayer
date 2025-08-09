@@ -24,19 +24,28 @@ class GridRecyclerView @JvmOverloads constructor(
 
 }
 
-class GridSpacingItemDecoration(private val spanCount: Int, private val spacing: Int) : RecyclerView.ItemDecoration() {
+class GridSpacingItemDecoration(private val spanCount: Int, private val spacing: Int) :
+    RecyclerView.ItemDecoration() {
 
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+    override fun getItemOffsets(
+        outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+    ) {
         val position = parent.getChildAdapterPosition(view)
         val column = position % spanCount
 
         when {
-            column == 0 -> outRect.left = spacing
+            column == 0 -> {
+                outRect.left = spacing
+            }
+
             (column + 1) == spanCount -> {
                 outRect.left = spacing / 2
                 outRect.right = spacing
             }
-            else -> outRect.left = spacing / 2
+
+            else -> {
+                outRect.left = spacing / 2
+            }
         }
 
         if (position < spanCount) {

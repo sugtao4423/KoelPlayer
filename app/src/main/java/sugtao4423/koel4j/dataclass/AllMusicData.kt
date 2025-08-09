@@ -4,5 +4,5 @@ data class AllMusicData(
     val albums: List<Album>,
     val artists: List<Artist>,
     val songs: List<Song>,
-    val playlists: List<Playlist>
+    val playlists: List<Playlist>,
 )

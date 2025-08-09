@@ -14,7 +14,11 @@ import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.session.MediaButtonReceiver
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
@@ -70,7 +74,9 @@ class MusicService : MediaBrowserServiceCompat() {
             action = Intent.ACTION_MAIN
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
-        val sessionActivityPendingIntent = PendingIntent.getActivity(this, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val sessionActivityPendingIntent = PendingIntent.getActivity(
+            this, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
         mediaSession = MediaSessionCompat(this, "MusicService").apply {
             setSessionActivity(sessionActivityPendingIntent)
             isActive = true
@@ -78,7 +84,9 @@ class MusicService : MediaBrowserServiceCompat() {
         sessionToken = mediaSession.sessionToken
 
         val timelineQueueNavigator = object : TimelineQueueNavigator(mediaSession) {
-            override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
+            override fun getMediaDescription(
+                player: Player, windowIndex: Int
+            ): MediaDescriptionCompat {
                 return songQueue[windowIndex].first.description
             }
         }
@@ -98,9 +106,13 @@ class MusicService : MediaBrowserServiceCompat() {
 
     private fun initNotificationManager() {
         val playerNotificationListener = object : PlayerNotificationManager.NotificationListener {
-            override fun onNotificationPosted(notificationId: Int, notification: Notification, ongoing: Boolean) {
+            override fun onNotificationPosted(
+                notificationId: Int, notification: Notification, ongoing: Boolean
+            ) {
                 if (ongoing && !isForegroundService) {
-                    ContextCompat.startForegroundService(applicationContext, Intent(applicationContext, this@MusicService.javaClass))
+                    ContextCompat.startForegroundService(
+                        applicationContext, Intent(applicationContext, this@MusicService.javaClass)
+                    )
                     startForeground(notificationId, notification)
                     isForegroundService = true
                 }
@@ -113,7 +125,9 @@ class MusicService : MediaBrowserServiceCompat() {
             }
         }
 
-        notificationManager = KoelNotificationManager(this, mediaSession.sessionToken, playerNotificationListener)
+        notificationManager = KoelNotificationManager(
+            this, mediaSession.sessionToken, playerNotificationListener
+        )
         notificationManager.setPlayer(exoPlayer)
     }
 
@@ -137,11 +151,15 @@ class MusicService : MediaBrowserServiceCompat() {
         val musicService = this@MusicService
     }
 
-    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): BrowserRoot {
+    override fun onGetRoot(
+        clientPackageName: String, clientUid: Int, rootHints: Bundle?
+    ): BrowserRoot {
         return BrowserRoot("media_root_id", null)
     }
 
-    override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
+    override fun onLoadChildren(
+        parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>
+    ) {
         result.sendResult(null)
     }
 
@@ -248,7 +266,8 @@ class MusicService : MediaBrowserServiceCompat() {
         addQueue(songs, songQueue.size)
         if (isShuffle()) {
             for (i in songs.indices) {
-                val insertedPos = shuffleOrder.getOrder().indexOf(songQueue.lastIndex - songs.lastIndex + i)
+                val insertedPos =
+                    shuffleOrder.getOrder().indexOf(songQueue.lastIndex - songs.lastIndex + i)
                 moveSong(insertedPos, songQueue.lastIndex)
             }
         }
@@ -277,7 +296,12 @@ class MusicService : MediaBrowserServiceCompat() {
     fun playingMetadata(): MediaMetadataCompat? = mediaSession.controller.metadata
 
     fun isPlaying(): Boolean = exoPlayer.isPlaying
-    fun playingPosition(): Int = if (isShuffle()) shuffleOrder.getOrder().indexOf(exoPlayer.currentWindowIndex) else exoPlayer.currentWindowIndex
+    fun playingPosition(): Int = if (isShuffle()) {
+        shuffleOrder.getOrder().indexOf(exoPlayer.currentWindowIndex)
+    } else {
+        exoPlayer.currentWindowIndex
+    }
+
     fun togglePlay() = if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play()
     fun prev() = if (exoPlayer.currentPosition < 3000) exoPlayer.previous() else exoPlayer.seekTo(0)
     fun next() = exoPlayer.next()
@@ -353,7 +377,9 @@ class MusicService : MediaBrowserServiceCompat() {
             val shuffled = shuffleOrder.getOrder().also {
                 it.add(to, it.removeAt(from))
             }
-            shuffleOrder = ShuffleOrder.DefaultShuffleOrder(shuffled.toIntArray(), shuffled.size.toLong())
+            shuffleOrder = ShuffleOrder.DefaultShuffleOrder(
+                shuffled.toIntArray(), shuffled.size.toLong()
+            )
             exoPlayer.setShuffleOrder(shuffleOrder)
         } else {
             songQueue.add(to, songQueue.removeAt(from))

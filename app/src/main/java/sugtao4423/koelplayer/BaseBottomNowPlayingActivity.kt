@@ -89,7 +89,8 @@ abstract class BaseBottomNowPlayingActivity(
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                bgAppbar.visibility = if (newState == BottomSheetBehavior.STATE_EXPANDED) View.GONE else View.VISIBLE
+                bgAppbar.visibility =
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED) View.GONE else View.VISIBLE
             }
         })
         binding.nowPlayingSheetExpanded.setOnTouchListener { _, _ -> true }

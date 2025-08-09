@@ -2,9 +2,12 @@ package sugtao4423.koelplayer.musicdb
 
 import android.content.Context
 import android.database.Cursor
-import sugtao4423.koel4j.dataclass.*
-import java.util.*
-import kotlin.collections.ArrayList
+import sugtao4423.koel4j.dataclass.Album
+import sugtao4423.koel4j.dataclass.AllMusicData
+import sugtao4423.koel4j.dataclass.Artist
+import sugtao4423.koel4j.dataclass.Playlist
+import sugtao4423.koel4j.dataclass.Song
+import java.util.Date
 
 class MusicDB(private val context: Context) {
 

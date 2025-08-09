@@ -104,7 +104,12 @@ class SettingsActivity : AppCompatActivity() {
             val downloadedSongs = allSongs.filter { dlUtil.isDownloaded(it) }
             val downloadedSize = dlUtil.getSongFilesSize(downloadedSongs)
 
-            val message = getString(R.string.preferences_downloaded_info_message, downloadedSongs.size, allSongs.size, downloadedSize)
+            val message = getString(
+                R.string.preferences_downloaded_info_message,
+                downloadedSongs.size,
+                allSongs.size,
+                downloadedSize
+            )
             AlertDialog.Builder(requireContext()).apply {
                 setTitle(R.string.preferences_downloaded_info)
                 setMessage(message)

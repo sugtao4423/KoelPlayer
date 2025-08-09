@@ -1,7 +1,7 @@
 package sugtao4423.koel4j.dataclass
 
 import java.io.Serializable
-import java.util.*
+import java.util.Date
 
 data class Album(
     val id: Int,
@@ -9,5 +9,5 @@ data class Album(
     val name: String,
     val cover: String,
     val createdAt: Date,
-    val isCompilation: Boolean
+    val isCompilation: Boolean,
 ) : Serializable

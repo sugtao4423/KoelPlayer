@@ -29,7 +29,9 @@ class BSQueueFragment : Fragment(), BSFragmentInterface {
         queueAdapter = QueueAdapter()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         _binding = BottomSheetQueueBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -86,7 +88,9 @@ class BSQueueFragment : Fragment(), BSFragmentInterface {
     }
 
     inner class QueueLinearLayoutManager : LinearLayoutManager(context) {
-        override fun smoothScrollToPosition(recyclerView: RecyclerView?, state: RecyclerView.State?, position: Int) {
+        override fun smoothScrollToPosition(
+            recyclerView: RecyclerView?, state: RecyclerView.State?, position: Int
+        ) {
             val linearSmoothScroller = object : LinearSmoothScroller(recyclerView?.context) {
                 override fun getVerticalSnapPreference(): Int {
                     return SNAP_TO_START
@@ -100,7 +104,11 @@ class BSQueueFragment : Fragment(), BSFragmentInterface {
     private val moveSwipeCallback = object : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
     ) {
-        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
             isScrollTop = false
             val fromPosition = viewHolder.adapterPosition
             val toPosition = target.adapterPosition

@@ -36,9 +36,18 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         context = parent.context!!
         return when (viewType) {
-            VIEW_TYPE_ALBUM -> AlbumMusicViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_album_song, parent, false))
-            VIEW_TYPE_PLAYLIST -> PlaylistMusicViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_playlist_song, parent, false))
-            else -> QueueMusicViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_queue_song, parent, false))
+            VIEW_TYPE_ALBUM -> AlbumMusicViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item_album_song, parent, false)
+            )
+
+            VIEW_TYPE_PLAYLIST -> PlaylistMusicViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_playlist_song, parent, false)
+            )
+
+            else -> QueueMusicViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item_queue_song, parent, false)
+            )
         }
     }
 
@@ -67,6 +76,7 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
                 holder.duration.text = length
                 holder.moreButton.setOnClickListener { clickMoreButton(it, position) }
             }
+
             VIEW_TYPE_PLAYLIST -> {
                 holder as PlaylistMusicViewHolder
                 GlideUtil.load(holder.itemView, song.album.cover, holder.cover)
@@ -74,6 +84,7 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
                 holder.duration.text = length
                 holder.moreButton.setOnClickListener { clickMoreButton(it, position) }
             }
+
             VIEW_TYPE_QUEUE -> {
                 holder as QueueMusicViewHolder
                 GlideUtil.load(holder.itemView, song.album.cover, holder.cover)
@@ -131,11 +142,16 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
                 when (menuItem.itemId) {
                     R.id.songMorePlayNext -> musicService?.let {
                         it.addQueueNext(listOf(songs[position]))
-                        Toast.makeText(context.applicationContext, R.string.play_next_song, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context.applicationContext, R.string.play_next_song, Toast.LENGTH_SHORT
+                        ).show()
                     }
+
                     R.id.songMoreAddQueue -> musicService?.let {
                         it.addQueueLast(listOf(songs[position]))
-                        Toast.makeText(context.applicationContext, R.string.add_queue_song, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context.applicationContext, R.string.add_queue_song, Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
                 true

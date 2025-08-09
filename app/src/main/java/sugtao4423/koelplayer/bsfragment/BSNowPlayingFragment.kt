@@ -16,7 +16,6 @@ import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.databinding.BottomSheetNowPlayingBinding
 import sugtao4423.koelplayer.playmusic.MusicService
-import sugtao4423.koelplayer.view.SquareImageButton
 
 class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
 
@@ -27,7 +26,9 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
     private lateinit var watchCurrentTimeHandler: Handler
     private lateinit var watchCurrentTimeRunnable: Runnable
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         _binding = BottomSheetNowPlayingBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -182,10 +183,12 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
                     binding.nowPlayingRepeatButton.clearColorFilter()
                     binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
                 }
+
                 Player.REPEAT_MODE_ONE -> {
                     binding.nowPlayingRepeatButton.clearColorFilter()
                     binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat_one)
                 }
+
                 Player.REPEAT_MODE_OFF -> {
                     binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
                     binding.nowPlayingRepeatButton.setColorFilter(Color.GRAY)

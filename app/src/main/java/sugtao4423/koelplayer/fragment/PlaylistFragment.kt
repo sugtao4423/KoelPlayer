@@ -9,7 +9,7 @@ import sugtao4423.koel4j.dataclass.AllMusicData
 import sugtao4423.koelplayer.adapter.PlaylistAdapter
 import sugtao4423.koelplayer.databinding.FragmentPlaylistBinding
 import sugtao4423.koelplayer.playmusic.MusicService
-import java.util.*
+import java.util.Locale
 
 class PlaylistFragment : Fragment() {
 
@@ -36,7 +36,9 @@ class PlaylistFragment : Fragment() {
             playlistAdapter.playlists = value.playlists
         }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -61,12 +63,14 @@ class PlaylistFragment : Fragment() {
         } else {
             val searchText = filterText.lowercase(Locale.ROOT)
             allMusicData!!.playlists.filter { playlist ->
-                playlist.name.lowercase(Locale.ROOT).contains(searchText) ||
-                        playlist.songs.map { songId -> allMusicData!!.songs.find { it.id == songId }!! }.any {
-                            it.title.lowercase(Locale.ROOT).contains(searchText) ||
-                                    it.artist.name.lowercase(Locale.ROOT).contains(searchText) ||
-                                    it.album.name.lowercase(Locale.ROOT).contains(searchText)
-                        }
+                playlist.name.lowercase(Locale.ROOT)
+                    .contains(searchText) || playlist.songs.map { songId -> allMusicData!!.songs.find { it.id == songId }!! }
+                    .any {
+                        it.title.lowercase(Locale.ROOT)
+                            .contains(searchText) || it.artist.name.lowercase(Locale.ROOT)
+                            .contains(searchText) || it.album.name.lowercase(Locale.ROOT)
+                            .contains(searchText)
+                    }
             }
         }
         playlistAdapter.notifyDataSetChanged()

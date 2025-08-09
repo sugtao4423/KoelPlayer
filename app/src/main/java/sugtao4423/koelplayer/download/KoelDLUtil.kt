@@ -30,7 +30,8 @@ class KoelDLUtil(context: Context) {
     }
 
     fun deleteUnusedMusicFiles(songs: List<Song>) {
-        val deleteFiles = ArrayList(downloadDirectory.listFiles()!!.filterNotNull().map { it.absolutePath })
+        val deleteFiles =
+            ArrayList(downloadDirectory.listFiles()!!.filterNotNull().map { it.absolutePath })
         songs.forEach {
             val songFilePath = getSongFilePath(it)
             deleteFiles.remove(songFilePath)

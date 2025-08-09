@@ -9,7 +9,7 @@ import sugtao4423.koel4j.dataclass.AllMusicData
 import sugtao4423.koelplayer.adapter.AlbumAdapter
 import sugtao4423.koelplayer.databinding.FragmentAlbumBinding
 import sugtao4423.koelplayer.playmusic.MusicService
-import java.util.*
+import java.util.Locale
 
 class AlbumFragment : Fragment() {
 
@@ -35,7 +35,9 @@ class AlbumFragment : Fragment() {
             albumAdapter.albums = value.albums
         }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentAlbumBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -60,11 +62,13 @@ class AlbumFragment : Fragment() {
         } else {
             val searchText = filterText.lowercase(Locale.ROOT)
             allMusicData!!.albums.filter { album ->
-                album.name.lowercase(Locale.ROOT).contains(searchText) ||
-                        allMusicData!!.songs.filter { it.album.id == album.id }.any {
-                            it.title.lowercase(Locale.ROOT).contains(searchText) ||
-                                    it.artist.name.lowercase(Locale.ROOT).contains(searchText)
-                        }
+                album.name.lowercase(Locale.ROOT)
+                    .contains(searchText) || allMusicData!!.songs.filter { it.album.id == album.id }
+                    .any {
+                        it.title.lowercase(Locale.ROOT)
+                            .contains(searchText) || it.artist.name.lowercase(Locale.ROOT)
+                            .contains(searchText)
+                    }
             }
         }
         albumAdapter.notifyDataSetChanged()
