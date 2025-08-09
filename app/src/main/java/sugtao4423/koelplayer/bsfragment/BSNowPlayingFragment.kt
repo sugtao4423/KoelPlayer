@@ -101,11 +101,11 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
     }
 
     private fun initControlButtons() {
-        requireView().findViewById<SquareImageButton>(R.id.nowPlayingShuffleButton).setOnClickListener(controlButtonsListener)
-        requireView().findViewById<SquareImageButton>(R.id.nowPlayingPrevButton).setOnClickListener(controlButtonsListener)
-        requireView().findViewById<SquareImageButton>(R.id.nowPlayingPlayButton).setOnClickListener(controlButtonsListener)
-        requireView().findViewById<SquareImageButton>(R.id.nowPlayingNextButton).setOnClickListener(controlButtonsListener)
-        requireView().findViewById<SquareImageButton>(R.id.nowPlayingRepeatButton).setOnClickListener(controlButtonsListener)
+        binding.nowPlayingShuffleButton.setOnClickListener(controlButtonsListener)
+        binding.nowPlayingPrevButton.setOnClickListener(controlButtonsListener)
+        binding.nowPlayingPlayButton.setOnClickListener(controlButtonsListener)
+        binding.nowPlayingNextButton.setOnClickListener(controlButtonsListener)
+        binding.nowPlayingRepeatButton.setOnClickListener(controlButtonsListener)
     }
 
     private fun initMusicTimes() {
