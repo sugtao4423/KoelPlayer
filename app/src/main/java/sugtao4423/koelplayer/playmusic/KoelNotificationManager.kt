@@ -7,7 +7,6 @@ import android.net.Uri
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import com.bumptech.glide.Glide
-import com.google.android.exoplayer2.DefaultControlDispatcher
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import kotlinx.coroutines.*
@@ -32,22 +31,19 @@ class KoelNotificationManager(
     init {
         val mediaController = MediaControllerCompat(context, sessionToken)
 
-        notificationManager = PlayerNotificationManager.createWithNotificationChannel(
-            context,
-            NOW_PLAYING_CHANNEL_ID,
-            R.string.notification_channel,
-            R.string.notification_channel_description,
-            NOW_PLAYING_NOTIFICATION_ID,
-            DescriptionAdapter(mediaController),
-            notificationListener
-        ).apply {
-            setUsePreviousActionInCompactView(true)
-            setUseNextActionInCompactView(true)
-            setUseStopAction(true)
-            setMediaSessionToken(sessionToken)
-            setSmallIcon(R.drawable.ic_notification_playing)
-            setControlDispatcher(DefaultControlDispatcher(0, 0))
-        }
+        notificationManager = PlayerNotificationManager.Builder(
+            context, NOW_PLAYING_NOTIFICATION_ID, NOW_PLAYING_CHANNEL_ID
+        ).setChannelNameResourceId(R.string.notification_channel)
+            .setChannelDescriptionResourceId(R.string.notification_channel_description)
+            .setMediaDescriptionAdapter(DescriptionAdapter(mediaController))
+            .setNotificationListener(notificationListener).build().apply {
+                setUsePreviousActionInCompactView(true)
+                setUseNextActionInCompactView(true)
+                setUseStopAction(true)
+                setMediaSessionToken(sessionToken)
+                setSmallIcon(R.drawable.ic_notification_playing)
+//                setControlDispatcher(DefaultControlDispatcher(0, 0))
+            }
     }
 
     fun setPlayer(player: Player?) {

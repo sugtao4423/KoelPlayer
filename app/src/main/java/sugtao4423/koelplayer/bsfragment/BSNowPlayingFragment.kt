@@ -6,21 +6,31 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.Player
-import kotlinx.android.synthetic.main.bottom_sheet_now_playing.*
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
+import sugtao4423.koelplayer.databinding.BottomSheetNowPlayingBinding
 import sugtao4423.koelplayer.playmusic.MusicService
 import sugtao4423.koelplayer.view.SquareImageButton
 
-class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFragmentInterface {
+class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
+
+    private var _binding: BottomSheetNowPlayingBinding? = null
+    private val binding get() = _binding!!
 
     private var musicService: MusicService? = null
     private lateinit var watchCurrentTimeHandler: Handler
     private lateinit var watchCurrentTimeRunnable: Runnable
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = BottomSheetNowPlayingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,6 +47,11 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
     override fun onStop() {
         super.onStop()
         watchCurrentTimeHandler.removeCallbacks(watchCurrentTimeRunnable)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onDestroy() {
@@ -63,26 +78,26 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
 
     @SuppressLint("SetTextI18n")
     override fun updateMetadata(metadata: MediaMetadataCompat) {
-        GlideUtil.load(this, metadata.description.iconUri, nowPlayingCover)
-        nowPlayingTitle.text = metadata.description.title
-        nowPlayingArtist.text = metadata.description.subtitle
+        GlideUtil.load(this, metadata.description.iconUri, binding.nowPlayingCover)
+        binding.nowPlayingTitle.text = metadata.description.title
+        binding.nowPlayingArtist.text = metadata.description.subtitle
 
         if (musicService == null) {
-            nowPlayingTotalTime.text = "00:00"
-            nowPlayingCurrentTime.text = "00:00"
+            binding.nowPlayingTotalTime.text = "00:00"
+            binding.nowPlayingCurrentTime.text = "00:00"
         } else {
             val duration = musicService!!.duration()
             val currentPosition = musicService!!.currentPosition()
-            nowPlayingTotalTime.text = duration.toTimeFormat()
-            nowPlayingSeek.max = (duration / 1000).toInt()
-            nowPlayingCurrentTime.text = currentPosition.toTimeFormat()
-            nowPlayingSeek.progress = (currentPosition / 1000).toInt()
+            binding.nowPlayingTotalTime.text = duration.toTimeFormat()
+            binding.nowPlayingSeek.max = (duration / 1000).toInt()
+            binding.nowPlayingCurrentTime.text = currentPosition.toTimeFormat()
+            binding.nowPlayingSeek.progress = (currentPosition / 1000).toInt()
         }
     }
 
     private fun initTextViewMarquee() {
-        nowPlayingTitle.isSelected = true
-        nowPlayingArtist.isSelected = true
+        binding.nowPlayingTitle.isSelected = true
+        binding.nowPlayingArtist.isSelected = true
     }
 
     private fun initControlButtons() {
@@ -94,17 +109,17 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
     }
 
     private fun initMusicTimes() {
-        nowPlayingSeek.setOnSeekBarChangeListener(seekBarListener)
+        binding.nowPlayingSeek.setOnSeekBarChangeListener(seekBarListener)
         watchCurrentTimeHandler = Handler(Looper.getMainLooper())
         watchCurrentTimeRunnable = Runnable {
             musicService?.let {
                 val duration = it.duration()
                 val currentPosition = it.currentPosition()
-                nowPlayingTotalTime.text = it.duration().toTimeFormat()
-                nowPlayingSeek.max = (duration / 1000).toInt()
-                nowPlayingCurrentTime.text = currentPosition.toTimeFormat()
-                nowPlayingSeek.progress = (currentPosition / 1000).toInt()
-                nowPlayingSeek.secondaryProgress = (it.bufferedPosition() / 1000).toInt()
+                binding.nowPlayingTotalTime.text = it.duration().toTimeFormat()
+                binding.nowPlayingSeek.max = (duration / 1000).toInt()
+                binding.nowPlayingCurrentTime.text = currentPosition.toTimeFormat()
+                binding.nowPlayingSeek.progress = (currentPosition / 1000).toInt()
+                binding.nowPlayingSeek.secondaryProgress = (it.bufferedPosition() / 1000).toInt()
             }
             watchCurrentTimeHandler.postDelayed(watchCurrentTimeRunnable, 500)
         }
@@ -147,33 +162,33 @@ class BSNowPlayingFragment : Fragment(R.layout.bottom_sheet_now_playing), BSFrag
         }
     }
 
-    private val playerEventListener = object : Player.EventListener {
+    private val playerEventListener = object : Player.Listener {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             val res = if (isPlaying) R.drawable.ic_playing_pause else R.drawable.ic_playing_play
-            nowPlayingPlayButton.setImageResource(res)
+            binding.nowPlayingPlayButton.setImageResource(res)
         }
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
             if (shuffleModeEnabled) {
-                nowPlayingShuffleButton.clearColorFilter()
+                binding.nowPlayingShuffleButton.clearColorFilter()
             } else {
-                nowPlayingShuffleButton.setColorFilter(Color.GRAY)
+                binding.nowPlayingShuffleButton.setColorFilter(Color.GRAY)
             }
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
             when (repeatMode) {
                 Player.REPEAT_MODE_ALL -> {
-                    nowPlayingRepeatButton.clearColorFilter()
-                    nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
+                    binding.nowPlayingRepeatButton.clearColorFilter()
+                    binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
                 }
                 Player.REPEAT_MODE_ONE -> {
-                    nowPlayingRepeatButton.clearColorFilter()
-                    nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat_one)
+                    binding.nowPlayingRepeatButton.clearColorFilter()
+                    binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat_one)
                 }
                 Player.REPEAT_MODE_OFF -> {
-                    nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
-                    nowPlayingRepeatButton.setColorFilter(Color.GRAY)
+                    binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
+                    binding.nowPlayingRepeatButton.setColorFilter(Color.GRAY)
                 }
             }
         }

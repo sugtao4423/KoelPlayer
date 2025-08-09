@@ -2,18 +2,22 @@ package sugtao4423.koelplayer.bsfragment
 
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.bottom_sheet_queue.*
-import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.adapter.QueueAdapter
+import sugtao4423.koelplayer.databinding.BottomSheetQueueBinding
 import sugtao4423.koelplayer.playmusic.MusicService
 
-class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterface {
+class BSQueueFragment : Fragment(), BSFragmentInterface {
+
+    private var _binding: BottomSheetQueueBinding? = null
+    private val binding get() = _binding!!
 
     private var musicService: MusicService? = null
     private lateinit var queueAdapter: QueueAdapter
@@ -25,14 +29,19 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
         queueAdapter = QueueAdapter()
     }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = BottomSheetQueueBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        songQueue.apply {
+        binding.songQueue.apply {
             setHasFixedSize(true)
             layoutManager = QueueLinearLayoutManager()
             adapter = queueAdapter
         }
-        ItemTouchHelper(moveSwipeCallback).attachToRecyclerView(songQueue)
+        ItemTouchHelper(moveSwipeCallback).attachToRecyclerView(binding.songQueue)
     }
 
     private val onQueueChangedListener = object : MusicService.OnQueueChangedListener {
@@ -60,10 +69,15 @@ class BSQueueFragment : Fragment(R.layout.bottom_sheet_queue), BSFragmentInterfa
         if (queueAdapter.itemCount > 0 && isScrollTop) {
             val playingPosition = musicService!!.playingPosition()
             if (playingPosition >= 0) {
-                songQueue.smoothScrollToPosition(playingPosition)
+                binding.songQueue.smoothScrollToPosition(playingPosition)
             }
         }
         isScrollTop = true
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onDestroy() {

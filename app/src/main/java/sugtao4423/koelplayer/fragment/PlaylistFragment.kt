@@ -1,16 +1,20 @@
 package sugtao4423.koelplayer.fragment
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_playlist.*
 import sugtao4423.koel4j.dataclass.AllMusicData
-import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.adapter.PlaylistAdapter
+import sugtao4423.koelplayer.databinding.FragmentPlaylistBinding
 import sugtao4423.koelplayer.playmusic.MusicService
 import java.util.*
 
-class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
+class PlaylistFragment : Fragment() {
+
+    private var _binding: FragmentPlaylistBinding? = null
+    private val binding get() = _binding!!
 
     var musicService: MusicService? = null
         set(value) {
@@ -27,16 +31,26 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
             value ?: return
 
             hideLoading = true
-            playlistProgressBar?.visibility = View.GONE
+            binding.playlistProgressBar.visibility = View.GONE
             playlistAdapter.songs = value.songs
             playlistAdapter.playlists = value.playlists
         }
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentPlaylistBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        playlistView.adapter = playlistAdapter
+        binding.playlistView.adapter = playlistAdapter
         if (hideLoading) {
-            playlistProgressBar.visibility = View.GONE
+            binding.playlistProgressBar.visibility = View.GONE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     fun filter(filterText: String) {
@@ -45,13 +59,13 @@ class PlaylistFragment : Fragment(R.layout.fragment_playlist) {
         playlistAdapter.playlists = if (filterText.isEmpty()) {
             allMusicData!!.playlists
         } else {
-            val searchText = filterText.toLowerCase(Locale.ROOT)
+            val searchText = filterText.lowercase(Locale.ROOT)
             allMusicData!!.playlists.filter { playlist ->
-                playlist.name.toLowerCase(Locale.ROOT).contains(searchText) ||
+                playlist.name.lowercase(Locale.ROOT).contains(searchText) ||
                         playlist.songs.map { songId -> allMusicData!!.songs.find { it.id == songId }!! }.any {
-                            it.title.toLowerCase(Locale.ROOT).contains(searchText) ||
-                                    it.artist.name.toLowerCase(Locale.ROOT).contains(searchText) ||
-                                    it.album.name.toLowerCase(Locale.ROOT).contains(searchText)
+                            it.title.lowercase(Locale.ROOT).contains(searchText) ||
+                                    it.artist.name.lowercase(Locale.ROOT).contains(searchText) ||
+                                    it.album.name.lowercase(Locale.ROOT).contains(searchText)
                         }
             }
         }

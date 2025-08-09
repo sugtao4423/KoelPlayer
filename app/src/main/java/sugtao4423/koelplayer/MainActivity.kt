@@ -9,11 +9,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import sugtao4423.koelplayer.databinding.ActivityMainBinding
 import sugtao4423.koelplayer.fragment.AlbumFragment
 import sugtao4423.koelplayer.fragment.PlaylistFragment
 import sugtao4423.koelplayer.musicdb.MusicDB
@@ -21,12 +21,15 @@ import sugtao4423.koelplayer.playmusic.MusicService
 
 class MainActivity : BaseBottomNowPlayingActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+
     private lateinit var albumFragment: AlbumFragment
     private lateinit var playlistFragment: PlaylistFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(mainToolbar)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setSupportActionBar(binding.mainToolbar)
 
         val koelToken = (applicationContext as App).koelToken
         if (koelToken.isEmpty()) {
@@ -42,8 +45,8 @@ class MainActivity : BaseBottomNowPlayingActivity() {
         albumFragment = AlbumFragment()
         playlistFragment = PlaylistFragment()
 
-        mainViewPager.adapter = MainTabAdapter(supportFragmentManager)
-        mainTabLayout.setupWithViewPager(mainViewPager)
+        binding.mainViewPager.adapter = MainTabAdapter(supportFragmentManager)
+        binding.mainTabLayout.setupWithViewPager(binding.mainViewPager)
 
         CoroutineScope(Dispatchers.Main).launch {
             val allMusicData = withContext(Dispatchers.IO) {

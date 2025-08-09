@@ -7,13 +7,13 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_song_list.*
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.Playlist
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.adapter.AlbumMusicAdapter
 import sugtao4423.koelplayer.adapter.BaseMusicAdapter
 import sugtao4423.koelplayer.adapter.PlaylistMusicAdapter
+import sugtao4423.koelplayer.databinding.ActivitySongListBinding
 import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.playmusic.MusicService
@@ -37,6 +37,8 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         private const val DATA_KEY_SONGS = "songs"
     }
 
+    private lateinit var binding: ActivitySongListBinding
+
     private val intentType by lazy {
         intent.getIntExtra(KEY_INTENT_TYPE, -1)
     }
@@ -45,8 +47,9 @@ class SongListActivity : BaseBottomNowPlayingActivity(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setSupportActionBar(songListToolbar)
-        songListToolbar.setNavigationOnClickListener { finish() }
+        binding = ActivitySongListBinding.inflate(layoutInflater)
+        setSupportActionBar(binding.songListToolbar)
+        binding.songListToolbar.setNavigationOnClickListener { finish() }
 
         val data = when (intentType) {
             INTENT_TYPE_ALBUM -> getAlbumData()
@@ -68,13 +71,13 @@ class SongListActivity : BaseBottomNowPlayingActivity(
         val theseSongsAllDownloaded = songs.size == downloadedCount
         val theseSongsFileSize = dlUtil.getSongFilesSize(songs)
 
-        GlideUtil.load(this, coverUrl, songListCover, true)
-        songListTitle.text = title
+        GlideUtil.load(this, coverUrl, binding.songListCover, true)
+        binding.songListTitle.text = title
         supportActionBar!!.title = title
         val songTime = getSongsTime(songs)
-        songListArtist.text = if (artist == null) songTime else "$artist・$songTime"
+        binding.songListArtist.text = if (artist == null) songTime else "$artist・$songTime"
         if (theseSongsAllDownloaded) {
-            songListDlSize.text = theseSongsFileSize
+            binding.songListDlSize.text = theseSongsFileSize
         }
 
         adapter = when (intentType) {
@@ -86,7 +89,7 @@ class SongListActivity : BaseBottomNowPlayingActivity(
             }
         }
 
-        songListMusicList.apply {
+        binding.songListMusicList.apply {
             layoutManager = LinearLayoutManager(this@SongListActivity)
             adapter = this@SongListActivity.adapter
         }
