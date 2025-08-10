@@ -13,18 +13,22 @@ import java.util.Date
 class MusicDB(private val context: Context) {
 
     companion object {
-        const val SQL_SELECT_SONGS = "SELECT songs.id, songs.title, songs.length, songs.track, songs.disc, songs.createdAt, " +
-                "albums.id AS albumId, albums.name AS albumName, albums.cover AS albumCover, albums.createdAt AS albumCreatedAt, albums.isCompilation AS albumIsCompilation, " +
-                "songArtists.id AS songArtistId, songArtists.name AS songArtistName, songArtists.image AS songArtistImage, " +
-                "albumArtists.id AS albumArtistId, albumArtists.name AS albumArtistName, albumArtists.image AS albumArtistImage " +
-                "FROM songs " +
-                "INNER JOIN albums ON songs.albumId = albums.id " +
-                "INNER JOIN artists AS songArtists ON songs.artistId = songArtists.id " +
-                "INNER JOIN artists AS albumArtists ON albums.artistId = albumArtists.id"
-        const val SQL_SELECT_ALBUMS = "SELECT albums.id, albums.name, albums.cover, albums.createdAt, albums.isCompilation, " +
-                "albumArtists.id AS albumArtistId, albumArtists.name AS albumArtistName, albumArtists.image AS albumArtistImage " +
-                "FROM albums " +
-                "INNER JOIN artists AS albumArtists ON albums.artistId = albumArtists.id"
+        const val SQL_SELECT_SONGS = """
+            SELECT songs.id, songs.title, songs.length, songs.track, songs.disc, songs.createdAt,
+            albums.id AS albumId, albums.name AS albumName, albums.cover AS albumCover, albums.createdAt AS albumCreatedAt, albums.isCompilation AS albumIsCompilation,
+            songArtists.id AS songArtistId, songArtists.name AS songArtistName, songArtists.image AS songArtistImage,
+            albumArtists.id AS albumArtistId, albumArtists.name AS albumArtistName, albumArtists.image AS albumArtistImage
+            FROM songs
+            INNER JOIN albums ON songs.albumId = albums.id
+            INNER JOIN artists AS songArtists ON songs.artistId = songArtists.id
+            INNER JOIN artists AS albumArtists ON albums.artistId = albumArtists.id
+        """
+        const val SQL_SELECT_ALBUMS = """
+            SELECT albums.id, albums.name, albums.cover, albums.createdAt, albums.isCompilation,
+            albumArtists.id AS albumArtistId, albumArtists.name AS albumArtistName, albumArtists.image AS albumArtistImage
+            FROM albums
+            INNER JOIN artists AS albumArtists ON albums.artistId = albumArtists.id
+        """
         const val SQL_SELECT_ARTISTS = "SELECT * FROM artists"
         const val SQL_SELECT_PLAYLISTS = "SELECT * FROM playlists"
     }

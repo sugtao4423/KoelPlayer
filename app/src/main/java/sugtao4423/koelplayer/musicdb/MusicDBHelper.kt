@@ -7,14 +7,26 @@ import android.database.sqlite.SQLiteOpenHelper
 class MusicDBHelper(context: Context) : SQLiteOpenHelper(context, "MusicDB", null, 1) {
 
     companion object {
-        private const val CREATE_ALBUM = "CREATE TABLE albums (" +
-                "id TEXT, artistId TEXT, name TEXT, cover TEXT, createdAt INTEGER, isCompilation TEXT)"
-        private const val CREATE_ARTIST = "CREATE TABLE artists (" +
-                "id TEXT, name TEXT, image TEXT)"
-        private const val CREATE_SONG = "CREATE TABLE songs (" +
-                "id TEXT, albumId TEXT, artistId TEXT, title TEXT, length REAL, track INTEGER, disc INTEGER, createdAt INTEGER)"
-        private const val CREATE_PLAYLIST = "CREATE TABLE playlists (" +
-                "id TEXT, name TEXT, songs TEXT)"
+        private const val CREATE_ALBUM = """
+            CREATE TABLE albums (
+                id TEXT, artistId TEXT, name TEXT, cover TEXT, createdAt INTEGER, isCompilation TEXT
+            )
+        """
+        private const val CREATE_ARTIST = """
+            CREATE TABLE artists (
+                id TEXT, name TEXT, image TEXT
+            )
+        """
+        private const val CREATE_SONG = """
+            CREATE TABLE songs (
+                id TEXT, albumId TEXT, artistId TEXT, title TEXT, length REAL, track INTEGER, disc INTEGER, createdAt INTEGER
+            )
+        """
+        private const val CREATE_PLAYLIST = """
+            CREATE TABLE playlists (
+                id TEXT, name TEXT, songs TEXT
+            )
+        """
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
