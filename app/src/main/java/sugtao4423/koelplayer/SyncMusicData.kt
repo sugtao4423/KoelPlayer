@@ -22,7 +22,9 @@ class SyncMusicData(private val context: Context) {
             val server = (context.applicationContext as App).koelServer
             val token = (context.applicationContext as App).koelToken
             val allMusicData = withContext(Dispatchers.IO) {
-                Koel4j(server, token).allMusicData()
+                runCatching {
+                    Koel4j(server, token).allMusicData()
+                }.getOrNull()
             }
             (context.applicationContext as App).clearPlaylistOrderSettings()
             if (allMusicData == null) {

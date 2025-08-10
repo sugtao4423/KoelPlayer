@@ -57,7 +57,9 @@ class ServerSettingsActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             val token = withContext(Dispatchers.IO) {
-                Koel4j(host).auth(email, password)
+                runCatching {
+                    Koel4j(host).auth(email, password)
+                }.getOrNull()
             }
             if (token == null) {
                 errorGetToken()

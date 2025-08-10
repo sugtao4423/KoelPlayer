@@ -76,10 +76,8 @@ class KoelNotificationManager(
             return if (currentIconUri != iconUri || currentBitmap == null) {
                 currentIconUri = iconUri
                 serviceScope.launch {
-                    currentBitmap = iconUri?.let {
-                        resolveUriAsBitmap(it)
-                    }
-                    currentBitmap?.let { callback.onBitmap(it) }
+                    currentBitmap = resolveUriAsBitmap(iconUri)
+                    callback.onBitmap(currentBitmap!!)
                 }
                 null
             } else {
@@ -87,15 +85,9 @@ class KoelNotificationManager(
             }
         }
 
-        private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? {
+        private suspend fun resolveUriAsBitmap(uri: Uri?): Bitmap {
             return withContext(Dispatchers.IO) {
-                val glideLoad = Glide.with(context).asBitmap().let {
-                    if (uri.toString().endsWith("unknown-album.png")) {
-                        it.load(R.drawable.unknown_album)
-                    } else {
-                        it.load(uri)
-                    }
-                }
+                val glideLoad = Glide.with(context).asBitmap().load(uri ?: R.drawable.unknown_album)
                 glideLoad.submit(NOTIFICATION_LARGE_ICON_SIZE, NOTIFICATION_LARGE_ICON_SIZE).get()
             }
         }

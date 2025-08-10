@@ -18,7 +18,7 @@ class GlideUtil {
             targetView: ImageView,
             enableRoundedCorners: Boolean = false
         ) {
-            var requestBuilder = if (url == null || url.endsWith("unknown-album.png")) {
+            var requestBuilder = if (url == null) {
                 Glide.with(context).load(R.drawable.unknown_album)
                     .placeholder(R.drawable.unknown_album)
             } else {

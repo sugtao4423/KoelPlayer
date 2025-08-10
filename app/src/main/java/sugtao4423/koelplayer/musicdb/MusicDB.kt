@@ -2,6 +2,7 @@ package sugtao4423.koelplayer.musicdb
 
 import android.content.Context
 import android.database.Cursor
+import androidx.core.database.getStringOrNull
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.AllMusicData
 import sugtao4423.koel4j.dataclass.Artist
@@ -42,10 +43,10 @@ class MusicDB(private val context: Context) {
         MusicDBHelper(context).onCreate(db)
     }
 
-    fun getAlbumSongs(albumId: Int): List<Song> {
+    fun getAlbumSongs(albumId: String): List<Song> {
         val sql = "$SQL_SELECT_SONGS WHERE songs.albumId = ?"
         val songs = ArrayList<Song>()
-        val songCursor = db.rawQuery(sql, arrayOf(albumId.toString()))
+        val songCursor = db.rawQuery(sql, arrayOf(albumId))
         while (songCursor.moveToNext()) {
             songs.add(getSongData(songCursor))
         }
@@ -102,47 +103,47 @@ class MusicDB(private val context: Context) {
 
     private fun getAlbumData(c: Cursor): Album {
         val albumArtist = c.let {
-            val id = it.getInt(5)
+            val id = it.getString(5)
             val name = it.getString(6)
-            val image = it.getString(7)
+            val image = it.getStringOrNull(7)
             Artist(id, name, image)
         }
-        val id = c.getInt(0)
+        val id = c.getString(0)
         val name = c.getString(1)
-        val cover = c.getString(2)
-        val createdAt = Date(c.getLong(3) * 1000)
+        val cover = c.getStringOrNull(2)
+        val createdAt = Date(c.getLong(3))
         val isCompilation = c.getString(4).toBoolean()
 
         return Album(id, albumArtist, name, cover, createdAt, isCompilation)
     }
 
     private fun getArtistData(c: Cursor): Artist {
-        val id = c.getInt(0)
+        val id = c.getString(0)
         val name = c.getString(1)
-        val image = c.getString(2)
+        val image = c.getStringOrNull(2)
 
         return Artist(id, name, image)
     }
 
     private fun getSongData(c: Cursor): Song {
         val albumArtist = c.let {
-            val id = it.getInt(14)
+            val id = it.getString(14)
             val name = it.getString(15)
-            val image = it.getString(16)
+            val image = it.getStringOrNull(16)
             Artist(id, name, image)
         }
         val album = c.let {
-            val id = it.getInt(6)
+            val id = it.getString(6)
             val name = it.getString(7)
-            val cover = it.getString(8)
-            val createdAt = Date(c.getLong(9) * 1000)
+            val cover = it.getStringOrNull(8)
+            val createdAt = Date(c.getLong(9))
             val isCompilation = c.getString(10).toBoolean()
             Album(id, albumArtist, name, cover, createdAt, isCompilation)
         }
         val songArtist = c.let {
-            val id = it.getInt(11)
+            val id = it.getString(11)
             val name = it.getString(12)
-            val image = it.getString(13)
+            val image = it.getStringOrNull(13)
             Artist(id, name, image)
         }
         val id = c.getString(0)
@@ -150,13 +151,13 @@ class MusicDB(private val context: Context) {
         val length = c.getDouble(2)
         val track = c.getInt(3)
         val disc = c.getInt(4)
-        val createdAt = Date(c.getLong(5) * 1000)
+        val createdAt = Date(c.getLong(5))
 
         return Song(id, album, songArtist, title, length, track, disc, createdAt)
     }
 
     private fun getPlaylistData(c: Cursor): Playlist {
-        val id = c.getInt(0)
+        val id = c.getString(0)
         val name = c.getString(1)
         val songs = c.getString(2).split(",")
 
@@ -173,16 +174,13 @@ class MusicDB(private val context: Context) {
     private fun insertAlbumData(albums: List<Album>) {
         val sql = "INSERT INTO albums VALUES (?, ?, ?, ?, ?, ?)"
         albums.map {
-            val bindArgs = arrayOf(
-                it.id.toString(),
-                it.artist.id.toString(),
-                it.name,
-                it.cover,
-                it.createdAt.time.toString(),
-                it.isCompilation.toString()
-            )
             db.compileStatement(sql).apply {
-                bindAllArgsAsStrings(bindArgs)
+                bindString(1, it.id)
+                bindString(2, it.artist.id)
+                bindString(3, it.name)
+                if (it.cover == null) bindNull(4) else bindString(4, it.cover)
+                bindLong(5, it.createdAt.time)
+                bindString(6, it.isCompilation.toString())
                 execute()
                 close()
             }
@@ -192,11 +190,10 @@ class MusicDB(private val context: Context) {
     private fun insertArtistData(artists: List<Artist>) {
         val sql = "INSERT INTO artists VALUES (?, ?, ?)"
         artists.map {
-            val bindArgs = arrayOf(
-                it.id.toString(), it.name, it.image
-            )
             db.compileStatement(sql).apply {
-                bindAllArgsAsStrings(bindArgs)
+                bindString(1, it.id)
+                bindString(2, it.name)
+                if (it.image == null) bindNull(3) else bindString(3, it.image)
                 execute()
                 close()
             }
@@ -206,18 +203,15 @@ class MusicDB(private val context: Context) {
     private fun insertSongData(songs: List<Song>) {
         val sql = "INSERT INTO songs VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
         songs.map {
-            val bindArgs = arrayOf(
-                it.id,
-                it.album.id.toString(),
-                it.artist.id.toString(),
-                it.title,
-                it.length.toString(),
-                it.track.toString(),
-                it.disc.toString(),
-                it.createdAt.time.toString()
-            )
             db.compileStatement(sql).apply {
-                bindAllArgsAsStrings(bindArgs)
+                bindString(1, it.id)
+                bindString(2, it.album.id)
+                bindString(3, it.artist.id)
+                bindString(4, it.title)
+                bindDouble(5, it.length)
+                bindLong(6, it.track.toLong())
+                bindLong(7, it.disc.toLong())
+                bindLong(8, it.createdAt.time)
                 execute()
                 close()
             }
@@ -228,9 +222,9 @@ class MusicDB(private val context: Context) {
         val sql = "INSERT INTO playlists VALUES (?, ?, ?)"
         playlists.map {
             val bindArgs = arrayOf(
-                it.id.toString(),
+                it.id,
                 it.name,
-                it.songs.joinToString(",")
+                it.songs.joinToString(","),
             )
             db.compileStatement(sql).apply {
                 bindAllArgsAsStrings(bindArgs)
