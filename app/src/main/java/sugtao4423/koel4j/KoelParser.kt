@@ -1,6 +1,7 @@
 package sugtao4423.koel4j
 
 import org.json.JSONArray
+import org.json.JSONObject
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.Artist
 import sugtao4423.koel4j.dataclass.Song
@@ -20,6 +21,10 @@ object KoelParser {
         "unknown-albums", UNKNOWN_ARTIST, "Unknown Albums", null, Date(0), false
     )
 
+    private fun JSONObject.nullString(key: String): String? {
+        return if (isNull(key)) null else getString(key)
+    }
+
     fun artists(json: JSONArray): List<Artist> {
         val result = ArrayList<Artist>()
         result.add(VARIOUS_ARTISTS)
@@ -29,7 +34,7 @@ object KoelParser {
             val obj = json.getJSONObject(i)
             val id = obj.getString("id")
             val name = obj.getString("name")
-            val image = obj.optString("image")
+            val image = obj.nullString("image")
             val artist = Artist(id, name, image)
             result.add(artist)
         }
@@ -47,7 +52,7 @@ object KoelParser {
             val artistId = obj.getString("artist_id")
             val artistName = obj.getString("artist_name")
             val name = obj.getString("name")
-            val cover = obj.optString("cover")
+            val cover = obj.nullString("cover")
             val createdAt = sdf.parse(obj.getString("created_at"))!!
             val isCompilation = artistName == VARIOUS_ARTISTS.name
 
