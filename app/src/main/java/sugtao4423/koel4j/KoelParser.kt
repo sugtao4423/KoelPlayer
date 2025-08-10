@@ -15,10 +15,10 @@ object KoelParser {
 
     private val VARIOUS_ARTISTS = Artist("various-artists", "Various Artists", null)
 
-    private val UNKNOWN_ARTIST = Artist("unknown-artists", "Unknown Artists", null)
+    private val UNKNOWN_ARTIST = Artist("unknown-artist", "Unknown Artist", null)
 
     private val UNKNOWN_ALBUM = Album(
-        "unknown-albums", UNKNOWN_ARTIST, "Unknown Albums", null, Date(0), false
+        "unknown-album", UNKNOWN_ARTIST, "Unknown Album", null, Date(0), false
     )
 
     private fun JSONObject.nullString(key: String): String? {
