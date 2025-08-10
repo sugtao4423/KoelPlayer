@@ -68,7 +68,6 @@ class ServerSettingsActivity : AppCompatActivity() {
             app.koelServer = host
             app.koelToken = token
             if (isReAuth) {
-                app.reloadServerSettings()
                 finish()
                 return@launch
             }
