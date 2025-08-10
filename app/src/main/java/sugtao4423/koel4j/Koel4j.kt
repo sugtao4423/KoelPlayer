@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.AllMusicData
@@ -25,46 +26,52 @@ class Koel4j(private var host: String, private val token: String = "") {
         const val USER_AGENT = "Android KoelPlayer"
     }
 
-    fun auth(email: String, password: String): String? {
+    @Throws(IOException::class, JSONException::class)
+    fun auth(email: String, password: String): String {
         val endpoint = KoelEndpoints.AUTHENTICATION
         val body = mapOf(
             "email" to email,
             "password" to password,
         )
         val json = postKoelApi(endpoint, body)
-        return json?.getString("token")
+        return json.getString("token")
     }
 
-    fun allMusicData(): AllMusicData? {
-        val artists = getArtists() ?: return null
-        val albums = getAlbums(artists) ?: return null
-        val songs = getSongs(artists, albums) ?: return null
-        val playlists = getPlaylists() ?: return null
+    @Throws(IOException::class, JSONException::class)
+    fun allMusicData(): AllMusicData {
+        val artists = getArtists()
+        val albums = getAlbums(artists)
+        val songs = getSongs(artists, albums)
+        val playlists = getPlaylists()
 
         return AllMusicData(albums, artists, songs, playlists)
     }
 
-    fun getArtists(): List<Artist>? {
+    @Throws(IOException::class, JSONException::class)
+    fun getArtists(): List<Artist> {
         val endpoint = KoelEndpoints.ARTISTS
-        val json = getPaginatedData(endpoint) ?: return null
+        val json = getPaginatedData(endpoint)
         return KoelParser.artists(json)
     }
 
-    fun getAlbums(artists: List<Artist>): List<Album>? {
+    @Throws(IOException::class, JSONException::class)
+    fun getAlbums(artists: List<Artist>): List<Album> {
         val endpoint = KoelEndpoints.ALBUMS
-        val json = getPaginatedData(endpoint) ?: return null
+        val json = getPaginatedData(endpoint)
         return KoelParser.albums(json, artists)
     }
 
-    fun getSongs(artists: List<Artist>, albums: List<Album>): List<Song>? {
+    @Throws(IOException::class, JSONException::class)
+    fun getSongs(artists: List<Artist>, albums: List<Album>): List<Song> {
         val endpoint = KoelEndpoints.SONGS
-        val json = getPaginatedData(endpoint) ?: return null
+        val json = getPaginatedData(endpoint)
         return KoelParser.songs(json, artists, albums)
     }
 
-    fun getPlaylists(): List<Playlist>? {
+    @Throws(IOException::class, JSONException::class)
+    fun getPlaylists(): List<Playlist> {
         val endpoint = KoelEndpoints.PLAYLISTS
-        val json = getKoelApi(endpoint, true) ?: return null
+        val json = getKoelApi(endpoint, true)
         val playlistArray = json.getJSONArray("array")
 
         val result = ArrayList<Playlist>()
@@ -72,15 +79,16 @@ class Koel4j(private var host: String, private val token: String = "") {
             val obj = playlistArray.getJSONObject(i)
             val id = obj.getString("id")
             val name = obj.getString("name")
-            val playlist = getPlaylistData(id, name) ?: return null
+            val playlist = getPlaylistData(id, name)
             result.add(playlist)
         }
         return result
     }
 
-    private fun getPlaylistData(id: String, name: String): Playlist? {
+    @Throws(IOException::class, JSONException::class)
+    private fun getPlaylistData(id: String, name: String): Playlist {
         val endpoint = KoelEndpoints.playlistData(id)
-        val json = getKoelApi(endpoint, true) ?: return null
+        val json = getKoelApi(endpoint, true)
         val songArray = json.getJSONArray("array")
         val songs = ArrayList<String>()
         for (i in 0 until songArray.length()) {
@@ -91,15 +99,13 @@ class Koel4j(private var host: String, private val token: String = "") {
         return Playlist(id, name, songs)
     }
 
-    private fun getPaginatedData(endpoint: String): JSONArray? {
+    @Throws(IOException::class, JSONException::class)
+    private fun getPaginatedData(endpoint: String): JSONArray {
         val result = JSONArray()
 
         var page: Int? = 1
         while (page != null) {
             val json = getKoelApi("$endpoint?page=$page")
-            if (json == null) {
-                return null
-            }
             val data = json.getJSONArray("data")
             for (i in 0 until data.length()) {
                 result.put(data.getJSONObject(i))
@@ -113,19 +119,22 @@ class Koel4j(private var host: String, private val token: String = "") {
         return result
     }
 
-    private fun getKoelApi(endpoint: String, isResultArray: Boolean = false): JSONObject? {
+    @Throws(IOException::class, JSONException::class)
+    private fun getKoelApi(endpoint: String, isResultArray: Boolean = false): JSONObject {
         return accessKoelApi("GET", endpoint, mapOf(), isResultArray)
     }
 
+    @Throws(IOException::class, JSONException::class)
     private fun postKoelApi(
         endpoint: String, body: Map<String, String> = mapOf(), isResultArray: Boolean = false
-    ): JSONObject? {
+    ): JSONObject {
         return accessKoelApi("POST", endpoint, body, isResultArray)
     }
 
+    @Throws(IOException::class, JSONException::class)
     private fun accessKoelApi(
         method: String, endpoint: String, body: Map<String, String>, isResultArray: Boolean
-    ): JSONObject? {
+    ): JSONObject {
         val headers = mapOf(
             "Content-Type" to "application/json",
             "Accept" to "application/json",
@@ -133,7 +142,7 @@ class Koel4j(private var host: String, private val token: String = "") {
             "User-Agent" to USER_AGENT
         )
         val request = Request.Builder().let {
-            headers.map { header ->
+            headers.forEach { header ->
                 it.addHeader(header.key, header.value)
             }
             it.url(host + endpoint)
@@ -148,19 +157,19 @@ class Koel4j(private var host: String, private val token: String = "") {
             }
             it.build()
         }
-        return try {
-            val response = OkHttpClient().newCall(request).execute()
-            if (!response.isSuccessful) {
-                return null
-            }
-            return if (isResultArray) {
-                val array = JSONArray(response.body.string()).toString()
+
+        val response = OkHttpClient().newCall(request).execute()
+        if (!response.isSuccessful) {
+            throw IOException("Unexpected code ${response.code}: ${response.message}")
+        }
+
+        return response.body.string().let {
+            if (isResultArray) {
+                val array = JSONArray(it).toString()
                 JSONObject("{\"array\": $array}")
             } else {
-                JSONObject(response.body.string())
+                JSONObject(it)
             }
-        } catch (e: IOException) {
-            null
         }
     }
 
