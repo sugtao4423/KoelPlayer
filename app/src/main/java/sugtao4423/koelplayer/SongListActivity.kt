@@ -130,8 +130,10 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
         musicDB.close()
 
         val sortOrder = (applicationContext as App).getPlaylistSortOrder(playlist)
-        if (sortOrder == 1) {
-            songs = songs.sortedBy { it.track }.sortedBy { it.album.name }
+        songs = when (sortOrder) {
+            0 -> playlist.songs.map { songId -> songs.find { it.id == songId }!! }
+            1 -> songs.sortedBy { it.track }.sortedBy { it.album.name }
+            else -> throw IllegalArgumentException("Unknown sort order: $sortOrder")
         }
 
         return mapOf(
