@@ -80,7 +80,7 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
         GlideUtil.load(this, coverUrl, binding.songListCover, true)
         binding.songListTitle.text = title
         supportActionBar!!.title = title
-        val songTime = getSongsTime(songs)
+        val songTime = songs.sumOf { it.length }.toInt().secToTimeFormat()
         binding.songListArtist.text = if (artist == null) songTime else "$artist・$songTime"
         if (theseSongsAllDownloaded) {
             binding.songListDlSize.text = theseSongsFileSize
@@ -141,20 +141,6 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
             DATA_KEY_TITLE to playlist.name,
             DATA_KEY_SONGS to songs,
         )
-    }
-
-    private fun getSongsTime(songs: List<Song>): String {
-        var second = 0.0
-        songs.forEach { second += it.length }
-        val sec = second.toInt()
-        val h = sec / 60 / 60
-        val m = (sec / 60 % 60).toString().padStart(2, '0')
-        val s = (sec % 60).toString().padStart(2, '0')
-        return if (h == 0) {
-            "$m:$s"
-        } else {
-            "$h:$m:$s"
-        }
     }
 
     fun clickPlayButton(@Suppress("UNUSED_PARAMETER") v: View) {

@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.Player
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.databinding.BottomSheetNowPlayingBinding
+import sugtao4423.koelplayer.millisToTimeFormat
 import sugtao4423.koelplayer.playmusic.MusicService
 
 class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
@@ -89,9 +90,9 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
         } else {
             val duration = musicService!!.duration()
             val currentPosition = musicService!!.currentPosition()
-            binding.nowPlayingTotalTime.text = duration.toTimeFormat()
+            binding.nowPlayingTotalTime.text = duration.millisToTimeFormat()
             binding.nowPlayingSeek.max = (duration / 1000).toInt()
-            binding.nowPlayingCurrentTime.text = currentPosition.toTimeFormat()
+            binding.nowPlayingCurrentTime.text = currentPosition.millisToTimeFormat()
             binding.nowPlayingSeek.progress = (currentPosition / 1000).toInt()
         }
     }
@@ -116,9 +117,9 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
             musicService?.let {
                 val duration = it.duration()
                 val currentPosition = it.currentPosition()
-                binding.nowPlayingTotalTime.text = it.duration().toTimeFormat()
+                binding.nowPlayingTotalTime.text = it.duration().millisToTimeFormat()
                 binding.nowPlayingSeek.max = (duration / 1000).toInt()
-                binding.nowPlayingCurrentTime.text = currentPosition.toTimeFormat()
+                binding.nowPlayingCurrentTime.text = currentPosition.millisToTimeFormat()
                 binding.nowPlayingSeek.progress = (currentPosition / 1000).toInt()
                 binding.nowPlayingSeek.secondaryProgress = (it.bufferedPosition() / 1000).toInt()
             }
@@ -194,18 +195,6 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
                     binding.nowPlayingRepeatButton.setColorFilter(Color.GRAY)
                 }
             }
-        }
-    }
-
-    private fun Long.toTimeFormat(): String {
-        val second = this / 1000
-        val hour = second / 60 / 60
-        val min = (second / 60 % 60).toString().padStart(2, '0')
-        val sec = (second % 60).toString().padStart(2, '0')
-        return if (hour == 0L) {
-            "$min:$sec"
-        } else {
-            "$hour:$min:$sec"
         }
     }
 

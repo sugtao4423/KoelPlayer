@@ -14,6 +14,7 @@ import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.playmusic.MusicService
+import sugtao4423.koelplayer.secToTimeFormat
 
 abstract class BaseMusicAdapter(private val viewType: Int) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -54,18 +55,8 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val song = songs[position]
 
-        val hour = song.length.toInt() / 60 / 60
-        val min = song.length.toInt() / 60 % 60
-        val sec = (song.length.toInt() % 60).toString().padStart(2, '0')
-        var length = if (hour == 0) {
-            "$min:$sec"
-        } else {
-            val m = min.toString().padStart(2, '0')
-            "$hour:$m:$sec"
-        }
-
-        if (isCompilation) {
-            length = song.artist.name + "・" + length
+        val length = song.length.toInt().secToTimeFormat(song.length >= 3600).let {
+            if (isCompilation) song.artist.name + "・" + it else it
         }
 
         when (viewType) {
