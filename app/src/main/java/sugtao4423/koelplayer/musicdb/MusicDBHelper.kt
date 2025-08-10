@@ -8,13 +8,13 @@ class MusicDBHelper(context: Context) : SQLiteOpenHelper(context, "MusicDB", nul
 
     companion object {
         private const val CREATE_ALBUM = "CREATE TABLE albums (" +
-                "id INTEGER, artistId INTEGER, name TEXT, cover TEXT, createdAt INTEGER, isCompilation TEXT)"
+                "id TEXT, artistId TEXT, name TEXT, cover TEXT, createdAt INTEGER, isCompilation TEXT)"
         private const val CREATE_ARTIST = "CREATE TABLE artists (" +
-                "id INTEGER, name TEXT, image TEXT)"
+                "id TEXT, name TEXT, image TEXT)"
         private const val CREATE_SONG = "CREATE TABLE songs (" +
-                "id TEXT, albumId INTEGER, artistId INTEGER, title TEXT, length REAL, track INTEGER, disc INTEGER, createdAt INTEGER)"
+                "id TEXT, albumId TEXT, artistId TEXT, title TEXT, length REAL, track INTEGER, disc INTEGER, createdAt INTEGER)"
         private const val CREATE_PLAYLIST = "CREATE TABLE playlists (" +
-                "id INTEGER, name TEXT, songs TEXT)"
+                "id TEXT, name TEXT, songs TEXT)"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {

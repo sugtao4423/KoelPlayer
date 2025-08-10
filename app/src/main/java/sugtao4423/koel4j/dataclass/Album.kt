@@ -4,10 +4,10 @@ import java.io.Serializable
 import java.util.Date
 
 data class Album(
-    val id: Int,
+    val id: String,
     val artist: Artist,
     val name: String,
-    val cover: String,
+    val cover: String?,
     val createdAt: Date,
     val isCompilation: Boolean,
 ) : Serializable

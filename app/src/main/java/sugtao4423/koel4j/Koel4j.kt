@@ -6,8 +6,11 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.AllMusicData
+import sugtao4423.koel4j.dataclass.Artist
 import sugtao4423.koel4j.dataclass.Playlist
+import sugtao4423.koel4j.dataclass.Song
 import java.io.IOException
 
 class Koel4j(private var host: String, private val token: String = "") {
@@ -23,7 +26,7 @@ class Koel4j(private var host: String, private val token: String = "") {
     }
 
     fun auth(email: String, password: String): String? {
-        val endpoint = KoelEndpoints.authentication
+        val endpoint = KoelEndpoints.AUTHENTICATION
         val body = mapOf(
             "email" to email,
             "password" to password,
@@ -33,30 +36,81 @@ class Koel4j(private var host: String, private val token: String = "") {
     }
 
     fun allMusicData(): AllMusicData? {
-        val endpoint = KoelEndpoints.applicationData
-        val json = getKoelApi(endpoint) ?: return null
-        val jsonPlaylists = json.getJSONArray("playlists")
-        val playlists = ArrayList<Playlist>()
-        for (i in 0 until jsonPlaylists.length()) {
-            val obj = jsonPlaylists.getJSONObject(i)
-            val id = obj.getInt("id")
-            val name = obj.getString("name")
-            val playlist = getPlaylistData(id, name) ?: return null
-            playlists.add(playlist)
-        }
-        return ParseAllMusicData(json, playlists).parse()
+        val artists = getArtists() ?: return null
+        val albums = getAlbums(artists) ?: return null
+        val songs = getSongs(artists, albums) ?: return null
+        val playlists = getPlaylists() ?: return null
+
+        return AllMusicData(albums, artists, songs, playlists)
     }
 
-    private fun getPlaylistData(id: Int, name: String): Playlist? {
+    fun getArtists(): List<Artist>? {
+        val endpoint = KoelEndpoints.ARTISTS
+        val json = getPaginatedData(endpoint) ?: return null
+        return KoelParser.artists(json)
+    }
+
+    fun getAlbums(artists: List<Artist>): List<Album>? {
+        val endpoint = KoelEndpoints.ALBUMS
+        val json = getPaginatedData(endpoint) ?: return null
+        return KoelParser.albums(json, artists)
+    }
+
+    fun getSongs(artists: List<Artist>, albums: List<Album>): List<Song>? {
+        val endpoint = KoelEndpoints.SONGS
+        val json = getPaginatedData(endpoint) ?: return null
+        return KoelParser.songs(json, artists, albums)
+    }
+
+    fun getPlaylists(): List<Playlist>? {
+        val endpoint = KoelEndpoints.PLAYLISTS
+        val json = getKoelApi(endpoint, true) ?: return null
+        val playlistArray = json.getJSONArray("array")
+
+        val result = ArrayList<Playlist>()
+        for (i in 0 until playlistArray.length()) {
+            val obj = playlistArray.getJSONObject(i)
+            val id = obj.getString("id")
+            val name = obj.getString("name")
+            val playlist = getPlaylistData(id, name) ?: return null
+            result.add(playlist)
+        }
+        return result
+    }
+
+    private fun getPlaylistData(id: String, name: String): Playlist? {
         val endpoint = KoelEndpoints.playlistData(id)
         val json = getKoelApi(endpoint, true) ?: return null
-        val songIds = json.getJSONArray("array")
+        val songArray = json.getJSONArray("array")
         val songs = ArrayList<String>()
-        for (i in 0 until songIds.length()) {
-            val songId = songIds.getString(i)
+        for (i in 0 until songArray.length()) {
+            val song = songArray.getJSONObject(i)
+            val songId = song.getString("id")
             songs.add(songId)
         }
         return Playlist(id, name, songs)
+    }
+
+    private fun getPaginatedData(endpoint: String): JSONArray? {
+        val result = JSONArray()
+
+        var page: Int? = 1
+        while (page != null) {
+            val json = getKoelApi("$endpoint?page=$page")
+            if (json == null) {
+                return null
+            }
+            val data = json.getJSONArray("data")
+            for (i in 0 until data.length()) {
+                result.put(data.getJSONObject(i))
+            }
+
+            val links = json.getJSONObject("links")
+            val hasNext = !links.isNull("next")
+            page = if (hasNext) page + 1 else null
+        }
+
+        return result
     }
 
     private fun getKoelApi(endpoint: String, isResultArray: Boolean = false): JSONObject? {
@@ -96,17 +150,15 @@ class Koel4j(private var host: String, private val token: String = "") {
         }
         return try {
             val response = OkHttpClient().newCall(request).execute()
-            if (response.isSuccessful) {
-                response.body?.let {
-                    return if (isResultArray) {
-                        val array = JSONArray(it.string()).toString()
-                        JSONObject("{\"array\": $array}")
-                    } else {
-                        JSONObject(it.string())
-                    }
-                }
+            if (!response.isSuccessful) {
+                return null
             }
-            null
+            return if (isResultArray) {
+                val array = JSONArray(response.body.string()).toString()
+                JSONObject("{\"array\": $array}")
+            } else {
+                JSONObject(response.body.string())
+            }
         } catch (e: IOException) {
             null
         }

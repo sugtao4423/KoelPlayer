@@ -1,18 +1,23 @@
 package sugtao4423.koel4j
 
-class KoelEndpoints {
+object KoelEndpoints {
 
-    companion object {
-        const val authentication = "/api/me"
-        const val applicationData = "/api/data"
+    const val AUTHENTICATION = "/api/me"
 
-        fun playlistData(playlistId: Int): String {
-            return "/api/playlist/$playlistId/songs"
-        }
+    const val ARTISTS = "/api/artists"
 
-        fun musicFile(auth: String, songId: String): String {
-            return "/play/${songId}?api_token=$auth"
-        }
+    const val ALBUMS = "/api/albums"
+
+    const val SONGS = "/api/songs"
+
+    const val PLAYLISTS = "/api/playlists"
+
+    fun playlistData(playlistId: String): String {
+        return "/api/playlists/$playlistId/songs"
+    }
+
+    fun musicFile(auth: String, songId: String): String {
+        return "/play/${songId}?t=$auth"
     }
 
 }
