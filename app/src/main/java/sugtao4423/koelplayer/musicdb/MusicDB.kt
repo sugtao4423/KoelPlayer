@@ -41,7 +41,7 @@ class MusicDB(private val context: Context) {
 
     fun resetDatabase() {
         val tables = arrayOf("albums", "artists", "songs", "playlists")
-        tables.map {
+        tables.forEach {
             db.execSQL("DROP TABLE $it")
         }
         MusicDBHelper(context).onCreate(db)
@@ -177,7 +177,7 @@ class MusicDB(private val context: Context) {
 
     private fun insertAlbumData(albums: List<Album>) {
         val sql = "INSERT INTO albums VALUES (?, ?, ?, ?, ?, ?)"
-        albums.map {
+        albums.forEach {
             db.compileStatement(sql).apply {
                 bindString(1, it.id)
                 bindString(2, it.artist.id)
@@ -193,7 +193,7 @@ class MusicDB(private val context: Context) {
 
     private fun insertArtistData(artists: List<Artist>) {
         val sql = "INSERT INTO artists VALUES (?, ?, ?)"
-        artists.map {
+        artists.forEach {
             db.compileStatement(sql).apply {
                 bindString(1, it.id)
                 bindString(2, it.name)
@@ -206,7 +206,7 @@ class MusicDB(private val context: Context) {
 
     private fun insertSongData(songs: List<Song>) {
         val sql = "INSERT INTO songs VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
-        songs.map {
+        songs.forEach {
             db.compileStatement(sql).apply {
                 bindString(1, it.id)
                 bindString(2, it.album.id)
@@ -224,7 +224,7 @@ class MusicDB(private val context: Context) {
 
     private fun insertPlaylist(playlists: List<Playlist>) {
         val sql = "INSERT INTO playlists VALUES (?, ?, ?)"
-        playlists.map {
+        playlists.forEach {
             val bindArgs = arrayOf(
                 it.id,
                 it.name,
