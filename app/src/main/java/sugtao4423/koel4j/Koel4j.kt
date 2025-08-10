@@ -87,7 +87,7 @@ class Koel4j(private var host: String, private val token: String = "") {
 
     @Throws(IOException::class, JSONException::class)
     private fun getPlaylistData(id: String, name: String): Playlist {
-        val endpoint = KoelEndpoints.playlistData(id)
+        val endpoint = KoelEndpoints.playlistSongs(id)
         val json = getKoelApi(endpoint, true)
         val songArray = json.getJSONArray("array")
         val songs = ArrayList<String>()

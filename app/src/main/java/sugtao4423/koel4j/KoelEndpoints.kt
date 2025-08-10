@@ -12,7 +12,7 @@ object KoelEndpoints {
 
     const val PLAYLISTS = "/api/playlists"
 
-    fun playlistData(playlistId: String): String {
+    fun playlistSongs(playlistId: String): String {
         return "/api/playlists/$playlistId/songs"
     }
 
