@@ -41,6 +41,7 @@ class KoelNotificationManager(
             .setChannelDescriptionResourceId(R.string.notification_channel_description)
             .setMediaDescriptionAdapter(DescriptionAdapter(mediaController))
             .setNotificationListener(notificationListener).build().apply {
+                setUseFastForwardAction(false)
                 setUsePreviousActionInCompactView(true)
                 setUseNextActionInCompactView(true)
                 setUseStopAction(true)
