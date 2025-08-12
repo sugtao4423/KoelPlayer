@@ -320,6 +320,7 @@ class MusicService : MediaBrowserServiceCompat() {
         invokeQueueChangedListeners()
     }
 
+    fun repeatMode(): Int = exoPlayer.repeatMode
     fun isRepeat(): Boolean = exoPlayer.repeatMode == Player.REPEAT_MODE_ALL
     fun isRepeatOne(): Boolean = exoPlayer.repeatMode == Player.REPEAT_MODE_ONE
     fun repeat() = run { exoPlayer.repeatMode = Player.REPEAT_MODE_ALL }

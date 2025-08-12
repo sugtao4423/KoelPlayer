@@ -17,7 +17,6 @@ import sugtao4423.koelplayer.databinding.ActivitySongListBinding
 import sugtao4423.koelplayer.databinding.BottomSheetBinding
 import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.musicdb.MusicDB
-import sugtao4423.koelplayer.playmusic.MusicService
 
 class SongListActivity : BaseBottomNowPlayingActivity() {
 
@@ -101,14 +100,6 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
         }
     }
 
-    override fun onMusicServiceConnected(musicService: MusicService) {
-        adapter.musicService = musicService
-    }
-
-    override fun onMusicServiceDisconnected() {
-        adapter.musicService = null
-    }
-
     private fun getAlbumData(): Map<String, Any?> {
         val album = intent.getSerializableExtra(KEY_INTENT_ALBUM_DATA) as Album
         val musicDB = MusicDB(this)
@@ -144,11 +135,11 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
     }
 
     fun clickPlayButton(@Suppress("UNUSED_PARAMETER") v: View) {
-        musicService?.playSongs(songs)
+        bottomSheetViewModel.playSongs(songs)
     }
 
     fun clickShuffleButton(@Suppress("UNUSED_PARAMETER") v: View) {
-        musicService?.shufflePlaySongs(songs)
+        bottomSheetViewModel.shufflePlaySongs(songs)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

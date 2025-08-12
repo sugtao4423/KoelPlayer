@@ -10,23 +10,21 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Playlist
-import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.SongListActivity
 import sugtao4423.koelplayer.musicdb.MusicDB
-import sugtao4423.koelplayer.playmusic.MusicService
 import sugtao4423.koelplayer.view.SquareImageView
+import sugtao4423.koelplayer.viewmodel.MusicServiceViewModel
 
-class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
+class PlaylistAdapter(private val viewModel: MusicServiceViewModel) :
+    RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
 
-    var musicService: MusicService? = null
-
-    var songs = listOf<Song>()
-    var playlists = listOf<Playlist>()
+    var playlists = listOf<Pair<Playlist, String?>>()
         set(value) {
+            notifyItemRangeRemoved(0, field.size)
             field = value
-            notifyDataSetChanged()
+            notifyItemRangeInserted(0, value.size)
         }
 
     private lateinit var context: Context
@@ -38,11 +36,8 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        val playlist = playlists[position]
-        val firstSongCover = songs.find {
-            it.id == playlist.songs[0]
-        }?.album?.cover
-        GlideUtil.load(context, firstSongCover, holder.cover)
+        val (playlist, coverUrl) = playlists[position]
+        GlideUtil.load(context, coverUrl, holder.cover)
         holder.title.text = playlist.name
         holder.itemView.setOnClickListener(playlistClickListener(playlist))
         holder.itemView.setOnLongClickListener(playlistLongClickListener(playlist))
@@ -67,7 +62,7 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>
                     val songs = musicDB.getSongsById(playlist.songs)
                     musicDB.close()
                     when (menuItem.itemId) {
-                        R.id.songMorePlayNext -> musicService?.let {
+                        R.id.songMorePlayNext -> viewModel.let {
                             it.addQueueNext(songs)
                             Toast.makeText(
                                 context.applicationContext,
@@ -76,7 +71,7 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>
                             ).show()
                         }
 
-                        R.id.songMoreAddQueue -> musicService?.let {
+                        R.id.songMoreAddQueue -> viewModel.let {
                             it.addQueueLast(songs)
                             Toast.makeText(
                                 context.applicationContext,
