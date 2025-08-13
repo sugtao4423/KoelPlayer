@@ -1,18 +1,14 @@
 package sugtao4423.koelplayer
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import sugtao4423.koel4j.Koel4j
 import sugtao4423.koelplayer.databinding.ActivityServerSettingsBinding
+import sugtao4423.koelplayer.viewmodel.ServerSettingsViewModel
 
 class ServerSettingsActivity : AppCompatActivity() {
 
@@ -22,58 +18,66 @@ class ServerSettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityServerSettingsBinding
 
+    private val viewModel: ServerSettingsViewModel by viewModels()
+
     private val isReAuth by lazy {
         intent.getBooleanExtra(INTENT_KEY_IS_RE_AUTH, false)
-    }
-
-    private val app by lazy {
-        applicationContext as App
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityServerSettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        initViews()
+        initObservers()
+        viewModel.initialize(isReAuth)
+    }
+
+    private fun initViews() {
         if (isReAuth) {
-            binding.serverHost.setText(app.koelServer)
             binding.serverHost.isEnabled = false
         }
+
         binding.fab.setOnClickListener {
-            it.isEnabled = false
-            saveKoelToken()
+            viewModel.authenticate(
+                binding.serverHost.text.toString(),
+                binding.serverEmail.text.toString(),
+                binding.serverPassword.text.toString(),
+            )
         }
     }
 
-    private fun saveKoelToken() {
-        val host = binding.serverHost.text.toString().let {
-            if (it.endsWith("/")) {
-                it.removeSuffix("/")
-            } else {
-                it
-            }
+    private fun initObservers() {
+        viewModel.serverHost.observe(this) {
+            binding.serverHost.setText(it)
         }
-        val email = binding.serverEmail.text.toString()
-        val password = binding.serverPassword.text.toString()
 
-        CoroutineScope(Dispatchers.Main).launch {
-            val token = withContext(Dispatchers.IO) {
-                runCatching {
-                    Koel4j(host).auth(email, password)
-                }.getOrNull()
-            }
-            if (token == null) {
-                errorGetToken()
-                return@launch
-            }
-            app.koelServer = host
-            app.koelToken = token
-            if (isReAuth) {
-                finish()
-                return@launch
-            }
-            SyncMusicData(this@ServerSettingsActivity).sync {
-                startActivity(Intent(this@ServerSettingsActivity, MainActivity::class.java))
-                finish()
+        viewModel.authState.observe(this) {
+            when (it) {
+                ServerSettingsViewModel.AuthState.Idle -> {
+                    binding.fab.isEnabled = true
+                }
+
+                ServerSettingsViewModel.AuthState.Loading -> {
+                    binding.fab.isEnabled = false
+                }
+
+                ServerSettingsViewModel.AuthState.Success -> {
+                    if (isReAuth) {
+                        finish()
+                    } else {
+                        SyncMusicData(this).sync {
+                            startActivity(Intent(this, MainActivity::class.java))
+                            finish()
+                        }
+                    }
+                }
+
+                ServerSettingsViewModel.AuthState.AuthError -> {
+                    errorGetToken()
+                    binding.fab.isEnabled = true
+                }
             }
         }
     }
@@ -83,12 +87,16 @@ class ServerSettingsActivity : AppCompatActivity() {
             setMessage(R.string.error_get_token)
             show()
         }
-        binding.fab.isEnabled = true
     }
 
     fun hideKeyboard(v: View) {
-        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(v.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.resetState()
     }
 
 }
