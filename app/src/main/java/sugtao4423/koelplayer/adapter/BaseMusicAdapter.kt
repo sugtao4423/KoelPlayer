@@ -4,15 +4,15 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
+import sugtao4423.koelplayer.databinding.ItemAlbumSongBinding
+import sugtao4423.koelplayer.databinding.ItemPlaylistSongBinding
+import sugtao4423.koelplayer.databinding.ItemQueueSongBinding
 import sugtao4423.koelplayer.secToTimeFormat
 import sugtao4423.koelplayer.viewmodel.MusicServiceViewModel
 
@@ -36,18 +36,18 @@ abstract class BaseMusicAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         context = parent.context!!
+        val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             VIEW_TYPE_ALBUM -> AlbumMusicViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item_album_song, parent, false)
+                ItemAlbumSongBinding.inflate(inflater, parent, false)
             )
 
             VIEW_TYPE_PLAYLIST -> PlaylistMusicViewHolder(
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_playlist_song, parent, false)
+                ItemPlaylistSongBinding.inflate(inflater, parent, false)
             )
 
             else -> QueueMusicViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.item_queue_song, parent, false)
+                ItemQueueSongBinding.inflate(inflater, parent, false)
             )
         }
     }
@@ -62,32 +62,30 @@ abstract class BaseMusicAdapter(
         when (viewType) {
             VIEW_TYPE_ALBUM -> {
                 holder as AlbumMusicViewHolder
-                holder.position.text = song.track.toString()
-                holder.title.text = song.title
-                holder.duration.text = length
-                holder.moreButton.setOnClickListener { clickMoreButton(it, position) }
+                holder.binding.albumSongPosition.text = song.track.toString()
+                holder.binding.albumSongTitle.text = song.title
+                holder.binding.albumSongDuration.text = length
+                holder.binding.albumSongMore.setOnClickListener { clickMoreButton(it, position) }
             }
 
             VIEW_TYPE_PLAYLIST -> {
                 holder as PlaylistMusicViewHolder
-                GlideUtil.load(holder.itemView, song.album.cover, holder.cover)
-                holder.title.text = song.title
-                holder.duration.text = length
-                holder.moreButton.setOnClickListener { clickMoreButton(it, position) }
+                GlideUtil.load(holder.itemView, song.album.cover, holder.binding.playlistSongCover)
+                holder.binding.playlistSongTitle.text = song.title
+                holder.binding.playlistSongDuration.text = length
+                holder.binding.playlistSongMore.setOnClickListener { clickMoreButton(it, position) }
             }
 
             VIEW_TYPE_QUEUE -> {
                 holder as QueueMusicViewHolder
-                GlideUtil.load(holder.itemView, song.album.cover, holder.cover)
-                holder.title.text = song.title
-                holder.duration.text = length
+                GlideUtil.load(holder.itemView, song.album.cover, holder.binding.queueSongCover)
+                holder.binding.queueSongTitle.text = song.title
+                holder.binding.queueSongDuration.text = length
             }
         }
     }
 
-    override fun getItemCount(): Int {
-        return songs.size
-    }
+    override fun getItemCount(): Int = songs.size
 
     fun clear() {
         val size = songs.size
@@ -106,25 +104,14 @@ abstract class BaseMusicAdapter(
         notifyItemRangeInserted(lastItemIndex + 1, songs.size)
     }
 
-    inner class AlbumMusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val position: TextView = itemView.findViewById(R.id.albumSongPosition)
-        val title: TextView = itemView.findViewById(R.id.albumSongTitle)
-        val duration: TextView = itemView.findViewById(R.id.albumSongDuration)
-        val moreButton: ImageButton = itemView.findViewById(R.id.albumSongMore)
-    }
+    inner class AlbumMusicViewHolder(val binding: ItemAlbumSongBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
-    inner class PlaylistMusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cover: ImageView = itemView.findViewById(R.id.playlistSongCover)
-        val title: TextView = itemView.findViewById(R.id.playlistSongTitle)
-        val duration: TextView = itemView.findViewById(R.id.playlistSongDuration)
-        val moreButton: ImageButton = itemView.findViewById(R.id.playlistSongMore)
-    }
+    inner class PlaylistMusicViewHolder(val binding: ItemPlaylistSongBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
-    inner class QueueMusicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cover: ImageView = itemView.findViewById(R.id.queueSongCover)
-        val title: TextView = itemView.findViewById(R.id.queueSongTitle)
-        val duration: TextView = itemView.findViewById(R.id.queueSongDuration)
-    }
+    inner class QueueMusicViewHolder(val binding: ItemQueueSongBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     private fun clickMoreButton(anchor: View, position: Int) {
         PopupMenu(context, anchor).apply {

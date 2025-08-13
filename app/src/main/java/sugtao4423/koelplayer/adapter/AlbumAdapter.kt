@@ -5,8 +5,6 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +12,7 @@ import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.SongListActivity
+import sugtao4423.koelplayer.databinding.ItemAlbumBinding
 import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.viewmodel.MusicServiceViewModel
 
@@ -32,14 +31,14 @@ class AlbumAdapter(private val viewModel: MusicServiceViewModel) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
         context = parent.context
         val inflater = LayoutInflater.from(parent.context)
-        return AlbumViewHolder(inflater.inflate(R.layout.item_album, parent, false))
+        return AlbumViewHolder(ItemAlbumBinding.inflate(inflater, parent, false))
     }
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
         val album = albums[position]
-        GlideUtil.load(context, album.cover, holder.image)
-        holder.title.text = album.name
-        holder.artist.text = album.artist.name
+        GlideUtil.load(context, album.cover, holder.binding.albumCover)
+        holder.binding.albumTitle.text = album.name
+        holder.binding.albumArtist.text = album.artist.name
         holder.itemView.setOnClickListener(albumClickListener(album))
         holder.itemView.setOnLongClickListener(albumLongClickListener(album))
     }
@@ -89,14 +88,9 @@ class AlbumAdapter(private val viewModel: MusicServiceViewModel) :
         }
     }
 
-    override fun getItemCount(): Int {
-        return albums.size
-    }
+    override fun getItemCount(): Int = albums.size
 
-    class AlbumViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val image: ImageView = itemView.findViewById(R.id.albumCover)
-        val title: TextView = itemView.findViewById(R.id.albumTitle)
-        val artist: TextView = itemView.findViewById(R.id.albumArtist)
-    }
+    inner class AlbumViewHolder(val binding: ItemAlbumBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
 }

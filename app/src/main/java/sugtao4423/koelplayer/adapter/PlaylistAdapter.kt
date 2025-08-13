@@ -5,7 +5,6 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
@@ -13,8 +12,8 @@ import sugtao4423.koel4j.dataclass.Playlist
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.SongListActivity
+import sugtao4423.koelplayer.databinding.ItemPlaylistBinding
 import sugtao4423.koelplayer.musicdb.MusicDB
-import sugtao4423.koelplayer.view.SquareImageView
 import sugtao4423.koelplayer.viewmodel.MusicServiceViewModel
 
 class PlaylistAdapter(private val viewModel: MusicServiceViewModel) :
@@ -32,13 +31,15 @@ class PlaylistAdapter(private val viewModel: MusicServiceViewModel) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         context = parent.context
         val inflater = LayoutInflater.from(parent.context)
-        return PlaylistViewHolder(inflater.inflate(R.layout.item_playlist, parent, false))
+        return PlaylistViewHolder(
+            ItemPlaylistBinding.inflate(inflater, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         val (playlist, coverUrl) = playlists[position]
-        GlideUtil.load(context, coverUrl, holder.cover)
-        holder.title.text = playlist.name
+        GlideUtil.load(context, coverUrl, holder.binding.playlistCover)
+        holder.binding.playlistTitle.text = playlist.name
         holder.itemView.setOnClickListener(playlistClickListener(playlist))
         holder.itemView.setOnLongClickListener(playlistLongClickListener(playlist))
     }
@@ -88,13 +89,9 @@ class PlaylistAdapter(private val viewModel: MusicServiceViewModel) :
         }
     }
 
-    override fun getItemCount(): Int {
-        return playlists.size
-    }
+    override fun getItemCount(): Int = playlists.size
 
-    class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val cover: SquareImageView = itemView.findViewById(R.id.playlistCover)
-        val title: TextView = itemView.findViewById(R.id.playlistTitle)
-    }
+    inner class PlaylistViewHolder(val binding: ItemPlaylistBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
 }
