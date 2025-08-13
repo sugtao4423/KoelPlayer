@@ -7,28 +7,17 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import sugtao4423.koelplayer.R
 
 object GlideUtil {
 
     fun load(
-        context: Context,
-        url: String?,
-        targetView: ImageView,
-        enableRoundedCorners: Boolean = false
+        context: Context, url: String?, targetView: ImageView, enableRoundedCorners: Boolean = false
     ) {
-        var requestBuilder = if (url == null) {
-            Glide.with(context).load(R.drawable.unknown_album)
-                .placeholder(R.drawable.unknown_album)
-        } else {
-            Glide.with(context).load(url).placeholder(R.drawable.unknown_album)
-        }
-        if (enableRoundedCorners) {
-            requestBuilder =
-                requestBuilder.apply(RequestOptions.bitmapTransform(RoundedCorners(8)))
-        }
-        requestBuilder.into(targetView)
+        Glide.with(context.applicationContext).load(url ?: R.drawable.unknown_album)
+            .placeholder(R.drawable.unknown_album).let {
+                if (enableRoundedCorners) it.transform(RoundedCorners(8)) else it
+            }.into(targetView)
     }
 
     fun load(context: Context, uri: Uri?, targetView: ImageView) {
