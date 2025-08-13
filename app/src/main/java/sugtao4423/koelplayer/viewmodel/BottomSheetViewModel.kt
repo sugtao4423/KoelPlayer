@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import sugtao4423.koelplayer.viewmodel.base.MusicServiceViewModel
 
 class BottomSheetViewModel(application: Application) : MusicServiceViewModel(application) {
 

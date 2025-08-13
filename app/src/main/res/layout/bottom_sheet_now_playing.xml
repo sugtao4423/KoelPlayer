@@ -102,7 +102,7 @@
         android:layout_marginRight="@dimen/now_playing_content_margin"
         android:layout_marginBottom="@dimen/now_playing_content_margin">
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingShuffleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
             tools:ignore="UnusedAttribute"
             tools:targetApi="23" />
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingPrevButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -126,7 +126,7 @@
             tools:ignore="UnusedAttribute"
             tools:targetApi="23" />
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingPlayButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -138,7 +138,7 @@
             tools:ignore="UnusedAttribute"
             tools:targetApi="23" />
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingNextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
             tools:ignore="UnusedAttribute"
             tools:targetApi="23" />
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingRepeatButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

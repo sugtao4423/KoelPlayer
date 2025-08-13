@@ -12,9 +12,9 @@ import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.Playlist
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.App
+import sugtao4423.koelplayer.data.database.MusicDB
 import sugtao4423.koelplayer.download.KoelDLUtil
-import sugtao4423.koelplayer.musicdb.MusicDB
-import sugtao4423.koelplayer.secToTimeFormat
+import sugtao4423.koelplayer.util.secToTimeFormat
 
 class SongListViewModel(application: Application) : AndroidViewModel(application) {
 

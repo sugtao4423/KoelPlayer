@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.AllMusicData
 import sugtao4423.koel4j.dataclass.Playlist
-import sugtao4423.koelplayer.musicdb.MusicDB
+import sugtao4423.koelplayer.data.database.MusicDB
 import java.util.Locale
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {

@@ -16,7 +16,7 @@
         android:theme="@style/Theme.KoelPlayer"
         tools:targetApi="n">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:theme="@style/Theme.KoelPlayer.NoActionBar">
             <intent-filter>
@@ -26,16 +26,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ServerSettingsActivity"
+            android:name=".ui.activity.ServerSettingsActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".SongListActivity"
+            android:name=".ui.activity.SongListActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:theme="@style/Theme.KoelPlayer.NoActionBar" />
 
         <service
-            android:name=".playmusic.MusicService"
+            android:name=".music.service.MusicService"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService" />
@@ -52,7 +52,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".ui.activity.SettingsActivity"
             android:label="@string/settings" />
     </application>
 

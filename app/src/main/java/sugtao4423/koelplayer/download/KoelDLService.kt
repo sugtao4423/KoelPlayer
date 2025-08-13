@@ -20,8 +20,8 @@ import sugtao4423.koel4j.Koel4j
 import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.App
-import sugtao4423.koelplayer.MainActivity
 import sugtao4423.koelplayer.R
+import sugtao4423.koelplayer.ui.activity.MainActivity
 import java.io.File
 import java.util.Arrays
 
