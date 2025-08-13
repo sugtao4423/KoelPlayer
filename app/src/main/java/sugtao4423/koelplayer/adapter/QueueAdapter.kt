@@ -1,17 +1,15 @@
 package sugtao4423.koelplayer.adapter
 
 import androidx.recyclerview.widget.RecyclerView
+import sugtao4423.koelplayer.viewmodel.MusicServiceViewModel
 
-class QueueAdapter : BaseMusicAdapter(VIEW_TYPE_QUEUE) {
-
-    init {
-        isCompilation = true
-    }
+class QueueAdapter(private val viewModel: MusicServiceViewModel) :
+    BaseMusicAdapter(VIEW_TYPE_QUEUE, true, viewModel) {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         holder.itemView.setOnClickListener {
-            musicService?.changeSong(holder.layoutPosition)
+            viewModel.changeSong(holder.layoutPosition)
         }
     }
 

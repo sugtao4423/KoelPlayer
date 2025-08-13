@@ -86,8 +86,8 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
         }
 
         adapter = when (intentType) {
-            INTENT_TYPE_ALBUM -> AlbumMusicAdapter(songs, isCompilation)
-            INTENT_TYPE_PLAYLIST -> PlaylistMusicAdapter(songs)
+            INTENT_TYPE_ALBUM -> AlbumMusicAdapter(songs, isCompilation, bottomSheetViewModel)
+            INTENT_TYPE_PLAYLIST -> PlaylistMusicAdapter(songs, bottomSheetViewModel)
             else -> {
                 finish()
                 return

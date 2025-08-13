@@ -124,8 +124,12 @@ class MusicRepository private constructor(private val context: Context) {
         isServiceBound = false
     }
 
-    fun playSongs(songs: List<Song>, playPos: Int = 0) {
-        musicService?.playSongs(songs, playPos)
+    fun playingPosition(): Int {
+        return musicService?.playingPosition() ?: -1
+    }
+
+    fun playSongs(songs: List<Song>, position: Int) {
+        musicService?.playSongs(songs, position)
     }
 
     fun shufflePlaySongs(songs: List<Song>) {

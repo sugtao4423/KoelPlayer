@@ -11,6 +11,7 @@ open class MusicServiceViewModel(application: Application) : AndroidViewModel(ap
 
     val currentMetadata = musicRepository.currentMetadata
     val isPlaying = musicRepository.isPlaying
+    val queueSongs = musicRepository.queueSongs
     val isShuffleEnabled = musicRepository.isShuffleEnabled
     val repeatMode = musicRepository.repeatMode
 
@@ -23,6 +24,7 @@ open class MusicServiceViewModel(application: Application) : AndroidViewModel(ap
         super.onCleared()
     }
 
+    fun playingPosition() = musicRepository.playingPosition()
     fun duration() = musicRepository.duration()
     fun currentPosition() = musicRepository.currentPosition()
     fun bufferedPosition() = musicRepository.bufferedPosition()
@@ -34,10 +36,14 @@ open class MusicServiceViewModel(application: Application) : AndroidViewModel(ap
     fun toggleRepeat() = musicRepository.toggleRepeat()
     fun seekTo(position: Long) = musicRepository.seekTo(position)
 
-    fun playSongs(songs: List<Song>) = musicRepository.playSongs(songs)
+    fun playSongs(songs: List<Song>, position: Int = 0) = musicRepository.playSongs(songs, position)
     fun shufflePlaySongs(songs: List<Song>) = musicRepository.shufflePlaySongs(songs)
 
     fun addQueueNext(songs: List<Song>) = musicRepository.addQueueNext(songs)
     fun addQueueLast(songs: List<Song>) = musicRepository.addQueueLast(songs)
+
+    fun changeSong(position: Int) = musicRepository.changeSong(position)
+    fun moveSong(from: Int, to: Int) = musicRepository.moveSong(from, to)
+    fun removeSong(position: Int) = musicRepository.removeSong(position)
 
 }
