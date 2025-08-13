@@ -10,39 +10,37 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import sugtao4423.koelplayer.R
 
-class GlideUtil {
+object GlideUtil {
 
-    companion object {
-        fun load(
-            context: Context,
-            url: String?,
-            targetView: ImageView,
-            enableRoundedCorners: Boolean = false
-        ) {
-            var requestBuilder = if (url == null) {
-                Glide.with(context).load(R.drawable.unknown_album)
-                    .placeholder(R.drawable.unknown_album)
-            } else {
-                Glide.with(context).load(url).placeholder(R.drawable.unknown_album)
-            }
-            if (enableRoundedCorners) {
-                requestBuilder =
-                    requestBuilder.apply(RequestOptions.bitmapTransform(RoundedCorners(8)))
-            }
-            requestBuilder.into(targetView)
+    fun load(
+        context: Context,
+        url: String?,
+        targetView: ImageView,
+        enableRoundedCorners: Boolean = false
+    ) {
+        var requestBuilder = if (url == null) {
+            Glide.with(context).load(R.drawable.unknown_album)
+                .placeholder(R.drawable.unknown_album)
+        } else {
+            Glide.with(context).load(url).placeholder(R.drawable.unknown_album)
         }
+        if (enableRoundedCorners) {
+            requestBuilder =
+                requestBuilder.apply(RequestOptions.bitmapTransform(RoundedCorners(8)))
+        }
+        requestBuilder.into(targetView)
+    }
 
-        fun load(context: Context, uri: Uri?, targetView: ImageView) {
-            load(context, uri.toString(), targetView)
-        }
+    fun load(context: Context, uri: Uri?, targetView: ImageView) {
+        load(context, uri.toString(), targetView)
+    }
 
-        fun load(view: View, url: String?, targetView: ImageView) {
-            load(view.context, url, targetView)
-        }
+    fun load(view: View, url: String?, targetView: ImageView) {
+        load(view.context, url, targetView)
+    }
 
-        fun load(fragment: Fragment, uri: Uri?, targetView: ImageView) {
-            load(fragment.requireContext(), uri, targetView)
-        }
+    fun load(fragment: Fragment, uri: Uri?, targetView: ImageView) {
+        load(fragment.requireContext(), uri, targetView)
     }
 
 }
