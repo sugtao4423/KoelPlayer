@@ -2,11 +2,11 @@ package sugtao4423.koelplayer.ui.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Song
-import sugtao4423.koelplayer.ui.adapter.base.BaseMusicAdapter
+import sugtao4423.koelplayer.ui.adapter.base.MusicAdapter
 import sugtao4423.koelplayer.viewmodel.base.MusicServiceViewModel
 
 class PlaylistMusicAdapter(songs: List<Song>, private val viewModel: MusicServiceViewModel) :
-    BaseMusicAdapter(VIEW_TYPE_PLAYLIST, true, viewModel) {
+    MusicAdapter(VIEW_TYPE_PLAYLIST, true, viewModel) {
 
     init {
         addAll(songs)

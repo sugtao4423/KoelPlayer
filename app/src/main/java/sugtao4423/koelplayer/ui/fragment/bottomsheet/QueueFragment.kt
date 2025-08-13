@@ -16,7 +16,7 @@ import sugtao4423.koelplayer.databinding.BottomSheetQueueBinding
 import sugtao4423.koelplayer.ui.adapter.QueueAdapter
 import sugtao4423.koelplayer.viewmodel.BottomSheetViewModel
 
-class BSQueueFragment : Fragment() {
+class QueueFragment : Fragment() {
 
     private var _binding: BottomSheetQueueBinding? = null
     private val binding get() = _binding!!

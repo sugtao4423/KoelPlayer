@@ -16,7 +16,7 @@ import sugtao4423.koelplayer.util.GlideUtil
 import sugtao4423.koelplayer.util.secToTimeFormat
 import sugtao4423.koelplayer.viewmodel.base.MusicServiceViewModel
 
-abstract class BaseMusicAdapter(
+abstract class MusicAdapter(
     private val viewType: Int,
     private val isCompilation: Boolean,
     private val viewModel: MusicServiceViewModel

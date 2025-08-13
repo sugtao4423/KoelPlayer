@@ -21,7 +21,7 @@ import sugtao4423.koelplayer.util.GlideUtil
 import sugtao4423.koelplayer.util.millisToTimeFormat
 import sugtao4423.koelplayer.viewmodel.BottomSheetViewModel
 
-class BSNowPlayingFragment : Fragment() {
+class NowPlayingFragment : Fragment() {
 
     private var _binding: BottomSheetNowPlayingBinding? = null
     private val binding get() = _binding!!

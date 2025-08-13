@@ -11,12 +11,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.databinding.BottomSheetBinding
-import sugtao4423.koelplayer.ui.fragment.bottomsheet.BSNowPlayingFragment
-import sugtao4423.koelplayer.ui.fragment.bottomsheet.BSQueueFragment
+import sugtao4423.koelplayer.ui.fragment.bottomsheet.NowPlayingFragment
+import sugtao4423.koelplayer.ui.fragment.bottomsheet.QueueFragment
 import sugtao4423.koelplayer.util.GlideUtil
 import sugtao4423.koelplayer.viewmodel.BottomSheetViewModel
 
-abstract class BaseBottomNowPlayingActivity : AppCompatActivity() {
+abstract class BottomSheetActivity : AppCompatActivity() {
 
     protected abstract val bsBinding: BottomSheetBinding
 
@@ -78,12 +78,12 @@ abstract class BaseBottomNowPlayingActivity : AppCompatActivity() {
         supportFragmentManager.commit {
             add(
                 R.id.bottomSheetContainer,
-                BSNowPlayingFragment(),
+                NowPlayingFragment(),
                 BottomSheetViewModel.BOTTOM_SHEET_NOW_PLAYING
             )
             add(
                 R.id.bottomSheetContainer,
-                BSQueueFragment(),
+                QueueFragment(),
                 BottomSheetViewModel.BOTTOM_SHEET_QUEUE
             )
         }

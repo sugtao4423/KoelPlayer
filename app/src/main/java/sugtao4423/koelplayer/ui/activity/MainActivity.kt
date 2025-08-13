@@ -15,12 +15,12 @@ import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.databinding.ActivityMainBinding
 import sugtao4423.koelplayer.databinding.BottomSheetBinding
 import sugtao4423.koelplayer.music.service.MusicService
-import sugtao4423.koelplayer.ui.activity.base.BaseBottomNowPlayingActivity
+import sugtao4423.koelplayer.ui.activity.base.BottomSheetActivity
 import sugtao4423.koelplayer.ui.fragment.AlbumFragment
 import sugtao4423.koelplayer.ui.fragment.PlaylistFragment
 import sugtao4423.koelplayer.viewmodel.MainViewModel
 
-class MainActivity : BaseBottomNowPlayingActivity() {
+class MainActivity : BottomSheetActivity() {
 
     private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 

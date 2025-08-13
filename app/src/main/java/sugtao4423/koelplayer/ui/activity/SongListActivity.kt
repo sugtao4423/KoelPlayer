@@ -12,13 +12,13 @@ import sugtao4423.koel4j.dataclass.Playlist
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.databinding.ActivitySongListBinding
 import sugtao4423.koelplayer.databinding.BottomSheetBinding
-import sugtao4423.koelplayer.ui.activity.base.BaseBottomNowPlayingActivity
+import sugtao4423.koelplayer.ui.activity.base.BottomSheetActivity
 import sugtao4423.koelplayer.ui.adapter.AlbumMusicAdapter
 import sugtao4423.koelplayer.ui.adapter.PlaylistMusicAdapter
 import sugtao4423.koelplayer.util.GlideUtil
 import sugtao4423.koelplayer.viewmodel.SongListViewModel
 
-class SongListActivity : BaseBottomNowPlayingActivity() {
+class SongListActivity : BottomSheetActivity() {
 
     companion object {
         const val KEY_INTENT_TYPE = "songsType"
