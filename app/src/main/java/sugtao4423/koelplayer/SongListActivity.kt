@@ -67,6 +67,22 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
         }
     }
 
+    override fun initViews(backgroundAppbar: View) {
+        super.initViews(backgroundAppbar)
+
+        binding.songListPlayButton.setOnClickListener {
+            viewModel.songListData.value?.let {
+                bottomSheetViewModel.playSongs(it.songs)
+            }
+        }
+
+        binding.songListShufflePlayButton.setOnClickListener {
+            viewModel.songListData.value?.let {
+                bottomSheetViewModel.shufflePlaySongs(it.songs)
+            }
+        }
+    }
+
     private fun initObservers() {
         viewModel.songListData.observe(this) {
             if (it == null) return@observe
@@ -108,18 +124,6 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
             else -> return
         }
         binding.songListMusicList.adapter = adapter
-    }
-
-    fun clickPlayButton(@Suppress("UNUSED_PARAMETER") v: View) {
-        viewModel.songListData.value?.let {
-            bottomSheetViewModel.playSongs(it.songs)
-        }
-    }
-
-    fun clickShuffleButton(@Suppress("UNUSED_PARAMETER") v: View) {
-        viewModel.songListData.value?.let {
-            bottomSheetViewModel.shufflePlaySongs(it.songs)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

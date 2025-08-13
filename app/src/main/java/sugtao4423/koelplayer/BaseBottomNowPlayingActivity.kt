@@ -20,7 +20,7 @@ abstract class BaseBottomNowPlayingActivity : AppCompatActivity() {
 
     protected val bottomSheetViewModel: BottomSheetViewModel by viewModels()
 
-    protected fun initViews(backgroundAppbar: View) {
+    protected open fun initViews(backgroundAppbar: View) {
         initActionBar()
         val bottomSheet = initBottomSheet(backgroundAppbar)
         initBottomNav()

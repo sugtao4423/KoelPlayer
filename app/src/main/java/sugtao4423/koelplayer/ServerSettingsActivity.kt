@@ -39,6 +39,8 @@ class ServerSettingsActivity : AppCompatActivity() {
             binding.serverHost.isEnabled = false
         }
 
+        binding.root.setOnClickListener { hideKeyboard(it) }
+
         binding.fab.setOnClickListener {
             viewModel.authenticate(
                 binding.serverHost.text.toString(),
@@ -46,6 +48,11 @@ class ServerSettingsActivity : AppCompatActivity() {
                 binding.serverPassword.text.toString(),
             )
         }
+    }
+
+    private fun hideKeyboard(v: View) {
+        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(v.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
     private fun initObservers() {
@@ -87,11 +94,6 @@ class ServerSettingsActivity : AppCompatActivity() {
             setMessage(R.string.error_get_token)
             show()
         }
-    }
-
-    fun hideKeyboard(v: View) {
-        val inputManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputManager.hideSoftInputFromWindow(v.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 
     override fun onDestroy() {
