@@ -70,8 +70,7 @@
             android:layout_marginRight="@dimen/now_playing_seek_side_margin"
             android:progressTint="?attr/colorPrimary"
             android:secondaryProgressTint="?attr/colorPrimaryVariant"
-            android:thumbTint="?attr/colorPrimary"
-            tools:targetApi="lollipop" />
+            android:thumbTint="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/nowPlayingCurrentTime"
@@ -113,7 +112,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_shuffle"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
 
         <sugtao4423.koelplayer.view.SquareImageButton
             android:id="@+id/nowPlayingPrevButton"
@@ -125,7 +124,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_prev"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
 
         <sugtao4423.koelplayer.view.SquareImageButton
             android:id="@+id/nowPlayingPlayButton"
@@ -137,7 +136,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_play"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
 
         <sugtao4423.koelplayer.view.SquareImageButton
             android:id="@+id/nowPlayingNextButton"
@@ -149,7 +148,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_next"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
 
         <sugtao4423.koelplayer.view.SquareImageButton
             android:id="@+id/nowPlayingRepeatButton"
@@ -161,7 +160,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_repeat"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
     </LinearLayout>
 
 </LinearLayout>
