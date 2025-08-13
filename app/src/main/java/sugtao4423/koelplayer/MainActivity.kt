@@ -23,7 +23,7 @@ class MainActivity : BaseBottomNowPlayingActivity() {
 
     override val bsBinding: BottomSheetBinding by lazy { binding.mainBottomSheet }
 
-    private val mainViewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModels()
 
     private val albumFragment: AlbumFragment by lazy { AlbumFragment(bottomSheetViewModel) }
     private val playlistFragment: PlaylistFragment by lazy { PlaylistFragment(bottomSheetViewModel) }
@@ -103,7 +103,7 @@ class MainActivity : BaseBottomNowPlayingActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                mainViewModel.filter(newText ?: "")
+                viewModel.filter(newText ?: "")
                 return true
             }
         })
