@@ -117,7 +117,12 @@ abstract class BaseBottomNowPlayingActivity : AppCompatActivity() {
         })
 
         bottomSheetViewModel.currentBottomSheetTag.observe(this, { tag ->
-            supportFragmentManager.fragments.forEach {
+            supportFragmentManager.fragments.filter {
+                listOf(
+                    BottomSheetViewModel.BOTTOM_SHEET_NOW_PLAYING,
+                    BottomSheetViewModel.BOTTOM_SHEET_QUEUE
+                ).contains(it.tag)
+            }.forEach {
                 supportFragmentManager.commit {
                     if (it.tag == tag) show(it) else hide(it)
                 }
