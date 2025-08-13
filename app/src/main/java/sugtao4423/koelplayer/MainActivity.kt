@@ -5,20 +5,17 @@ import android.media.AudioManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import sugtao4423.koelplayer.databinding.ActivityMainBinding
 import sugtao4423.koelplayer.databinding.BottomSheetBinding
 import sugtao4423.koelplayer.fragment.AlbumFragment
 import sugtao4423.koelplayer.fragment.PlaylistFragment
-import sugtao4423.koelplayer.musicdb.MusicDB
 import sugtao4423.koelplayer.playmusic.MusicService
+import sugtao4423.koelplayer.viewmodel.MainViewModel
 
 class MainActivity : BaseBottomNowPlayingActivity() {
 
@@ -26,8 +23,10 @@ class MainActivity : BaseBottomNowPlayingActivity() {
 
     override val bsBinding: BottomSheetBinding by lazy { binding.mainBottomSheet }
 
-    private lateinit var albumFragment: AlbumFragment
-    private lateinit var playlistFragment: PlaylistFragment
+    private val viewModel: MainViewModel by viewModels()
+
+    private val albumFragment: AlbumFragment by lazy { AlbumFragment(bottomSheetViewModel) }
+    private val playlistFragment: PlaylistFragment by lazy { PlaylistFragment(bottomSheetViewModel) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,25 +42,10 @@ class MainActivity : BaseBottomNowPlayingActivity() {
         }
 
         volumeControlStream = AudioManager.STREAM_MUSIC
-
         startService(Intent(this, MusicService::class.java))
-
-        albumFragment = AlbumFragment()
-        playlistFragment = PlaylistFragment()
 
         binding.mainViewPager.adapter = MainTabAdapter(supportFragmentManager)
         binding.mainTabLayout.setupWithViewPager(binding.mainViewPager)
-
-        CoroutineScope(Dispatchers.Main).launch {
-            val allMusicData = withContext(Dispatchers.IO) {
-                val musicDB = MusicDB(this@MainActivity)
-                val allMusicData = musicDB.getAllMusicData()
-                musicDB.close()
-                allMusicData
-            }
-            albumFragment.allMusicData = allMusicData
-            playlistFragment.allMusicData = allMusicData
-        }
     }
 
     override fun onResume() {
@@ -72,16 +56,6 @@ class MainActivity : BaseBottomNowPlayingActivity() {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
-    }
-
-    override fun onMusicServiceConnected(musicService: MusicService) {
-        albumFragment.musicService = musicService
-        playlistFragment.musicService = musicService
-    }
-
-    override fun onMusicServiceDisconnected() {
-        albumFragment.musicService = null
-        playlistFragment.musicService = null
     }
 
     inner class MainTabAdapter(fm: FragmentManager) :
@@ -129,11 +103,7 @@ class MainActivity : BaseBottomNowPlayingActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText == null) {
-                    return true
-                }
-                albumFragment.filter(newText)
-                playlistFragment.filter(newText)
+                viewModel.filter(newText ?: "")
                 return true
             }
         })

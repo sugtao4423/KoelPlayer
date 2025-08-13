@@ -13,11 +13,14 @@ import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
-import sugtao4423.koelplayer.playmusic.MusicService
 import sugtao4423.koelplayer.secToTimeFormat
+import sugtao4423.koelplayer.viewmodel.MusicServiceViewModel
 
-abstract class BaseMusicAdapter(private val viewType: Int) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+abstract class BaseMusicAdapter(
+    private val viewType: Int,
+    private val isCompilation: Boolean,
+    private val viewModel: MusicServiceViewModel
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         const val VIEW_TYPE_ALBUM = 1
@@ -26,9 +29,6 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
     }
 
     private lateinit var context: Context
-
-    var musicService: MusicService? = null
-    var isCompilation = false
 
     protected var songs = ArrayList<Song>()
 
@@ -131,14 +131,14 @@ abstract class BaseMusicAdapter(private val viewType: Int) :
             menuInflater.inflate(R.menu.song_more_menu, menu)
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
-                    R.id.songMorePlayNext -> musicService?.let {
+                    R.id.songMorePlayNext -> viewModel.let {
                         it.addQueueNext(listOf(songs[position]))
                         Toast.makeText(
                             context.applicationContext, R.string.play_next_song, Toast.LENGTH_SHORT
                         ).show()
                     }
 
-                    R.id.songMoreAddQueue -> musicService?.let {
+                    R.id.songMoreAddQueue -> viewModel.let {
                         it.addQueueLast(listOf(songs[position]))
                         Toast.makeText(
                             context.applicationContext, R.string.add_queue_song, Toast.LENGTH_SHORT

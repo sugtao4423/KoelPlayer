@@ -15,16 +15,16 @@ import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.SongListActivity
 import sugtao4423.koelplayer.musicdb.MusicDB
-import sugtao4423.koelplayer.playmusic.MusicService
+import sugtao4423.koelplayer.viewmodel.MusicServiceViewModel
 
-class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
-
-    var musicService: MusicService? = null
+class AlbumAdapter(private val viewModel: MusicServiceViewModel) :
+    RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
 
     var albums = listOf<Album>()
         set(value) {
+            notifyItemRangeRemoved(0, field.size)
             field = value
-            notifyDataSetChanged()
+            notifyItemRangeInserted(0, value.size)
         }
 
     private lateinit var context: Context
@@ -63,7 +63,7 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
                     val songs = musicDB.getAlbumSongs(album.id)
                     musicDB.close()
                     when (menuItem.itemId) {
-                        R.id.songMorePlayNext -> musicService?.let {
+                        R.id.songMorePlayNext -> viewModel.let {
                             it.addQueueNext(songs)
                             Toast.makeText(
                                 context.applicationContext,
@@ -72,7 +72,7 @@ class AlbumAdapter : RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder>() {
                             ).show()
                         }
 
-                        R.id.songMoreAddQueue -> musicService?.let {
+                        R.id.songMoreAddQueue -> viewModel.let {
                             it.addQueueLast(songs)
                             Toast.makeText(
                                 context.applicationContext,

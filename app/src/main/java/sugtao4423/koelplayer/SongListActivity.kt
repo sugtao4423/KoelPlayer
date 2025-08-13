@@ -1,23 +1,19 @@
 package sugtao4423.koelplayer
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.Playlist
-import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.adapter.AlbumMusicAdapter
-import sugtao4423.koelplayer.adapter.BaseMusicAdapter
 import sugtao4423.koelplayer.adapter.PlaylistMusicAdapter
 import sugtao4423.koelplayer.databinding.ActivitySongListBinding
 import sugtao4423.koelplayer.databinding.BottomSheetBinding
-import sugtao4423.koelplayer.download.KoelDLUtil
-import sugtao4423.koelplayer.musicdb.MusicDB
-import sugtao4423.koelplayer.playmusic.MusicService
+import sugtao4423.koelplayer.viewmodel.SongListViewModel
 
 class SongListActivity : BaseBottomNowPlayingActivity() {
 
@@ -28,12 +24,6 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
 
         const val KEY_INTENT_ALBUM_DATA = "albumData"
         const val KEY_INTENT_PLAYLIST_DATA = "playlistData"
-
-        private const val DATA_KEY_COVER_URL = "cover"
-        private const val DATA_KEY_TITLE = "title"
-        private const val DATA_KEY_ARTIST = "artist"
-        private const val DATA_KEY_IS_COMPILATION = "compilation"
-        private const val DATA_KEY_SONGS = "songs"
     }
 
     private val binding: ActivitySongListBinding by lazy {
@@ -44,11 +34,13 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
         binding.songListBottomSheet
     }
 
+    private val viewModel: SongListViewModel by viewModels()
+
     private val intentType by lazy {
         intent.getIntExtra(KEY_INTENT_TYPE, -1)
     }
-    private lateinit var adapter: BaseMusicAdapter
-    private lateinit var songs: List<Song>
+
+    private var playlist: Playlist? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,98 +49,77 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
         binding.songListToolbar.setNavigationOnClickListener { finish() }
         initViews(binding.songListToolbar)
 
-        val data = when (intentType) {
-            INTENT_TYPE_ALBUM -> getAlbumData()
-            INTENT_TYPE_PLAYLIST -> getPlaylistData()
-            else -> {
-                finish()
-                return
+        binding.songListMusicList.layoutManager = LinearLayoutManager(this)
+        initObservers()
+
+        when (intentType) {
+            INTENT_TYPE_ALBUM -> {
+                val album = intent.getSerializableExtra(KEY_INTENT_ALBUM_DATA) as Album
+                viewModel.loadAlbumData(album)
             }
-        }
 
-        val coverUrl = data[DATA_KEY_COVER_URL] as String?
-        val title = data[DATA_KEY_TITLE] as String
-        val artist = data[DATA_KEY_ARTIST] as String?
-        val isCompilation = (data[DATA_KEY_IS_COMPILATION] as Boolean?) ?: false
-        songs = (data[DATA_KEY_SONGS] as List<*>).map { it as Song }
-
-        val dlUtil = KoelDLUtil(this)
-        val downloadedCount = songs.filter { dlUtil.isDownloaded(it) }.size
-        val theseSongsAllDownloaded = songs.size == downloadedCount
-        val theseSongsFileSize = dlUtil.getSongFilesSize(songs)
-
-        GlideUtil.load(this, coverUrl, binding.songListCover, true)
-        binding.songListTitle.text = title
-        supportActionBar!!.title = title
-        val songTime = songs.sumOf { it.length }.toInt().secToTimeFormat()
-        binding.songListArtist.text = if (artist == null) songTime else "$artist・$songTime"
-        if (theseSongsAllDownloaded) {
-            binding.songListDlSize.text = theseSongsFileSize
-        }
-
-        adapter = when (intentType) {
-            INTENT_TYPE_ALBUM -> AlbumMusicAdapter(songs, isCompilation)
-            INTENT_TYPE_PLAYLIST -> PlaylistMusicAdapter(songs)
-            else -> {
-                finish()
-                return
+            INTENT_TYPE_PLAYLIST -> {
+                playlist = intent.getSerializableExtra(KEY_INTENT_PLAYLIST_DATA) as Playlist
+                viewModel.loadPlaylistData(playlist!!)
             }
-        }
 
-        binding.songListMusicList.apply {
-            layoutManager = LinearLayoutManager(this@SongListActivity)
-            adapter = this@SongListActivity.adapter
+            else -> throw IllegalArgumentException("Unknown intent type: $intentType")
         }
     }
 
-    override fun onMusicServiceConnected(musicService: MusicService) {
-        adapter.musicService = musicService
+    private fun initObservers() {
+        viewModel.songListData.observe(this) {
+            if (it == null) return@observe
+            updateUI(it)
+            initAdapter(it)
+        }
     }
 
-    override fun onMusicServiceDisconnected() {
-        adapter.musicService = null
-    }
+    private fun updateUI(data: SongListViewModel.SongListData) {
+        GlideUtil.load(this, data.coverUrl, binding.songListCover, true)
+        binding.songListTitle.text = data.title
+        supportActionBar?.title = data.title
 
-    private fun getAlbumData(): Map<String, Any?> {
-        val album = intent.getSerializableExtra(KEY_INTENT_ALBUM_DATA) as Album
-        val musicDB = MusicDB(this)
-        val songs = musicDB.getAlbumSongs(album.id)
-        musicDB.close()
-        return mapOf(
-            DATA_KEY_COVER_URL to album.cover,
-            DATA_KEY_TITLE to album.name,
-            DATA_KEY_ARTIST to album.artist.name,
-            DATA_KEY_IS_COMPILATION to album.isCompilation,
-            DATA_KEY_SONGS to songs,
-        )
-    }
-
-    private fun getPlaylistData(): Map<String, Any?> {
-        val playlist = intent.getSerializableExtra(KEY_INTENT_PLAYLIST_DATA) as Playlist
-        val musicDB = MusicDB(this)
-        var songs = musicDB.getSongsById(playlist.songs)
-        musicDB.close()
-
-        val sortOrder = (applicationContext as App).getPlaylistSortOrder(playlist)
-        songs = when (sortOrder) {
-            0 -> playlist.songs.map { songId -> songs.find { it.id == songId }!! }
-            1 -> songs.sortedBy { it.track }.sortedBy { it.album.name }
-            else -> throw IllegalArgumentException("Unknown sort order: $sortOrder")
+        val songTime = viewModel.getSongTime() ?: ""
+        binding.songListArtist.text = if (data.artist == null) {
+            songTime
+        } else {
+            "${data.artist}・$songTime"
         }
 
-        return mapOf(
-            DATA_KEY_COVER_URL to songs.randomOrNull()?.album?.cover,
-            DATA_KEY_TITLE to playlist.name,
-            DATA_KEY_SONGS to songs,
-        )
+        if (data.allDownloaded && data.fileSize != null) {
+            binding.songListDlSize.text = data.fileSize
+            binding.songListDlSize.visibility = View.VISIBLE
+        } else {
+            binding.songListDlSize.visibility = View.GONE
+        }
+    }
+
+    private fun initAdapter(data: SongListViewModel.SongListData) {
+        val adapter = when (intentType) {
+            INTENT_TYPE_ALBUM -> AlbumMusicAdapter(
+                data.songs, data.isCompilation, bottomSheetViewModel
+            )
+
+            INTENT_TYPE_PLAYLIST -> PlaylistMusicAdapter(
+                data.songs, bottomSheetViewModel
+            )
+
+            else -> return
+        }
+        binding.songListMusicList.adapter = adapter
     }
 
     fun clickPlayButton(@Suppress("UNUSED_PARAMETER") v: View) {
-        musicService?.playSongs(songs)
+        viewModel.songListData.value?.let {
+            bottomSheetViewModel.playSongs(it.songs)
+        }
     }
 
     fun clickShuffleButton(@Suppress("UNUSED_PARAMETER") v: View) {
-        musicService?.shufflePlaySongs(songs)
+        viewModel.songListData.value?.let {
+            bottomSheetViewModel.shufflePlaySongs(it.songs)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -166,23 +137,17 @@ class SongListActivity : BaseBottomNowPlayingActivity() {
     }
 
     private fun showSortDialog() {
-        val playlist = (intent.getSerializableExtra(KEY_INTENT_PLAYLIST_DATA) as Playlist)
-        val order = (applicationContext as App).getPlaylistSortOrder(playlist)
-        AlertDialog.Builder(this).apply {
-            setSingleChoiceItems(R.array.sort_items, order) { dialogInterface, which ->
-                if (order == which) {
-                    dialogInterface.dismiss()
-                } else {
-                    (applicationContext as App).setPlaylistSortOrder(playlist, which)
-                    val intent = Intent(context, SongListActivity::class.java).apply {
-                        putExtra(KEY_INTENT_TYPE, INTENT_TYPE_PLAYLIST)
-                        putExtra(KEY_INTENT_PLAYLIST_DATA, playlist)
+        playlist?.let {
+            val order = viewModel.getPlaylistSort(it)
+            AlertDialog.Builder(this).apply {
+                setSingleChoiceItems(R.array.sort_items, order) { dialogInterface, which ->
+                    if (order != which) {
+                        viewModel.updatePlaylistSort(it, which)
                     }
-                    startActivity(intent)
-                    finish()
+                    dialogInterface.dismiss()
                 }
+                show()
             }
-            show()
         }
     }
 

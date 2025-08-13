@@ -11,19 +11,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
-import com.google.android.exoplayer2.Player
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import sugtao4423.koelplayer.GlideUtil
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.databinding.BottomSheetNowPlayingBinding
 import sugtao4423.koelplayer.millisToTimeFormat
-import sugtao4423.koelplayer.playmusic.MusicService
+import sugtao4423.koelplayer.playmusic.MusicRepository
+import sugtao4423.koelplayer.viewmodel.BottomSheetViewModel
 
-class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
+class BSNowPlayingFragment : Fragment() {
 
     private var _binding: BottomSheetNowPlayingBinding? = null
     private val binding get() = _binding!!
 
-    private var musicService: MusicService? = null
+    private val bottomSheetViewModel: BottomSheetViewModel by activityViewModels()
+
     private lateinit var watchCurrentTimeHandler: Handler
     private lateinit var watchCurrentTimeRunnable: Runnable
 
@@ -39,6 +43,7 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
         initTextViewMarquee()
         initControlButtons()
         initMusicTimes()
+        initObservers()
     }
 
     override fun onStart() {
@@ -56,45 +61,18 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
         _binding = null
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        musicService?.removePlayerEventListener(playerEventListener)
-    }
-
-    override fun onMusicServiceConnected(musicService: MusicService) {
-        this.musicService = musicService
-        musicService.addPlayerEventListener(playerEventListener)
-        playerEventListener.onIsPlayingChanged(musicService.isPlaying())
-        playerEventListener.onShuffleModeEnabledChanged(musicService.isShuffle())
-        val repeatMode = when {
-            musicService.isRepeat() -> Player.REPEAT_MODE_ALL
-            musicService.isRepeatOne() -> Player.REPEAT_MODE_ONE
-            else -> Player.REPEAT_MODE_OFF
-        }
-        playerEventListener.onRepeatModeChanged(repeatMode)
-    }
-
-    override fun onMusicServiceDisconnected() {
-        this.musicService = null
-    }
-
     @SuppressLint("SetTextI18n")
-    override fun updateMetadata(metadata: MediaMetadataCompat) {
+    private fun updateMetadata(metadata: MediaMetadataCompat) {
         GlideUtil.load(this, metadata.description.iconUri, binding.nowPlayingCover)
         binding.nowPlayingTitle.text = metadata.description.title
         binding.nowPlayingArtist.text = metadata.description.subtitle
 
-        if (musicService == null) {
-            binding.nowPlayingTotalTime.text = "00:00"
-            binding.nowPlayingCurrentTime.text = "00:00"
-        } else {
-            val duration = musicService!!.duration()
-            val currentPosition = musicService!!.currentPosition()
-            binding.nowPlayingTotalTime.text = duration.millisToTimeFormat()
-            binding.nowPlayingSeek.max = (duration / 1000).toInt()
-            binding.nowPlayingCurrentTime.text = currentPosition.millisToTimeFormat()
-            binding.nowPlayingSeek.progress = (currentPosition / 1000).toInt()
-        }
+        val duration = bottomSheetViewModel.duration()
+        val currentPosition = bottomSheetViewModel.currentPosition()
+        binding.nowPlayingTotalTime.text = duration.millisToTimeFormat()
+        binding.nowPlayingSeek.max = (duration / 1000).toInt()
+        binding.nowPlayingCurrentTime.text = currentPosition.millisToTimeFormat()
+        binding.nowPlayingSeek.progress = (currentPosition / 1000).toInt()
     }
 
     private fun initTextViewMarquee() {
@@ -114,7 +92,7 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
         binding.nowPlayingSeek.setOnSeekBarChangeListener(seekBarListener)
         watchCurrentTimeHandler = Handler(Looper.getMainLooper())
         watchCurrentTimeRunnable = Runnable {
-            musicService?.let {
+            bottomSheetViewModel.let {
                 val duration = it.duration()
                 val currentPosition = it.currentPosition()
                 binding.nowPlayingTotalTime.text = it.duration().millisToTimeFormat()
@@ -128,21 +106,13 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
     }
 
     private val controlButtonsListener = View.OnClickListener {
-        if (it == null || musicService == null) {
-            return@OnClickListener
-        }
+        val model = bottomSheetViewModel
         when (it.id) {
-            R.id.nowPlayingShuffleButton -> musicService!!.toggleShuffle()
-            R.id.nowPlayingPrevButton -> musicService!!.prev()
-            R.id.nowPlayingPlayButton -> musicService!!.togglePlay()
-            R.id.nowPlayingNextButton -> musicService!!.next()
-            R.id.nowPlayingRepeatButton -> {
-                when {
-                    musicService!!.isRepeat() -> musicService!!.repeatOne()
-                    musicService!!.isRepeatOne() -> musicService!!.repeatOff()
-                    else -> musicService!!.repeat()
-                }
-            }
+            R.id.nowPlayingShuffleButton -> model.toggleShuffle()
+            R.id.nowPlayingPrevButton -> model.prev()
+            R.id.nowPlayingPlayButton -> model.togglePlay()
+            R.id.nowPlayingNextButton -> model.next()
+            R.id.nowPlayingRepeatButton -> model.toggleRepeat()
         }
     }
 
@@ -151,7 +121,7 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
 
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             if (touching) {
-                musicService?.seekTo((progress * 1000).toLong())
+                bottomSheetViewModel.seekTo((progress * 1000).toLong())
             }
         }
 
@@ -164,35 +134,47 @@ class BSNowPlayingFragment : Fragment(), BSFragmentInterface {
         }
     }
 
-    private val playerEventListener = object : Player.Listener {
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            val res = if (isPlaying) R.drawable.ic_playing_pause else R.drawable.ic_playing_play
-            binding.nowPlayingPlayButton.setImageResource(res)
-        }
-
-        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            if (shuffleModeEnabled) {
-                binding.nowPlayingShuffleButton.clearColorFilter()
-            } else {
-                binding.nowPlayingShuffleButton.setColorFilter(Color.GRAY)
+    private fun initObservers() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            bottomSheetViewModel.currentMetadata.collect {
+                if (it != null) updateMetadata(it)
             }
         }
 
-        override fun onRepeatModeChanged(repeatMode: Int) {
-            when (repeatMode) {
-                Player.REPEAT_MODE_ALL -> {
-                    binding.nowPlayingRepeatButton.clearColorFilter()
-                    binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            bottomSheetViewModel.isPlaying.collect {
+                val res = if (it) R.drawable.ic_playing_pause else R.drawable.ic_playing_play
+                binding.nowPlayingPlayButton.setImageResource(res)
+            }
+        }
 
-                Player.REPEAT_MODE_ONE -> {
-                    binding.nowPlayingRepeatButton.clearColorFilter()
-                    binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat_one)
+        viewLifecycleOwner.lifecycleScope.launch {
+            bottomSheetViewModel.isShuffleEnabled.collect {
+                if (it) {
+                    binding.nowPlayingShuffleButton.clearColorFilter()
+                } else {
+                    binding.nowPlayingShuffleButton.setColorFilter(Color.GRAY)
                 }
+            }
+        }
 
-                Player.REPEAT_MODE_OFF -> {
-                    binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
-                    binding.nowPlayingRepeatButton.setColorFilter(Color.GRAY)
+        viewLifecycleOwner.lifecycleScope.launch {
+            bottomSheetViewModel.repeatMode.collect {
+                when (it) {
+                    MusicRepository.RepeatMode.ALL -> {
+                        binding.nowPlayingRepeatButton.clearColorFilter()
+                        binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
+                    }
+
+                    MusicRepository.RepeatMode.ONE -> {
+                        binding.nowPlayingRepeatButton.clearColorFilter()
+                        binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat_one)
+                    }
+
+                    MusicRepository.RepeatMode.OFF -> {
+                        binding.nowPlayingRepeatButton.setImageResource(R.drawable.ic_playing_repeat)
+                        binding.nowPlayingRepeatButton.setColorFilter(Color.GRAY)
+                    }
                 }
             }
         }
