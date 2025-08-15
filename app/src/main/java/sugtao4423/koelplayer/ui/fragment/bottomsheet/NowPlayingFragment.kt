@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.media.MediaMetadataCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.MediaItem
 import kotlinx.coroutines.launch
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.databinding.BottomSheetNowPlayingBinding
@@ -62,10 +62,10 @@ class NowPlayingFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateMetadata(metadata: MediaMetadataCompat) {
-        GlideUtil.load(this, metadata.description.iconUri, binding.nowPlayingCover)
-        binding.nowPlayingTitle.text = metadata.description.title
-        binding.nowPlayingArtist.text = metadata.description.subtitle
+    private fun updateMediaItem(mediaItem: MediaItem) {
+        GlideUtil.load(this, mediaItem.mediaMetadata.artworkUri, binding.nowPlayingCover)
+        binding.nowPlayingTitle.text = mediaItem.mediaMetadata.title
+        binding.nowPlayingArtist.text = mediaItem.mediaMetadata.artist
 
         val duration = bottomSheetViewModel.duration()
         val currentPosition = bottomSheetViewModel.currentPosition()
@@ -136,8 +136,8 @@ class NowPlayingFragment : Fragment() {
 
     private fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
-            bottomSheetViewModel.currentMetadata.collect {
-                if (it != null) updateMetadata(it)
+            bottomSheetViewModel.currentMediaItem.collect {
+                if (it != null) updateMediaItem(it)
             }
         }
 

@@ -3,15 +3,23 @@ package sugtao4423.koelplayer.music.repository
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
-import com.google.android.exoplayer2.Player
+import android.net.Uri
+import androidx.core.net.toUri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
+import androidx.media3.common.Timeline
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
+import sugtao4423.koelplayer.App
+import sugtao4423.koelplayer.data.database.MusicDB
+import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.music.service.MusicService
 
 class MusicRepository private constructor(private val context: Context) {
@@ -28,15 +36,16 @@ class MusicRepository private constructor(private val context: Context) {
         }
     }
 
-    private var musicService: MusicService? = null
-    private var isServiceBound = false
+    private var controller: MediaController? = null
+    private var controllerFuture: ListenableFuture<MediaController>? = null
 
-    private val _currentMetadata = MutableStateFlow<MediaMetadataCompat?>(null)
-    val currentMetadata: StateFlow<MediaMetadataCompat?> = _currentMetadata
+    private val _currentMediaItem = MutableStateFlow<MediaItem?>(null)
+    val currentMediaItem: StateFlow<MediaItem?> = _currentMediaItem
 
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> = _isPlaying
 
+    private val songMap: MutableMap<String, Song> = mutableMapOf()
     private val _queueSongs = MutableStateFlow<List<Song>>(emptyList())
     val queueSongs: StateFlow<List<Song>> = _queueSongs
 
@@ -48,155 +57,194 @@ class MusicRepository private constructor(private val context: Context) {
 
     enum class RepeatMode { OFF, ALL, ONE }
 
-    private val mediaControllerCallback = object : MediaControllerCompat.Callback() {
-        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-            _currentMetadata.value = metadata
-        }
-    }
-
-    private val playerEventListener = object : Player.Listener {
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            _isPlaying.value = isPlaying
-        }
-
-        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            _isShuffleEnabled.value = shuffleModeEnabled
-        }
-
-        override fun onRepeatModeChanged(repeatMode: Int) {
-            _repeatMode.value = when (repeatMode) {
-                Player.REPEAT_MODE_OFF -> RepeatMode.OFF
-                Player.REPEAT_MODE_ALL -> RepeatMode.ALL
-                Player.REPEAT_MODE_ONE -> RepeatMode.ONE
-                else -> throw IllegalArgumentException("Unknown repeat mode: $repeatMode")
+    private val controllerListener = object : Player.Listener {
+        override fun onEvents(player: Player, events: Player.Events) {
+            if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)) {
+                _currentMediaItem.value = player.currentMediaItem
             }
-        }
-    }
-
-    private val queueChangedListener = object : MusicService.OnQueueChangedListener {
-        override fun onChanged() {
-            musicService?.let {
-                _queueSongs.value = it.queueSongs()
+            if (events.contains(Player.EVENT_TIMELINE_CHANGED) || events.contains(Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED)) {
+                val mediaIds = player.currentMediaItems.map { it.mediaId }
+                _queueSongs.value = songIdsToSongList(mediaIds)
             }
-        }
-    }
-
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            musicService = (service as MusicService.MusicServiceBinder).musicService
-            musicService!!.apply {
-                setMediaControllerCallback(mediaControllerCallback)
-                addOnQueueChangedListener(queueChangedListener)
-                addPlayerEventListener(playerEventListener)
-
-                playingMetadata()?.let { _currentMetadata.value = it }
-                playerEventListener.let {
-                    it.onIsPlayingChanged(isPlaying())
-                    it.onShuffleModeEnabledChanged(isShuffle())
-                    it.onRepeatModeChanged(repeatMode())
+            if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+                _isPlaying.value = player.isPlaying
+            }
+            if (events.contains(Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED)) {
+                _isShuffleEnabled.value = player.shuffleModeEnabled
+            }
+            if (events.contains(Player.EVENT_REPEAT_MODE_CHANGED)) {
+                _repeatMode.value = when (player.repeatMode) {
+                    Player.REPEAT_MODE_OFF -> RepeatMode.OFF
+                    Player.REPEAT_MODE_ALL -> RepeatMode.ALL
+                    Player.REPEAT_MODE_ONE -> RepeatMode.ONE
+                    else -> throw IllegalArgumentException("Unknown repeat mode: ${player.repeatMode}")
                 }
-                _queueSongs.value = queueSongs()
-            }
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            musicService?.apply {
-                removePlayerEventListener(playerEventListener)
-                removeOnQueueChangedListener(queueChangedListener)
-                removeMediaControllerCallback(mediaControllerCallback)
-            }
-            musicService = null
-        }
-    }
-
-    fun bindService() {
-        if (isServiceBound) return
-
-        val intent = Intent(context, MusicService::class.java)
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        isServiceBound = true
-    }
-
-    fun unbindService() {
-        if (!isServiceBound) return
-
-        musicService?.removeMediaControllerCallback(mediaControllerCallback)
-        context.unbindService(serviceConnection)
-        isServiceBound = false
-    }
-
-    fun playingPosition(): Int {
-        return musicService?.playingPosition() ?: -1
-    }
-
-    fun playSongs(songs: List<Song>, position: Int) {
-        musicService?.playSongs(songs, position)
-    }
-
-    fun shufflePlaySongs(songs: List<Song>) {
-        musicService?.shufflePlaySongs(songs)
-    }
-
-    fun togglePlay() {
-        musicService?.togglePlay()
-    }
-
-    fun next() {
-        musicService?.next()
-    }
-
-    fun prev() {
-        musicService?.prev()
-    }
-
-    fun seekTo(position: Long) {
-        musicService?.seekTo(position)
-    }
-
-    fun toggleShuffle() {
-        musicService?.toggleShuffle()
-    }
-
-    fun toggleRepeat() {
-        musicService?.let {
-            when {
-                it.isRepeat() -> it.repeatOne()
-                it.isRepeatOne() -> it.repeatOff()
-                else -> it.repeat()
             }
         }
     }
 
-    fun addQueueNext(songs: List<Song>) {
-        musicService?.addQueueNext(songs)
+    fun initialize() {
+        if (controller != null) {
+            return
+        }
+
+        val sessionToken = SessionToken(context, ComponentName(context, MusicService::class.java))
+        controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+        controllerFuture!!.addListener({
+            controller = controllerFuture!!.get()
+            controller!!.addListener(controllerListener)
+        }, MoreExecutors.directExecutor())
     }
 
-    fun addQueueLast(songs: List<Song>) {
-        musicService?.addQueueLast(songs)
+    fun release() {
+        controller?.let {
+            it.removeListener(controllerListener)
+            it.release()
+        }
+        controllerFuture?.let {
+            MediaController.releaseFuture(it)
+        }
+        controller = null
+        controllerFuture = null
     }
 
-    fun changeSong(position: Int) {
-        musicService?.changeSong(position)
+    fun playingPosition(): Int = controller?.let {
+        it.mediaItemsIndices.indexOf(it.currentMediaItemIndex)
+    } ?: -1
+
+    fun duration(): Long = controller?.duration ?: 0
+    fun currentPosition(): Long = controller?.currentPosition ?: 0
+    fun bufferedPosition(): Long = controller?.bufferedPosition ?: 0
+
+    fun prev() = controller?.seekToPrevious()
+    fun next() = controller?.seekToNext()
+    fun seekTo(position: Long) = controller?.seekTo(position)
+
+    fun togglePlay() = controller?.run { if (isPlaying()) pause() else play() }
+    fun toggleShuffle() = controller?.run { shuffleModeEnabled = !shuffleModeEnabled }
+    fun toggleRepeat() = controller?.repeatMode = when (controller?.repeatMode) {
+        Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL
+        Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
+        Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_OFF
+        else -> throw IllegalArgumentException("Unknown repeat mode: ${controller?.repeatMode}")
     }
 
-    fun moveSong(from: Int, to: Int) {
-        musicService?.moveSong(from, to)
+    fun playSongs(songs: List<Song>, position: Int) = controller?.run {
+        shuffleModeEnabled = false
+        setMediaItems(songs.toMediaItems())
+        seekTo(position, 0)
+        prepare()
+        play()
     }
 
-    fun removeSong(position: Int) {
-        musicService?.removeSong(position)
+    fun shufflePlaySongs(songs: List<Song>) = controller?.run {
+        shuffleModeEnabled = true
+        setMediaItems(songs.toMediaItems())
+        prepare()
+        play()
     }
 
-    fun currentPosition(): Long {
-        return musicService?.currentPosition() ?: 0L
+    // TODO: Handle adding songs in shuffle mode
+    fun addQueueNext(songs: List<Song>) = controller?.run {
+        addMediaItems(currentMediaItemIndex + 1, songs.toMediaItems())
     }
 
-    fun duration(): Long {
-        return musicService?.duration() ?: 0L
+    // TODO: Handle adding songs in shuffle mode
+    fun addQueueLast(songs: List<Song>) = controller?.run {
+        addMediaItems(mediaItemCount, songs.toMediaItems())
     }
 
-    fun bufferedPosition(): Long {
-        return musicService?.bufferedPosition() ?: 0L
+    fun changeSong(position: Int) = controller?.run {
+        val unshufflePos = mediaItemsIndices[position]
+        seekTo(unshufflePos, 0)
+    }
+
+    // TODO: Handle moving songs in shuffle mode
+    fun moveSong(from: Int, to: Int) = controller?.run {
+        val unshuffleFrom = mediaItemsIndices[from]
+        val unshuffleTo = mediaItemsIndices[to]
+        moveMediaItem(unshuffleFrom, unshuffleTo)
+    }
+
+    fun removeSong(position: Int) = controller?.run {
+        val unshufflePos = mediaItemsIndices[position]
+        removeMediaItem(unshufflePos)
+    }
+
+    private val Player.mediaItemsIndices: List<Int>
+        get() {
+            val indices = mutableListOf<Int>()
+            var index = currentTimeline.getFirstWindowIndex(shuffleModeEnabled)
+            if (index == -1) {
+                return emptyList()
+            }
+
+            repeat(currentTimeline.windowCount) {
+                indices.add(index)
+                index = currentTimeline.getNextWindowIndex(
+                    index, Player.REPEAT_MODE_OFF, shuffleModeEnabled
+                )
+            }
+
+            return indices
+        }
+
+    private val Player.currentMediaItems: List<MediaItem>
+        get() = if (shuffleModeEnabled) {
+            mediaItemsIndices.map { getMediaItemAt(it) }
+        } else {
+            List(currentTimeline.windowCount) { i ->
+                currentTimeline.getWindow(i, Timeline.Window()).mediaItem
+            }
+        }
+
+    private fun List<Song>.toMediaItems(): List<MediaItem> {
+        val dlUtil = KoelDLUtil(context)
+        val app = context as App
+
+        fun Song.toUri(): Uri = if (dlUtil.isDownloaded(this)) {
+            dlUtil.getSongFilePath(this)
+        } else {
+            app.koelServer + KoelEndpoints.musicFile(app.koelToken, this.id)
+        }.toUri()
+
+        fun Song.toMetadata(): MediaMetadata = MediaMetadata.Builder().let {
+            it.setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
+
+            it.setTitle(this.title)
+            it.setArtist(this.artist.name)
+            it.setAlbumTitle(this.album.name)
+            it.setAlbumArtist(this.album.artist.name)
+            it.setArtworkUri(this.album.cover?.toUri())
+
+            it.setDurationMs((this.length * 1000).toLong())
+            it.setDiscNumber(this.disc)
+            it.setTrackNumber(this.track)
+        }.build()
+
+        return this.map { song ->
+            MediaItem.Builder().let {
+                it.setMediaId(song.id)
+                it.setUri(song.toUri())
+                it.setMediaMetadata(song.toMetadata())
+            }.build()
+        }
+    }
+
+    private fun songIdsToSongList(songIds: List<String>): List<Song> {
+        val notFoundIds = songIds.filter { !songMap.containsKey(it) }
+        if (notFoundIds.isEmpty()) {
+            return songIds.map { songMap[it]!! }
+        }
+
+        val songs = MusicDB(context).let {
+            val result = it.getSongsById(notFoundIds)
+            it.close()
+            result
+        }
+        songMap.putAll(songs.associateBy { it.id })
+
+        return songIds.map { songMap[it]!! }
     }
 
 }

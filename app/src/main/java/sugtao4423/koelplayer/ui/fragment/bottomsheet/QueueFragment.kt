@@ -59,7 +59,7 @@ class QueueFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            bottomSheetViewModel.currentMetadata.collect {
+            bottomSheetViewModel.currentMediaItem.collect {
                 if (it == null) return@collect
                 if (queueAdapter.itemCount > 0 && isScrollTop) {
                     val playingPosition = bottomSheetViewModel.playingPosition()
