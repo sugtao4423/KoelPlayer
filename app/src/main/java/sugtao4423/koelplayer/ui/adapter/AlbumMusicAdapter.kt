@@ -10,13 +10,13 @@ class AlbumMusicAdapter(
 ) : MusicAdapter(VIEW_TYPE_ALBUM, isCompilation, viewModel) {
 
     init {
-        addAll(songs)
+        submitList(songs)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         holder.itemView.setOnClickListener {
-            viewModel.playSongs(songs, position)
+            viewModel.playSongs(currentList, position)
         }
     }
 

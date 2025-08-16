@@ -24,7 +24,7 @@ class QueueFragment : Fragment() {
     private val bottomSheetViewModel: BottomSheetViewModel by activityViewModels()
 
     private val queueAdapter: QueueAdapter by lazy { QueueAdapter(bottomSheetViewModel) }
-    private var isScrollTop = true
+    private var enableScrollToTop = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -53,21 +53,18 @@ class QueueFragment : Fragment() {
     private fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             bottomSheetViewModel.queueSongs.collect {
-                queueAdapter.clear()
-                queueAdapter.addAll(it)
+                queueAdapter.submitList(it)
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             bottomSheetViewModel.currentMediaItem.collect {
-                if (it == null) return@collect
-                if (queueAdapter.itemCount > 0 && isScrollTop) {
+                if (it != null && queueAdapter.itemCount > 0 && enableScrollToTop) {
                     val playingPosition = bottomSheetViewModel.playingPosition()
                     if (playingPosition >= 0) {
                         binding.songQueue.smoothScrollToPosition(playingPosition)
                     }
                 }
-                isScrollTop = true
             }
         }
     }
@@ -89,23 +86,42 @@ class QueueFragment : Fragment() {
     private val moveSwipeCallback = object : ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT
     ) {
+        private var dragStartPosition = -1
+        private var dragEndPosition = -1
+
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+            if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
+                return
+            }
+
+            enableScrollToTop = true
+            if (dragStartPosition >= 0 && dragEndPosition >= 0) {
+                bottomSheetViewModel.moveSong(dragStartPosition, dragEndPosition)
+                dragStartPosition = -1
+                dragEndPosition = -1
+            }
+        }
+
         override fun onMove(
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder,
             target: RecyclerView.ViewHolder
         ): Boolean {
-            isScrollTop = false
-            val fromPosition = viewHolder.adapterPosition
-            val toPosition = target.adapterPosition
-            queueAdapter.move(fromPosition, toPosition)
-            bottomSheetViewModel.moveSong(fromPosition, toPosition)
+            val from = viewHolder.bindingAdapterPosition
+            val to = target.bindingAdapterPosition
+
+            queueAdapter.move(from, to)
+            if (dragStartPosition == -1) {
+                dragStartPosition = from
+            }
+            dragEndPosition = to
+
             return true
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            isScrollTop = false
-            val position = viewHolder.adapterPosition
-            queueAdapter.remove(position)
+            val position = viewHolder.bindingAdapterPosition
             bottomSheetViewModel.removeSong(position)
         }
     }

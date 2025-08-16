@@ -15,13 +15,9 @@ class QueueAdapter(private val viewModel: MusicServiceViewModel) :
     }
 
     fun move(from: Int, to: Int) {
-        songs.add(to, songs.removeAt(from))
-        notifyItemMoved(from, to)
-    }
-
-    fun remove(position: Int) {
-        songs.removeAt(position)
-        notifyItemRemoved(position)
+        val newList = currentList.toMutableList()
+        newList.add(to, newList.removeAt(from))
+        submitList(newList)
     }
 
 }
