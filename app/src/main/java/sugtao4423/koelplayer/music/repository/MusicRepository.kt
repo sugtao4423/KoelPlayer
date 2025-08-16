@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -131,51 +132,35 @@ class MusicRepository private constructor(private val context: Context) {
 
     fun playSongs(songs: List<Song>, position: Int) = controller?.run {
         shuffleModeEnabled = false
-        setMediaItems(songs.toMediaItems())
-        seekTo(position, 0)
+        setMediaItems(songs.toMediaItems(), position, 0)
         prepare()
         play()
     }
 
     fun shufflePlaySongs(songs: List<Song>) = controller?.run {
         shuffleModeEnabled = true
-        setMediaItems(songs.toMediaItems())
+        setMediaItems(songs.toMediaItems(), true)
         prepare()
         play()
     }
 
-    // TODO: Handle adding songs in shuffle mode
     fun addQueueNext(songs: List<Song>) = controller?.run {
         addMediaItems(currentMediaItemIndex + 1, songs.toMediaItems())
     }
 
-    // TODO: Handle adding songs in shuffle mode
     fun addQueueLast(songs: List<Song>) = controller?.run {
         addMediaItems(mediaItemCount, songs.toMediaItems())
     }
 
-    fun changeSong(position: Int) = controller?.run {
-        val unshufflePos = mediaItemsIndices[position]
-        seekTo(unshufflePos, 0)
-    }
-
-    // TODO: Handle moving songs in shuffle mode
-    fun moveSong(from: Int, to: Int) = controller?.run {
-        val unshuffleFrom = mediaItemsIndices[from]
-        val unshuffleTo = mediaItemsIndices[to]
-        moveMediaItem(unshuffleFrom, unshuffleTo)
-    }
-
-    fun removeSong(position: Int) = controller?.run {
-        val unshufflePos = mediaItemsIndices[position]
-        removeMediaItem(unshufflePos)
-    }
+    fun changeSong(position: Int) = controller?.seekTo(position, 0)
+    fun moveSong(from: Int, to: Int) = controller?.moveMediaItem(from, to)
+    fun removeSong(position: Int) = controller?.removeMediaItem(position)
 
     private val Player.mediaItemsIndices: List<Int>
         get() {
             val indices = mutableListOf<Int>()
             var index = currentTimeline.getFirstWindowIndex(shuffleModeEnabled)
-            if (index == -1) {
+            if (index == C.INDEX_UNSET) {
                 return emptyList()
             }
 
