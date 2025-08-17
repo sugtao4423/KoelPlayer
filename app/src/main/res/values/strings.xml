@@ -4,6 +4,9 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
+    <!-- Music Notification -->
+    <string name="notification_channel_name">Now Playing</string>
+
     <!-- MainActivity.kt -->
     <string name="playlist">プレイリスト</string>
     <string name="album">アルバム</string>
@@ -60,10 +63,6 @@
     <!-- PlaylistAdapter.kt -->
     <string name="add_queue_playlist">プレイリストをキューに追加しました</string>
     <string name="play_next_playlist">次にこのプレイリストが再生されます</string>
-
-    <!-- MusicService.kt -->
-    <string name="notification_channel">Now Playing</string>
-    <string name="notification_channel_description">@string/notification_channel</string>
 
     <!-- bottom_sheet.xml -->
     <string name="now_playing">Now Playing</string>

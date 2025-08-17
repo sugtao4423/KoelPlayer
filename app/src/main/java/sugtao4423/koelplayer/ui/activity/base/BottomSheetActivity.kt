@@ -82,9 +82,7 @@ abstract class BottomSheetActivity : AppCompatActivity() {
                 BottomSheetViewModel.BOTTOM_SHEET_NOW_PLAYING
             )
             add(
-                R.id.bottomSheetContainer,
-                QueueFragment(),
-                BottomSheetViewModel.BOTTOM_SHEET_QUEUE
+                R.id.bottomSheetContainer, QueueFragment(), BottomSheetViewModel.BOTTOM_SHEET_QUEUE
             )
         }
 
@@ -101,13 +99,15 @@ abstract class BottomSheetActivity : AppCompatActivity() {
 
     private fun initObservers(bottomSheet: BottomSheetBehavior<CoordinatorLayout>) {
         lifecycleScope.launch {
-            bottomSheetViewModel.currentMetadata.collect { metadata ->
-                metadata?.let {
+            bottomSheetViewModel.currentMediaItem.collect { mediaItem ->
+                mediaItem?.let {
                     GlideUtil.load(
-                        applicationContext, it.description.iconUri, bsBinding.bottomNowPlayingCover
+                        applicationContext,
+                        it.mediaMetadata.artworkUri,
+                        bsBinding.bottomNowPlayingCover
                     )
-                    bsBinding.bottomNowPlayingTitle.text = it.description.title
-                    bsBinding.bottomNowPlayingArtist.text = it.description.subtitle
+                    bsBinding.bottomNowPlayingTitle.text = it.mediaMetadata.title
+                    bsBinding.bottomNowPlayingArtist.text = it.mediaMetadata.artist
                 }
             }
         }

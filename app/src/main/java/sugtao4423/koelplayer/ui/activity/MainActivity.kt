@@ -61,6 +61,11 @@ class MainActivity : BottomSheetActivity() {
         }
     }
 
+    override fun onDestroy() {
+        bottomSheetViewModel.releaseController()
+        super.onDestroy()
+    }
+
     inner class MainTabAdapter(fm: FragmentManager) :
         FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 

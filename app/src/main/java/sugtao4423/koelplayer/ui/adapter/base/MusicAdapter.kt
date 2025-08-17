@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.R
@@ -16,11 +18,16 @@ import sugtao4423.koelplayer.util.GlideUtil
 import sugtao4423.koelplayer.util.secToTimeFormat
 import sugtao4423.koelplayer.viewmodel.base.MusicServiceViewModel
 
+private class SongDiffCallback : DiffUtil.ItemCallback<Song>() {
+    override fun areItemsTheSame(oldItem: Song, newItem: Song): Boolean = oldItem.id == newItem.id
+    override fun areContentsTheSame(oldItem: Song, newItem: Song): Boolean = oldItem == newItem
+}
+
 abstract class MusicAdapter(
     private val viewType: Int,
     private val isCompilation: Boolean,
     private val viewModel: MusicServiceViewModel
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : ListAdapter<Song, RecyclerView.ViewHolder>(SongDiffCallback()) {
 
     companion object {
         const val VIEW_TYPE_ALBUM = 1
@@ -29,8 +36,6 @@ abstract class MusicAdapter(
     }
 
     private lateinit var context: Context
-
-    protected var songs = ArrayList<Song>()
 
     override fun getItemViewType(position: Int): Int = viewType
 
@@ -53,7 +58,7 @@ abstract class MusicAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val song = songs[position]
+        val song = getItem(position)
 
         val length = song.length.toInt().secToTimeFormat(song.length >= 3600).let {
             if (isCompilation) song.artist.name + "・" + it else it
@@ -85,25 +90,6 @@ abstract class MusicAdapter(
         }
     }
 
-    override fun getItemCount(): Int = songs.size
-
-    fun clear() {
-        val size = songs.size
-        songs.clear()
-        notifyItemRangeRemoved(0, size)
-    }
-
-    fun add(song: Song) {
-        songs.add(song)
-        notifyItemInserted(songs.lastIndex)
-    }
-
-    fun addAll(songs: List<Song>) {
-        val lastItemIndex = this.songs.lastIndex
-        this.songs.addAll(songs)
-        notifyItemRangeInserted(lastItemIndex + 1, songs.size)
-    }
-
     inner class AlbumMusicViewHolder(val binding: ItemAlbumSongBinding) :
         RecyclerView.ViewHolder(binding.root)
 
@@ -119,14 +105,14 @@ abstract class MusicAdapter(
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.songMorePlayNext -> viewModel.let {
-                        it.addQueueNext(listOf(songs[position]))
+                        it.addQueueNext(listOf(getItem(position)))
                         Toast.makeText(
                             context.applicationContext, R.string.play_next_song, Toast.LENGTH_SHORT
                         ).show()
                     }
 
                     R.id.songMoreAddQueue -> viewModel.let {
-                        it.addQueueLast(listOf(songs[position]))
+                        it.addQueueLast(listOf(getItem(position)))
                         Toast.makeText(
                             context.applicationContext, R.string.add_queue_song, Toast.LENGTH_SHORT
                         ).show()
