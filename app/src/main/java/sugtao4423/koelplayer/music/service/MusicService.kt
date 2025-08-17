@@ -7,18 +7,30 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.music.player.MusicPlayer
 import sugtao4423.koelplayer.ui.activity.MainActivity
 
 class MusicService : MediaLibraryService() {
 
+    @OptIn(UnstableApi::class)
+    private val notificationProvider by lazy {
+        DefaultMediaNotificationProvider.Builder(applicationContext).apply {
+            setChannelId("${packageName}.NOW_PLAYING")
+            setChannelName(R.string.notification_channel_name)
+            setNotificationId(1145141919)
+        }.build()
+    }
+
     private var mediaLibrarySession: MediaLibrarySession? = null
 
+    @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
-//        setMediaNotificationProvider()
+        setMediaNotificationProvider(notificationProvider)
         val player = initExoPlayer()
         mediaLibrarySession = initMediaSession(player)
     }
@@ -51,7 +63,7 @@ class MusicService : MediaLibraryService() {
 
         return MediaLibrarySession.Builder(
             this, player, object : MediaLibrarySession.Callback {}).let {
-            it.setId("sugtao4423.koelplayer.music.service.MusicService")
+            it.setId("${packageName}.music.service.MusicService")
             it.setSessionActivity(sessionActivityPendingIntent)
             it.build()
         }
