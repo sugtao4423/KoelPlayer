@@ -73,10 +73,10 @@ class MusicPlayer(private val exoPlayer: ExoPlayer) : ForwardingSimpleBasePlayer
             return super.handleRemoveMediaItems(fromIndex, toIndex)
         }
 
-        (fromIndex until toIndex).forEach {
-            val shuffleOrder = exoPlayer.shuffleOrder.toMutableList()
-            val index = shuffleOrder[it]
-            exoPlayer.removeMediaItem(index)
+        val shuffleOrder = exoPlayer.shuffleOrder.toMutableList()
+        val removeItems = shuffleOrder.subList(fromIndex, toIndex).toList()
+        removeItems.sortedDescending().forEach {
+            exoPlayer.removeMediaItem(it)
         }
         return Futures.immediateVoidFuture()
     }
