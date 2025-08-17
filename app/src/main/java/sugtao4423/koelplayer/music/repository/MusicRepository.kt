@@ -221,7 +221,7 @@ class MusicRepository private constructor(private val context: Context) {
             it.setAlbumArtist(this.album.artist.name)
             it.setArtworkUri(this.album.cover?.toUri())
 
-            it.setDurationMs((this.length * 1000).toLong())
+            it.setDurationMs(this.length.toLong() * 1000)
             it.setDiscNumber(this.disc)
             it.setTrackNumber(this.track)
         }.build()

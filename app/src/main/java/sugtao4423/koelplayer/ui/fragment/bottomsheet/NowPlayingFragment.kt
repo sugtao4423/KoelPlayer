@@ -121,7 +121,7 @@ class NowPlayingFragment : Fragment() {
 
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             if (touching) {
-                bottomSheetViewModel.seekTo((progress * 1000).toLong())
+                bottomSheetViewModel.seekTo(progress.toLong() * 1000)
             }
         }
 
