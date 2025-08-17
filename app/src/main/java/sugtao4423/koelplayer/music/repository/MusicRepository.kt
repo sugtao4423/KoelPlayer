@@ -4,12 +4,15 @@ import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.core.net.toUri
 import androidx.media3.common.C
+import androidx.media3.common.FlagSet
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
@@ -59,6 +62,18 @@ class MusicRepository private constructor(private val context: Context) {
     enum class RepeatMode { OFF, ALL, ONE }
 
     private val controllerListener = object : Player.Listener {
+        @OptIn(UnstableApi::class)
+        private val handlingFlags = FlagSet.Builder().addAll(
+            Player.EVENT_MEDIA_ITEM_TRANSITION,
+            Player.EVENT_TIMELINE_CHANGED,
+            Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED,
+            Player.EVENT_IS_PLAYING_CHANGED,
+            Player.EVENT_REPEAT_MODE_CHANGED,
+        ).build()
+
+        @OptIn(UnstableApi::class)
+        fun initStates(player: Player) = onEvents(player, Player.Events(handlingFlags))
+
         override fun onEvents(player: Player, events: Player.Events) {
             if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)) {
                 _currentMediaItem.value = player.currentMediaItem
@@ -93,7 +108,10 @@ class MusicRepository private constructor(private val context: Context) {
         controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
         controllerFuture!!.addListener({
             controller = controllerFuture!!.get()
-            controller!!.addListener(controllerListener)
+            controller!!.let {
+                controllerListener.initStates(it)
+                it.addListener(controllerListener)
+            }
         }, MoreExecutors.directExecutor())
     }
 
@@ -107,6 +125,7 @@ class MusicRepository private constructor(private val context: Context) {
         }
         controller = null
         controllerFuture = null
+        INSTANCE = null
     }
 
     fun playingPosition(): Int = controller?.let {
