@@ -59,8 +59,8 @@ class MusicPlayer(private val exoPlayer: ExoPlayer) : ForwardingSimpleBasePlayer
 
         val shuffleOrder = exoPlayer.shuffleOrder.toMutableList()
         val moveItems = shuffleOrder.subList(fromIndex, toIndex).toList()
-        (fromIndex until toIndex).forEach {
-            shuffleOrder.removeAt(it)
+        for (i in fromIndex until toIndex) {
+            shuffleOrder.removeAt(i)
         }
         shuffleOrder.addAll(newIndex, moveItems)
 
