@@ -53,9 +53,12 @@ class SettingsActivity : AppCompatActivity() {
                 true
             }
 
-            findPreference<Preference>("showDownloadedInfo")?.setOnPreferenceClickListener {
-                showDownloadedInfo()
-                true
+            findPreference<Preference>("showDownloadedInfo")?.let {
+                it.summary = getDownloadedInfoMessage()
+                it.setOnPreferenceClickListener { _ ->
+                    it.summary = getDownloadedInfoMessage()
+                    true
+                }
             }
 
         }
@@ -93,7 +96,7 @@ class SettingsActivity : AppCompatActivity() {
             }.show()
         }
 
-        private fun showDownloadedInfo() {
+        private fun getDownloadedInfoMessage(): String {
             val allSongs = MusicDB(requireContext()).let {
                 val songs = it.getAllMusicData().songs
                 it.close()
@@ -104,19 +107,14 @@ class SettingsActivity : AppCompatActivity() {
             val downloadedSongCount = allSongs.filter { downloader.isDownloaded(it.id) }.size
             val allDownloadedFileSize = downloader.getAllDownloadedFileSize().bytesToHumanReadable()
 
-            val message = getString(
+            return getString(
                 R.string.preferences_downloaded_info_message,
                 downloadedSongCount,
                 allSongs.size,
                 allDownloadedFileSize
             )
-            AlertDialog.Builder(requireContext()).apply {
-                setTitle(R.string.preferences_downloaded_info)
-                setMessage(message)
-                setPositiveButton(R.string.ok, null)
-                show()
-            }
         }
+
     }
 
 }
