@@ -12,7 +12,7 @@ import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.data.database.MusicDB
-import sugtao4423.koelplayer.download.KoelDLUtil
+import sugtao4423.koelplayer.download.MusicDownloader
 
 class SyncMusicData(private val context: Context) {
 
@@ -63,7 +63,8 @@ class SyncMusicData(private val context: Context) {
     }
 
     private fun syncDownloadedMusicFiles(songs: List<Song>) {
-        KoelDLUtil(context).deleteUnusedMusicFiles(songs)
+        val songIds = songs.map { it.id }
+        MusicDownloader(context).deleteUnusedSongFiles(songIds)
     }
 
 }

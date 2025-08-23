@@ -13,7 +13,8 @@ import sugtao4423.koel4j.dataclass.Playlist
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.data.database.MusicDB
-import sugtao4423.koelplayer.download.KoelDLUtil
+import sugtao4423.koelplayer.download.MusicDownloader
+import sugtao4423.koelplayer.util.bytesToHumanReadable
 import sugtao4423.koelplayer.util.secToTimeFormat
 
 class SongListViewModel(application: Application) : AndroidViewModel(application) {
@@ -32,9 +33,13 @@ class SongListViewModel(application: Application) : AndroidViewModel(application
     val songListData: LiveData<SongListData?> = _songListData
 
     private fun getFileSize(songs: List<Song>): String? {
-        val dlUtil = KoelDLUtil(getApplication())
-        val allDownloaded = songs.all { dlUtil.isDownloaded(it) }
-        return if (allDownloaded) dlUtil.getSongFilesSize(songs) else null
+        val downloader = MusicDownloader(getApplication())
+        val isAllDownloaded = songs.all { downloader.isDownloaded(it.id) }
+        return if (isAllDownloaded) {
+            songs.sumOf { downloader.getDownloadedFileSize(it.id) }.bytesToHumanReadable()
+        } else {
+            null
+        }
     }
 
     fun loadAlbumData(album: Album) {

@@ -23,7 +23,6 @@ import sugtao4423.koel4j.KoelEndpoints
 import sugtao4423.koel4j.dataclass.Song
 import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.data.database.MusicDB
-import sugtao4423.koelplayer.download.KoelDLUtil
 import sugtao4423.koelplayer.music.service.MusicService
 
 class MusicRepository private constructor(private val context: Context) {
@@ -203,14 +202,9 @@ class MusicRepository private constructor(private val context: Context) {
         }
 
     private fun List<Song>.toMediaItems(): List<MediaItem> {
-        val dlUtil = KoelDLUtil(context)
         val app = context as App
-
-        fun Song.toUri(): Uri = if (dlUtil.isDownloaded(this)) {
-            dlUtil.getSongFilePath(this)
-        } else {
-            app.koelServer + KoelEndpoints.musicFile(app.koelToken, this.id)
-        }.toUri()
+        fun Song.toUri(): Uri =
+            (app.koelServer + KoelEndpoints.musicFile(app.koelToken, this.id)).toUri()
 
         fun Song.toMetadata(): MediaMetadata = MediaMetadata.Builder().let {
             it.setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
