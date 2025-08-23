@@ -74,7 +74,7 @@
     <string name="queue">Queue</string>
 
     <!-- MusicDownloadService.kt -->
-    <string name="download_notification_channel_name">ダウンロード</string>
+    <string name="download_notification_channel_name">Download</string>
     <string name="param_download_left">残り %d 曲</string>
 
     <!-- preferences.xml -->
