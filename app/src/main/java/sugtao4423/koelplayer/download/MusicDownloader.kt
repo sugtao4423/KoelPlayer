@@ -49,25 +49,25 @@ class MusicDownloader(private val context: Context) {
         0
     }
 
-    private fun getAllDownloaded(): List<Download> {
-        val downloadedIds = mutableListOf<Download>()
+    private fun getAllDownloads(): List<Download> {
+        val downloads = mutableListOf<Download>()
         try {
             val cursor = downloadManager.downloadIndex.getDownloads()
             cursor.use {
                 while (it.moveToNext()) {
-                    downloadedIds.add(it.download)
+                    downloads.add(it.download)
                 }
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        return downloadedIds
+        return downloads
     }
 
-    fun getAllDownloadedFileSize(): Long = getAllDownloaded().sumOf { it.bytesDownloaded }
+    fun getAllDownloadedFileSize(): Long = getAllDownloads().sumOf { it.bytesDownloaded }
 
     fun deleteUnusedSongFiles(newSongIds: List<String>) {
-        val downloadedSongIds = getAllDownloaded().map { it.request.id }.toSet()
+        val downloadedSongIds = getAllDownloads().map { it.request.id }.toSet()
         val newSongIds = newSongIds.toSet()
         val unusedSongIds = downloadedSongIds - newSongIds
 
