@@ -53,6 +53,11 @@ class SettingsActivity : AppCompatActivity() {
                 true
             }
 
+            findPreference<Preference>("removeAllDownloaded")?.setOnPreferenceClickListener {
+                removeAllDownloadedMusic()
+                true
+            }
+
             findPreference<Preference>("showDownloadedInfo")?.let {
                 it.summary = getDownloadedInfoMessage()
                 it.setOnPreferenceClickListener { _ ->
@@ -93,6 +98,16 @@ class SettingsActivity : AppCompatActivity() {
                     songs
                 }
                 MusicDownloader(requireContext()).downloadSongs(allSongs)
+            }.show()
+        }
+
+        private fun removeAllDownloadedMusic() {
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle(R.string.preferences_remove_all_downloaded)
+                setMessage(R.string.preferences_remove_all_downloaded_description)
+                setNegativeButton(R.string.cancel, null)
+            }.setPositiveButton(R.string.ok) { _, _ ->
+                MusicDownloader(requireContext()).deleteAllDownloadedSongFiles()
             }.show()
         }
 

@@ -76,4 +76,8 @@ class MusicDownloader(private val context: Context) {
         }
     }
 
+    fun deleteAllDownloadedSongFiles() {
+        DownloadService.sendRemoveAllDownloads(context, MusicDownloadService::class.java, false)
+    }
+
 }
