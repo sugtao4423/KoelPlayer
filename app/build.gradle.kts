@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "sugtao4423.koelplayer"
         minSdk = 21
-        targetSdk = 31
+        targetSdk = 32
         versionCode = 1
         versionName = "1.0"
     }
