@@ -112,13 +112,13 @@ abstract class BottomSheetActivity : AppCompatActivity() {
             }
         }
 
-        bottomSheetViewModel.bottomSheetState.observe(this, { state ->
+        bottomSheetViewModel.bottomSheetState.observe(this) { state ->
             if (bottomSheet.state != state) {
                 bottomSheet.state = state
             }
-        })
+        }
 
-        bottomSheetViewModel.currentBottomSheetTag.observe(this, { tag ->
+        bottomSheetViewModel.currentBottomSheetTag.observe(this) { tag ->
             supportFragmentManager.fragments.filter {
                 listOf(
                     BottomSheetViewModel.BOTTOM_SHEET_NOW_PLAYING,
@@ -129,7 +129,7 @@ abstract class BottomSheetActivity : AppCompatActivity() {
                     if (it.tag == tag) show(it) else hide(it)
                 }
             }
-        })
+        }
     }
 
     override fun onBackPressed() {
