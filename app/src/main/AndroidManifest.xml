@@ -45,8 +45,14 @@
         </service>
 
         <service
-            android:name=".download.KoelDLService"
-            android:exported="false" />
+            android:name=".download.MusicDownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync">
+            <intent-filter>
+                <action android:name="androidx.media3.exoplayer.downloadService.action.RESTART" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name=".ui.activity.SettingsActivity"

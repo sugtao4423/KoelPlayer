@@ -6,11 +6,16 @@ import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import sugtao4423.koel4j.Koel4j
 import sugtao4423.koelplayer.R
+import sugtao4423.koelplayer.download.DownloadUtil
 import sugtao4423.koelplayer.music.player.MusicPlayer
 import sugtao4423.koelplayer.ui.activity.MainActivity
 
@@ -37,6 +42,21 @@ class MusicService : MediaLibraryService() {
 
     @OptIn(UnstableApi::class)
     private fun initExoPlayer(): MusicPlayer {
+        val httpDataSourceFactory = DefaultHttpDataSource.Factory().let {
+            it.setUserAgent(Koel4j.USER_AGENT)
+            it.setAllowCrossProtocolRedirects(true)
+        }
+        val cache = DownloadUtil.getDownloadCache(this)
+        val cacheDataSourceFactory = CacheDataSource.Factory().let {
+            it.setCache(cache)
+            it.setUpstreamDataSourceFactory(httpDataSourceFactory)
+            it.setCacheWriteDataSinkFactory(null)
+            it.setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        }
+        val mediaSourceFactory = DefaultMediaSourceFactory(this).setDataSourceFactory(
+            cacheDataSourceFactory
+        )
+
         val attr = AudioAttributes.Builder().run {
             setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
             setUsage(C.USAGE_MEDIA)
@@ -44,6 +64,7 @@ class MusicService : MediaLibraryService() {
         }
 
         val exoPlayer = ExoPlayer.Builder(this).run {
+            setMediaSourceFactory(mediaSourceFactory)
             setAudioAttributes(attr, true)
             setHandleAudioBecomingNoisy(true)
             setMaxSeekToPreviousPositionMs(3000L)

@@ -1,7 +1,6 @@
 package sugtao4423.koelplayer.ui.activity
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
@@ -13,8 +12,8 @@ import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.data.SyncMusicData
 import sugtao4423.koelplayer.data.database.MusicDB
-import sugtao4423.koelplayer.download.KoelDLService
-import sugtao4423.koelplayer.download.KoelDLUtil
+import sugtao4423.koelplayer.download.MusicDownloader
+import sugtao4423.koelplayer.util.bytesToHumanReadable
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -54,9 +53,17 @@ class SettingsActivity : AppCompatActivity() {
                 true
             }
 
-            findPreference<Preference>("showDownloadedInfo")?.setOnPreferenceClickListener {
-                showDownloadedInfo()
+            findPreference<Preference>("removeAllDownloaded")?.setOnPreferenceClickListener {
+                removeAllDownloadedMusic()
                 true
+            }
+
+            findPreference<Preference>("showDownloadedInfo")?.let {
+                it.summary = getDownloadedInfoMessage()
+                it.setOnPreferenceClickListener { _ ->
+                    it.summary = getDownloadedInfoMessage()
+                    true
+                }
             }
 
         }
@@ -85,41 +92,44 @@ class SettingsActivity : AppCompatActivity() {
                 setMessage(R.string.preferences_all_download_description)
                 setNegativeButton(R.string.cancel, null)
             }.setPositiveButton(R.string.ok) { _, _ ->
-                val musicDB = MusicDB(requireContext())
-                val allSongs = musicDB.getAllMusicData().songs.toTypedArray()
-                musicDB.close()
-
-                val intent = Intent(requireContext(), KoelDLService::class.java)
-                intent.putExtra(KoelDLService.INTENT_KEY_SONGS, allSongs)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    requireContext().startForegroundService(intent)
-                } else {
-                    requireContext().startService(intent)
+                val allSongs = MusicDB(requireContext()).let {
+                    val songs = it.getAllMusicData().songs
+                    it.close()
+                    songs
                 }
+                MusicDownloader(requireContext()).downloadSongs(allSongs)
             }.show()
         }
 
-        private fun showDownloadedInfo() {
-            val musicDB = MusicDB(requireContext())
-            val allSongs = musicDB.getAllMusicData().songs
-            musicDB.close()
-            val dlUtil = KoelDLUtil(requireContext())
-            val downloadedSongs = allSongs.filter { dlUtil.isDownloaded(it) }
-            val downloadedSize = dlUtil.getSongFilesSize(downloadedSongs)
-
-            val message = getString(
-                R.string.preferences_downloaded_info_message,
-                downloadedSongs.size,
-                allSongs.size,
-                downloadedSize
-            )
+        private fun removeAllDownloadedMusic() {
             AlertDialog.Builder(requireContext()).apply {
-                setTitle(R.string.preferences_downloaded_info)
-                setMessage(message)
-                setPositiveButton(R.string.ok, null)
-                show()
-            }
+                setTitle(R.string.preferences_remove_all_downloaded)
+                setMessage(R.string.preferences_remove_all_downloaded_description)
+                setNegativeButton(R.string.cancel, null)
+            }.setPositiveButton(R.string.ok) { _, _ ->
+                MusicDownloader(requireContext()).deleteAllDownloadedSongFiles()
+            }.show()
         }
+
+        private fun getDownloadedInfoMessage(): String {
+            val allSongs = MusicDB(requireContext()).let {
+                val songs = it.getAllMusicData().songs
+                it.close()
+                songs
+            }
+
+            val downloader = MusicDownloader(requireContext())
+            val downloadedSongCount = allSongs.filter { downloader.isDownloaded(it.id) }.size
+            val allDownloadedFileSize = downloader.getAllDownloadedFileSize().bytesToHumanReadable()
+
+            return getString(
+                R.string.preferences_downloaded_info_message,
+                downloadedSongCount,
+                allSongs.size,
+                allDownloadedFileSize
+            )
+        }
+
     }
 
 }
