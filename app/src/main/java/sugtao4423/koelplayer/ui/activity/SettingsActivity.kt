@@ -1,8 +1,11 @@
 package sugtao4423.koelplayer.ui.activity
 
+import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
@@ -35,8 +38,21 @@ class SettingsActivity : AppCompatActivity() {
 
     class SettingsFragment : PreferenceFragmentCompat() {
 
+        private val notificationPermissionRequest =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (isGranted) return@registerForActivityResult
+                AlertDialog.Builder(requireContext()).apply {
+                    setMessage(R.string.preferences_deny_notification_permission)
+                    setPositiveButton(R.string.ok, null)
+                }.show()
+            }
+
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.preferences, rootKey)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                notificationPermissionRequest.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
 
             findPreference<Preference>("reAuth")?.setOnPreferenceClickListener {
                 reAuth()
