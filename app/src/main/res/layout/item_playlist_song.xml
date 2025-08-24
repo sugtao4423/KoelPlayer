@@ -8,10 +8,8 @@
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:paddingStart="@dimen/no_padding"
-    android:paddingLeft="@dimen/no_padding"
     android:paddingTop="@dimen/playlist_song_item_text_padding"
     android:paddingEnd="@dimen/playlist_song_item_text_padding"
-    android:paddingRight="@dimen/playlist_song_item_text_padding"
     tools:ignore="UnusedAttribute">
 
     <ImageView
@@ -28,11 +26,8 @@
         android:layout_alignTop="@id/playlistSongCover"
         android:layout_alignBottom="@id/playlistSongCover"
         android:layout_marginStart="@dimen/playlist_song_item_title_margin"
-        android:layout_marginLeft="@dimen/playlist_song_item_title_margin"
         android:layout_toStartOf="@id/playlistSongMore"
-        android:layout_toLeftOf="@id/playlistSongMore"
         android:layout_toEndOf="@id/playlistSongCover"
-        android:layout_toRightOf="@id/playlistSongCover"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
@@ -62,7 +57,6 @@
         android:layout_alignTop="@id/playlistSongCover"
         android:layout_alignBottom="@id/playlistSongCover"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:background="@android:color/transparent"
         android:contentDescription="@string/description_more_button"
         android:foreground="?android:attr/selectableItemBackground"

@@ -8,10 +8,8 @@
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:paddingStart="@dimen/no_padding"
-    android:paddingLeft="@dimen/no_padding"
     android:paddingTop="@dimen/bottom_queue_item_text_padding"
     android:paddingEnd="@dimen/bottom_queue_item_text_padding"
-    android:paddingRight="@dimen/bottom_queue_item_text_padding"
     tools:ignore="UnusedAttribute">
 
     <ImageView
@@ -28,9 +26,7 @@
         android:layout_alignTop="@id/queueSongCover"
         android:layout_alignBottom="@id/queueSongCover"
         android:layout_marginStart="@dimen/bottom_queue_item_title_margin"
-        android:layout_marginLeft="@dimen/bottom_queue_item_title_margin"
         android:layout_toEndOf="@id/queueSongCover"
-        android:layout_toRightOf="@id/queueSongCover"
         android:gravity="center_vertical"
         android:orientation="vertical">
 

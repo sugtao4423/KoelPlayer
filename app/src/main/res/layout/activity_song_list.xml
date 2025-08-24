@@ -32,7 +32,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/song_list_cover_text_margin"
-                android:layout_marginLeft="@dimen/song_list_cover_text_margin"
                 android:layout_weight="1">
 
                 <LinearLayout
@@ -61,7 +60,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true" />
             </RelativeLayout>
         </LinearLayout>
@@ -80,7 +78,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/song_list_buttons_distance_margin"
-                android:layout_marginRight="@dimen/song_list_buttons_distance_margin"
                 android:layout_weight="1"
                 android:text="@string/play"
                 app:icon="@drawable/ic_playing_play"
@@ -92,7 +89,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/song_list_buttons_distance_margin"
-                android:layout_marginLeft="@dimen/song_list_buttons_distance_margin"
                 android:layout_weight="1"
                 android:text="@string/shuffle"
                 app:icon="@drawable/ic_playing_shuffle"

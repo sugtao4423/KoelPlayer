@@ -25,9 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
             android:layout_marginStart="@dimen/bottom_now_playing_title_margin"
-            android:layout_marginLeft="@dimen/bottom_now_playing_title_margin"
             android:layout_toEndOf="@id/bottomNowPlayingCover"
-            android:layout_toRightOf="@id/bottomNowPlayingCover"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
