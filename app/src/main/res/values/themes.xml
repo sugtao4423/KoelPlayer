@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="Theme.KoelPlayer" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.KoelPlayer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -19,11 +19,6 @@
 
     <style name="Theme.KoelPlayer.HomeButtonToolBar" parent="Theme.KoelPlayer">
         <item name="colorControlNormal">@color/white</item>
-    </style>
-
-    <style name="Theme.KoelPlayer.NoActionBar" parent="Theme.KoelPlayer">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Theme.KoelPlayer.SearchToolbar" parent="Widget.Design.CollapsingToolbar">

@@ -49,7 +49,10 @@ class MusicDownloadService : DownloadService(
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
         val pendingIntent = PendingIntent.getActivity(
-            this, FOREGROUND_NOTIFICATION_ID, appIntent, PendingIntent.FLAG_UPDATE_CURRENT
+            this,
+            FOREGROUND_NOTIFICATION_ID,
+            appIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         return NotificationCompat.Builder(this, DOWNLOAD_NOTIFICATION_CHANNEL_ID).let {

@@ -79,7 +79,7 @@ class MusicService : MediaLibraryService() {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
         val sessionActivityPendingIntent = PendingIntent.getActivity(
-            this, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT
+            this, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         return MediaLibrarySession.Builder(

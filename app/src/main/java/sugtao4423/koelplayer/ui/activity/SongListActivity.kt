@@ -6,6 +6,9 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import sugtao4423.koel4j.dataclass.Album
 import sugtao4423.koel4j.dataclass.Playlist
@@ -47,6 +50,7 @@ class SongListActivity : BottomSheetActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        optimizeEdgeToEdge()
         setContentView(binding.root)
         setSupportActionBar(binding.songListToolbar)
         binding.songListToolbar.setNavigationOnClickListener { finish() }
@@ -67,6 +71,16 @@ class SongListActivity : BottomSheetActivity() {
             }
 
             else -> throw IllegalArgumentException("Unknown intent type: $intentType")
+        }
+    }
+
+    private fun optimizeEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.songListToolbar) { v, insets ->
+            val i =
+                insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            v.updatePadding(i.left, i.top, i.right)
+            binding.songListMusicList.updatePadding(bottom = i.bottom)
+            WindowInsetsCompat.CONSUMED
         }
     }
 

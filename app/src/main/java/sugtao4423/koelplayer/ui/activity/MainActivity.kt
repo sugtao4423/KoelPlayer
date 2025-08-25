@@ -7,6 +7,9 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -33,6 +36,8 @@ class MainActivity : BottomSheetActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        optimizeEdgeToEdge()
+        initToolbarAlphaListener()
         setContentView(binding.root)
         setSupportActionBar(binding.mainToolbar)
         initViews(binding.mainAppbar)
@@ -64,6 +69,22 @@ class MainActivity : BottomSheetActivity() {
     override fun onDestroy() {
         bottomSheetViewModel.releaseController()
         super.onDestroy()
+    }
+
+    private fun optimizeEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainViewPager) { v, insets ->
+            val i = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = i.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    private fun initToolbarAlphaListener() {
+        binding.mainAppbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val totalScrollRange = appBarLayout.totalScrollRange
+            val alpha = (totalScrollRange + verticalOffset).toFloat() / totalScrollRange.toFloat()
+            binding.mainToolbar.alpha = alpha
+        }
     }
 
     inner class MainTabAdapter(fm: FragmentManager) :

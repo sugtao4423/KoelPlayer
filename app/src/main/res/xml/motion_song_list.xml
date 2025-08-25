@@ -16,7 +16,7 @@
         <Constraint
             android:id="@+id/songListToolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="wrap_content">
             <CustomAttribute
                 app:attributeName="background"
                 app:customColorDrawableValue="@android:color/transparent" />
@@ -30,7 +30,7 @@
         <Constraint
             android:id="@+id/songListToolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="wrap_content">
             <CustomAttribute
                 app:attributeName="background"
                 app:customColorDrawableValue="?attr/colorPrimary" />

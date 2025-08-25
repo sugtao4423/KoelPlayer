@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
         android:name=".App"
@@ -18,10 +21,9 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
-            android:theme="@style/Theme.KoelPlayer.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -31,8 +33,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.activity.SongListActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
-            android:theme="@style/Theme.KoelPlayer.NoActionBar" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <service
             android:name=".music.service.MusicService"

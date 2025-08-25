@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "sugtao4423.koelplayer"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "sugtao4423.koelplayer"
         minSdk = 21
-        targetSdk = 30
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
