@@ -13,8 +13,7 @@
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name"
-            app:titleTextColor="@android:color/white" />
+            app:title="@string/app_name" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <RelativeLayout

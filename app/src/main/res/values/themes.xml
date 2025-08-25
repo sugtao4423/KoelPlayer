@@ -12,13 +12,17 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Toolbar color style. -->
+        <item name="toolbarStyle">@style/Theme.KoelPlayer.Toolbar</item>
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/activity_bg</item>
         <item name="colorControlNormal">@color/black</item>
     </style>
 
-    <style name="Theme.KoelPlayer.HomeButtonToolBar" parent="Theme.KoelPlayer">
-        <item name="colorControlNormal">@color/white</item>
+    <style name="Theme.KoelPlayer.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">@color/white</item>
+        <item name="android:background">?attr/colorPrimary</item>
     </style>
 
     <style name="Theme.KoelPlayer.SearchToolbar" parent="Widget.Design.CollapsingToolbar">
