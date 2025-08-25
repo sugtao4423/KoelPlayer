@@ -3,6 +3,7 @@ package sugtao4423.koelplayer.ui.activity.base
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -29,6 +30,7 @@ abstract class BottomSheetActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         optimizeEdgeToEdge()
+        onBackPressedDispatcher.addCallback(this) { onBackPress() }
     }
 
     private fun optimizeEdgeToEdge() {
@@ -37,6 +39,12 @@ abstract class BottomSheetActivity : AppCompatActivity() {
                 insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             v.updatePadding(bottom = i.bottom)
             WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    private fun onBackPress() {
+        if (!bottomSheetViewModel.handleBackPressed()) {
+            finish()
         }
     }
 
@@ -139,12 +147,6 @@ abstract class BottomSheetActivity : AppCompatActivity() {
                     if (it.tag == tag) show(it) else hide(it)
                 }
             }
-        }
-    }
-
-    override fun onBackPressed() {
-        if (!bottomSheetViewModel.handleBackPressed()) {
-            super.onBackPressed()
         }
     }
 
