@@ -1,10 +1,14 @@
 package sugtao4423.koelplayer.ui.activity.base
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -22,6 +26,20 @@ abstract class BottomSheetActivity : AppCompatActivity() {
 
     protected val bottomSheetViewModel: BottomSheetViewModel by viewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        optimizeEdgeToEdge()
+    }
+
+    private fun optimizeEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(bsBinding.bottomSheetContainer) { v, insets ->
+            val i =
+                insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            v.updatePadding(bottom = i.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
     protected open fun initViews(backgroundAppbar: View) {
         initActionBar()
         val bottomSheet = initBottomSheet(backgroundAppbar)
@@ -30,14 +48,9 @@ abstract class BottomSheetActivity : AppCompatActivity() {
     }
 
     private fun initActionBar() {
-        bsBinding.nowPlayingToolbar.setNavigationOnClickListener {
-            bottomSheetViewModel.toggleBottomSheetState()
-        }
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        bottomSheetViewModel.toggleBottomSheetState()
-        return super.onSupportNavigateUp()
+        fun toggle() = bottomSheetViewModel.toggleBottomSheetState()
+        bsBinding.nowPlayingAppBar.setOnClickListener { toggle() }
+        bsBinding.nowPlayingToolbar.setOnClickListener { toggle() }
     }
 
     private fun initBottomSheet(backgroundAppbar: View): BottomSheetBehavior<CoordinatorLayout> {
@@ -67,9 +80,6 @@ abstract class BottomSheetActivity : AppCompatActivity() {
         })
 
         @SuppressLint("ClickableViewAccessibility") bsBinding.nowPlayingSheetExpanded.setOnTouchListener { _, _ -> true }
-        bsBinding.nowPlayingToolbar.setOnClickListener {
-            bottomSheetViewModel.toggleBottomSheetState()
-        }
 
         return bottomSheet
     }

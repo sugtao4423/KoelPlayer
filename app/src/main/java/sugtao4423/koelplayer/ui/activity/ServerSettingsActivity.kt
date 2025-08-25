@@ -7,6 +7,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.data.SyncMusicData
 import sugtao4423.koelplayer.databinding.ActivityServerSettingsBinding
@@ -18,7 +21,9 @@ class ServerSettingsActivity : AppCompatActivity() {
         const val INTENT_KEY_IS_RE_AUTH = "isReAuth"
     }
 
-    private lateinit var binding: ActivityServerSettingsBinding
+    private val binding: ActivityServerSettingsBinding by lazy {
+        ActivityServerSettingsBinding.inflate(layoutInflater)
+    }
 
     private val viewModel: ServerSettingsViewModel by viewModels()
 
@@ -28,12 +33,22 @@ class ServerSettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityServerSettingsBinding.inflate(layoutInflater)
+        optimizeEdgeToEdge()
         setContentView(binding.root)
 
         initViews()
         initObservers()
         viewModel.initialize(isReAuth)
+    }
+
+    private fun optimizeEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val i =
+                insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            v.updatePadding(bottom = maxOf(i.bottom, ime.bottom))
+            insets
+        }
     }
 
     private fun initViews() {

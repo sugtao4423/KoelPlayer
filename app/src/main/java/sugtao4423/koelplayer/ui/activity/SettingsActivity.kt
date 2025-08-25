@@ -4,10 +4,12 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -15,25 +17,33 @@ import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.data.SyncMusicData
 import sugtao4423.koelplayer.data.database.MusicDB
+import sugtao4423.koelplayer.databinding.ActivitySettingsBinding
 import sugtao4423.koelplayer.download.MusicDownloader
 import sugtao4423.koelplayer.util.bytesToHumanReadable
 
 class SettingsActivity : AppCompatActivity() {
 
+    private val binding: ActivitySettingsBinding by lazy {
+        ActivitySettingsBinding.inflate(layoutInflater)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        optimizeEdgeToEdge()
+        setContentView(binding.root)
+        binding.settingsToolbar.setNavigationOnClickListener { finish() }
+
         supportFragmentManager.commit {
-            replace(android.R.id.content, SettingsFragment())
+            replace(R.id.settingsContent, SettingsFragment())
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
+    private fun optimizeEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.settingsContent) { v, insets ->
+            val i = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            v.updatePadding(bottom = i.bottom)
+            WindowInsetsCompat.CONSUMED
         }
-        return super.onOptionsItemSelected(item)
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {

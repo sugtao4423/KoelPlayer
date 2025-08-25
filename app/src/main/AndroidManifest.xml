@@ -21,8 +21,7 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
-            android:exported="true"
-            android:theme="@style/Theme.KoelPlayer.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,8 +33,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.activity.SongListActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
-            android:theme="@style/Theme.KoelPlayer.NoActionBar" />
+            android:configChanges="orientation|screenSize|screenLayout" />
 
         <service
             android:name=".music.service.MusicService"
