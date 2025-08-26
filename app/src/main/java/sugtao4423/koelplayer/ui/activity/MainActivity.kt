@@ -11,8 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.google.android.material.tabs.TabLayoutMediator
 import sugtao4423.koelplayer.App
 import sugtao4423.koelplayer.R
 import sugtao4423.koelplayer.databinding.ActivityMainBinding
@@ -30,9 +30,6 @@ class MainActivity : BottomSheetActivity() {
     override val bsBinding: BottomSheetBinding by lazy { binding.mainBottomSheet }
 
     private val viewModel: MainViewModel by viewModels()
-
-    private val albumFragment: AlbumFragment by lazy { AlbumFragment(bottomSheetViewModel) }
-    private val playlistFragment: PlaylistFragment by lazy { PlaylistFragment(bottomSheetViewModel) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +49,14 @@ class MainActivity : BottomSheetActivity() {
         volumeControlStream = AudioManager.STREAM_MUSIC
         startService(Intent(this, MusicService::class.java))
 
-        binding.mainViewPager.adapter = MainTabAdapter(supportFragmentManager)
-        binding.mainTabLayout.setupWithViewPager(binding.mainViewPager)
+        binding.mainViewPager.adapter = MainTabAdapter()
+        TabLayoutMediator(binding.mainTabLayout, binding.mainViewPager) { tab, position ->
+            val textResId = when (position) {
+                0 -> R.string.album
+                else -> R.string.playlist
+            }
+            tab.setText(textResId)
+        }.attach()
     }
 
     override fun onResume() {
@@ -87,24 +90,14 @@ class MainActivity : BottomSheetActivity() {
         }
     }
 
-    inner class MainTabAdapter(fm: FragmentManager) :
-        FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    inner class MainTabAdapter : FragmentStateAdapter(this) {
 
-        override fun getItem(position: Int): Fragment {
-            return when (position) {
-                0 -> albumFragment
-                else -> playlistFragment
-            }
+        override fun getItemCount(): Int = 2
+
+        override fun createFragment(position: Int): Fragment = when (position) {
+            0 -> AlbumFragment(bottomSheetViewModel)
+            else -> PlaylistFragment(bottomSheetViewModel)
         }
-
-        override fun getPageTitle(position: Int): CharSequence {
-            return when (position) {
-                0 -> getString(R.string.album)
-                else -> getString(R.string.playlist)
-            }
-        }
-
-        override fun getCount(): Int = 2
 
     }
 
