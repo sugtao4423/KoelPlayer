@@ -4,6 +4,9 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
 
+    <!-- Music Notification -->
+    <string name="notification_channel_name">Now Playing</string>
+
     <!-- MainActivity.kt -->
     <string name="playlist">プレイリスト</string>
     <string name="album">アルバム</string>
@@ -61,10 +64,6 @@
     <string name="add_queue_playlist">プレイリストをキューに追加しました</string>
     <string name="play_next_playlist">次にこのプレイリストが再生されます</string>
 
-    <!-- MusicService.kt -->
-    <string name="notification_channel">Now Playing</string>
-    <string name="notification_channel_description">@string/notification_channel</string>
-
     <!-- bottom_sheet.xml -->
     <string name="now_playing">Now Playing</string>
     <string name="description_shuffle_button">シャッフル</string>
@@ -74,9 +73,9 @@
     <string name="description_repeat_button">リピート</string>
     <string name="queue">Queue</string>
 
-    <!-- KoelDLService.kt -->
-    <string name="download_done">Download Done!</string>
-    <string name="param_song_progress">%1$d / %2$d 曲</string>
+    <!-- MusicDownloadService.kt -->
+    <string name="download_notification_channel_name">Download</string>
+    <string name="param_download_left">残り %d 曲</string>
 
     <!-- preferences.xml -->
     <string name="preferences_koel_server">Koel Server</string>
@@ -86,6 +85,9 @@
     <string name="preferences_download">ダウンロード</string>
     <string name="preferences_all_download">すべての曲をダウンロードする</string>
     <string name="preferences_all_download_description">携帯回線でもWi-Fi回線でもお構いなしにダウンロードします。\nよろしいですか？</string>
+    <string name="preferences_remove_all_downloaded">すべてのダウンロードを削除する</string>
+    <string name="preferences_remove_all_downloaded_description">すべてのダウンロードを削除します。\nよろしいですか？</string>
     <string name="preferences_downloaded_info">ダウンロード済み情報</string>
-    <string name="preferences_downloaded_info_message">ダウンロード済み: %1$d / %2$d 曲\n合計: %3$s</string>
+    <string name="preferences_downloaded_info_message">%1$d / %2$d 曲\n%3$s</string>
+    <string name="preferences_deny_notification_permission">通知の権限が拒否されました。\nダウンロード進捗を確認するためには通知の権限を許可してください。</string>
 </resources>

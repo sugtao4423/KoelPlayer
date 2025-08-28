@@ -8,10 +8,8 @@
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:paddingStart="@dimen/no_padding"
-    android:paddingLeft="@dimen/no_padding"
     android:paddingTop="@dimen/album_song_item_text_padding"
     android:paddingEnd="@dimen/album_song_item_text_padding"
-    android:paddingRight="@dimen/album_song_item_text_padding"
     android:paddingBottom="@dimen/album_song_item_text_padding"
     tools:ignore="UnusedAttribute">
 
@@ -30,9 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@id/albumSongMore"
-        android:layout_toLeftOf="@id/albumSongMore"
         android:layout_toEndOf="@id/albumSongPosition"
-        android:layout_toRightOf="@id/albumSongPosition"
         android:textSize="@dimen/album_song_item_title_text_size" />
 
     <TextView
@@ -42,9 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/albumSongTitle"
         android:layout_alignStart="@id/albumSongTitle"
-        android:layout_alignLeft="@id/albumSongTitle"
         android:layout_toStartOf="@id/albumSongMore"
-        android:layout_toLeftOf="@id/albumSongMore"
         android:textSize="@dimen/default_text_size" />
 
     <ImageButton
@@ -54,7 +48,6 @@
         android:layout_alignBottom="@id/albumSongDuration"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:background="@android:color/transparent"
         android:contentDescription="@string/description_more_button"
         android:foreground="?android:attr/selectableItemBackground"

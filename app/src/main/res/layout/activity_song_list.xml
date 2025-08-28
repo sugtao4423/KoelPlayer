@@ -32,7 +32,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/song_list_cover_text_margin"
-                android:layout_marginLeft="@dimen/song_list_cover_text_margin"
                 android:layout_weight="1">
 
                 <LinearLayout
@@ -61,7 +60,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true" />
             </RelativeLayout>
         </LinearLayout>
@@ -76,24 +74,22 @@
             app:layout_constraintTop_toBottomOf="@id/songListDetails">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/songListPlayButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/song_list_buttons_distance_margin"
-                android:layout_marginRight="@dimen/song_list_buttons_distance_margin"
                 android:layout_weight="1"
-                android:onClick="clickPlayButton"
                 android:text="@string/play"
                 app:icon="@drawable/ic_playing_play"
                 app:iconGravity="textStart" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/songListShufflePlayButton"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/song_list_buttons_distance_margin"
-                android:layout_marginLeft="@dimen/song_list_buttons_distance_margin"
                 android:layout_weight="1"
-                android:onClick="clickShuffleButton"
                 android:text="@string/shuffle"
                 app:icon="@drawable/ic_playing_shuffle"
                 app:iconGravity="textStart" />
@@ -102,7 +98,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/songListToolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
             app:navigationIcon="@drawable/ic_back" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -114,5 +110,8 @@
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 
-    <include layout="@layout/bottom_sheet" />
+    <include
+        android:id="@+id/songListBottomSheet"
+        layout="@layout/bottom_sheet" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

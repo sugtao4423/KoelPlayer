@@ -15,6 +15,9 @@
             android:key="allDownload"
             android:title="@string/preferences_all_download" />
         <Preference
+            android:key="removeAllDownloaded"
+            android:title="@string/preferences_remove_all_downloaded" />
+        <Preference
             android:key="showDownloadedInfo"
             android:title="@string/preferences_downloaded_info" />
     </PreferenceCategory>

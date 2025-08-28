@@ -25,9 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
             android:layout_marginStart="@dimen/bottom_now_playing_title_margin"
-            android:layout_marginLeft="@dimen/bottom_now_playing_title_margin"
             android:layout_toEndOf="@id/bottomNowPlayingCover"
-            android:layout_toRightOf="@id/bottomNowPlayingCover"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -56,18 +54,17 @@
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/nowPlayingAppBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/nowPlayingToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:theme="@style/Theme.KoelPlayer.HomeButtonToolBar"
                 app:navigationIcon="@drawable/ic_back"
-                app:title="@string/now_playing"
-                app:titleTextColor="@android:color/white" />
+                app:title="@string/now_playing" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <LinearLayout
@@ -80,7 +77,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomSheetBottomNav"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:menu="@menu/bottom_sheet_menu" />
 

@@ -1,0 +1,153 @@
+package sugtao4423.koelplayer.ui.activity.base
+
+import android.annotation.SuppressLint
+import android.os.Bundle
+import android.view.View
+import androidx.activity.addCallback
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.launch
+import sugtao4423.koelplayer.R
+import sugtao4423.koelplayer.databinding.BottomSheetBinding
+import sugtao4423.koelplayer.ui.fragment.bottomsheet.NowPlayingFragment
+import sugtao4423.koelplayer.ui.fragment.bottomsheet.QueueFragment
+import sugtao4423.koelplayer.util.GlideUtil
+import sugtao4423.koelplayer.viewmodel.BottomSheetViewModel
+
+abstract class BottomSheetActivity : AppCompatActivity() {
+
+    protected abstract val bsBinding: BottomSheetBinding
+
+    protected val bottomSheetViewModel: BottomSheetViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        optimizeEdgeToEdge()
+        onBackPressedDispatcher.addCallback(this) { onBackPress() }
+    }
+
+    private fun optimizeEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(bsBinding.bottomSheetContainer) { v, insets ->
+            val i =
+                insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            v.updatePadding(bottom = i.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    private fun onBackPress() {
+        if (!bottomSheetViewModel.handleBackPressed()) {
+            finish()
+        }
+    }
+
+    protected open fun initViews(backgroundAppbar: View) {
+        initActionBar()
+        val bottomSheet = initBottomSheet(backgroundAppbar)
+        initBottomNav()
+        initObservers(bottomSheet)
+    }
+
+    private fun initActionBar() {
+        fun toggle() = bottomSheetViewModel.toggleBottomSheetState()
+        bsBinding.nowPlayingAppBar.setOnClickListener { toggle() }
+        bsBinding.nowPlayingToolbar.setOnClickListener { toggle() }
+    }
+
+    private fun initBottomSheet(backgroundAppbar: View): BottomSheetBehavior<CoordinatorLayout> {
+        val bottomSheet = BottomSheetBehavior.from(bsBinding.root)
+
+        if (bottomSheet.state == BottomSheetBehavior.STATE_EXPANDED) {
+            bsBinding.nowPlayingSheetCollapsed.alpha = 0f
+            bsBinding.nowPlayingSheetExpanded.alpha = 1f
+        } else if (bottomSheet.state == BottomSheetBehavior.STATE_COLLAPSED) {
+            bsBinding.nowPlayingSheetCollapsed.alpha = 1f
+            bsBinding.nowPlayingSheetExpanded.alpha = 0f
+        }
+
+        bottomSheet.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                val inverseOffset = 1 - slideOffset
+                bsBinding.nowPlayingSheetCollapsed.alpha = inverseOffset
+                bsBinding.nowPlayingSheetExpanded.alpha = slideOffset
+                backgroundAppbar.alpha = inverseOffset
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                bottomSheetViewModel.setBottomSheetState(newState)
+                backgroundAppbar.visibility =
+                    if (newState == BottomSheetBehavior.STATE_EXPANDED) View.GONE else View.VISIBLE
+            }
+        })
+
+        @SuppressLint("ClickableViewAccessibility") bsBinding.nowPlayingSheetExpanded.setOnTouchListener { _, _ -> true }
+
+        return bottomSheet
+    }
+
+    private fun initBottomNav() {
+        supportFragmentManager.commit {
+            add(
+                R.id.bottomSheetContainer,
+                NowPlayingFragment(),
+                BottomSheetViewModel.BOTTOM_SHEET_NOW_PLAYING
+            )
+            add(
+                R.id.bottomSheetContainer, QueueFragment(), BottomSheetViewModel.BOTTOM_SHEET_QUEUE
+            )
+        }
+
+        bsBinding.bottomSheetBottomNav.setOnItemSelectedListener {
+            val selectedFragmentTag = when (it.itemId) {
+                R.id.bottomSheetNowPlayingButton -> BottomSheetViewModel.BOTTOM_SHEET_NOW_PLAYING
+                R.id.bottomSheetQueueButton -> BottomSheetViewModel.BOTTOM_SHEET_QUEUE
+                else -> throw IllegalArgumentException("Unknown item selected: ${it.itemId}")
+            }
+            bottomSheetViewModel.setCurrentBottomSheetTag(selectedFragmentTag)
+            true
+        }
+    }
+
+    private fun initObservers(bottomSheet: BottomSheetBehavior<CoordinatorLayout>) {
+        lifecycleScope.launch {
+            bottomSheetViewModel.currentMediaItem.collect { mediaItem ->
+                mediaItem?.let {
+                    GlideUtil.load(
+                        applicationContext,
+                        it.mediaMetadata.artworkUri,
+                        bsBinding.bottomNowPlayingCover
+                    )
+                    bsBinding.bottomNowPlayingTitle.text = it.mediaMetadata.title
+                    bsBinding.bottomNowPlayingArtist.text = it.mediaMetadata.artist
+                }
+            }
+        }
+
+        bottomSheetViewModel.bottomSheetState.observe(this) { state ->
+            if (bottomSheet.state != state) {
+                bottomSheet.state = state
+            }
+        }
+
+        bottomSheetViewModel.currentBottomSheetTag.observe(this) { tag ->
+            supportFragmentManager.fragments.filter {
+                listOf(
+                    BottomSheetViewModel.BOTTOM_SHEET_NOW_PLAYING,
+                    BottomSheetViewModel.BOTTOM_SHEET_QUEUE
+                ).contains(it.tag)
+            }.forEach {
+                supportFragmentManager.commit {
+                    if (it.tag == tag) show(it) else hide(it)
+                }
+            }
+        }
+    }
+
+}

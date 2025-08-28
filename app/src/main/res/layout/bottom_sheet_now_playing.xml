@@ -15,8 +15,8 @@
             android:id="@+id/nowPlayingCover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/now_playing_content_margin"
-            android:layout_marginRight="@dimen/now_playing_content_margin"
+            android:layout_marginStart="@dimen/now_playing_content_margin"
+            android:layout_marginEnd="@dimen/now_playing_content_margin"
             android:adjustViewBounds="true"
             android:contentDescription="@string/description_album_cover"
             app:srcCompat="@drawable/unknown_album" />
@@ -26,9 +26,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/nowPlayingCover"
-            android:layout_marginLeft="@dimen/now_playing_content_margin"
+            android:layout_marginStart="@dimen/now_playing_content_margin"
             android:layout_marginTop="@dimen/now_playing_title_top_margin"
-            android:layout_marginRight="@dimen/now_playing_content_margin">
+            android:layout_marginEnd="@dimen/now_playing_content_margin">
 
             <TextView
                 android:id="@+id/nowPlayingTitle"
@@ -46,9 +46,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/wrapNowPlayingTitle"
-            android:layout_marginLeft="@dimen/now_playing_content_margin"
+            android:layout_marginStart="@dimen/now_playing_content_margin"
             android:layout_marginTop="@dimen/now_playing_artist_top_margin"
-            android:layout_marginRight="@dimen/now_playing_content_margin">
+            android:layout_marginEnd="@dimen/now_playing_content_margin">
 
             <TextView
                 android:id="@+id/nowPlayingArtist"
@@ -65,13 +65,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/wrapNowPlayingArtist"
-            android:layout_marginLeft="@dimen/now_playing_seek_side_margin"
+            android:layout_marginStart="@dimen/now_playing_seek_side_margin"
             android:layout_marginTop="@dimen/now_playing_seek_top_margin"
-            android:layout_marginRight="@dimen/now_playing_seek_side_margin"
+            android:layout_marginEnd="@dimen/now_playing_seek_side_margin"
             android:progressTint="?attr/colorPrimary"
             android:secondaryProgressTint="?attr/colorPrimaryVariant"
-            android:thumbTint="?attr/colorPrimary"
-            tools:targetApi="lollipop" />
+            android:thumbTint="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/nowPlayingCurrentTime"
@@ -79,9 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/nowPlayingSeek"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:layout_marginStart="@dimen/now_playing_content_margin"
-            android:layout_marginLeft="@dimen/now_playing_content_margin"
             android:layout_marginTop="@dimen/now_playing_time_top_margin" />
 
         <TextView
@@ -90,20 +87,18 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/nowPlayingSeek"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginEnd="@dimen/now_playing_content_margin"
-            android:layout_marginRight="@dimen/now_playing_content_margin" />
+            android:layout_marginEnd="@dimen/now_playing_content_margin" />
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/now_playing_content_margin"
+        android:layout_marginStart="@dimen/now_playing_content_margin"
         android:layout_marginTop="@dimen/now_playing_control_top_margin"
-        android:layout_marginRight="@dimen/now_playing_content_margin"
+        android:layout_marginEnd="@dimen/now_playing_content_margin"
         android:layout_marginBottom="@dimen/now_playing_content_margin">
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingShuffleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -113,9 +108,9 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_shuffle"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingPrevButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -125,9 +120,9 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_prev"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingPlayButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -137,9 +132,9 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_play"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingNextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -149,9 +144,9 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_next"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
 
-        <sugtao4423.koelplayer.view.SquareImageButton
+        <sugtao4423.koelplayer.ui.view.SquareImageButton
             android:id="@+id/nowPlayingRepeatButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -161,7 +156,7 @@
             android:foreground="?android:attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_playing_repeat"
             tools:ignore="UnusedAttribute"
-            tools:targetApi="m" />
+            tools:targetApi="23" />
     </LinearLayout>
 
 </LinearLayout>

@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <sugtao4423.koelplayer.view.SquareImageView
+        <sugtao4423.koelplayer.ui.view.SquareImageView
             android:id="@+id/playlistCover"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,9 +31,9 @@
             android:layout_below="@+id/playlistCover"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingLeft="@dimen/playlist_item_text_padding"
+            android:paddingStart="@dimen/playlist_item_text_padding"
             android:paddingTop="@dimen/playlist_item_text_padding_top"
-            android:paddingRight="@dimen/playlist_item_text_padding"
+            android:paddingEnd="@dimen/playlist_item_text_padding"
             android:paddingBottom="@dimen/playlist_item_text_padding" />
     </RelativeLayout>
 
